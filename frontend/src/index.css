@@ -1,0 +1,9 @@
+@import "tailwindcss";
+
+.navvilla , .Page1Form, .cardImg, .catScroll{
+    scrollbar-width: none;
+}
+/* 
+*{
+    border: 1px solid red;
+} */
