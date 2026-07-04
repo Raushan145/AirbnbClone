@@ -71,6 +71,19 @@ const Nav = ({
 
   // return () => clearTimeout(timer);
 }, [input]);
+
+// useEffect(() => {
+//   const handleClick = () => {
+//     setShowMenu(false);
+//   };
+
+//   window.addEventListener("click", handleClick);
+
+//   return () => {
+//     window.removeEventListener("click", handleClick);
+//   };
+// }, []);
+
   return (
     <nav className="fixed top-0 bg-white z-50 w-full">
 
@@ -122,7 +135,9 @@ const Nav = ({
             <GiHamburgerMenu
               size={22}
               className="cursor-pointer"
-              onClick={() => setShowMenu(!showMenu)}
+              onClick={() => {
+               
+                setShowMenu(prev => !prev)}}
             />
 
             {showMenu && (
@@ -151,7 +166,9 @@ const Nav = ({
 
                 {!userData ? (
                   <div
-                    onClick={() => navigate("/signin")}
+                    onClick={() => {navigate("/signin")
+                       setShowMenu(false)
+                    }}
                     className="px-5 py-3 hover:bg-gray-100 cursor-pointer"
                   >
                     Login

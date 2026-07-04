@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { toast } from 'react-toastify'
@@ -21,6 +21,7 @@ const MyBooking = () => {
       const [cancelReason, setCancelReason] = useState("");
       const navigate = useNavigate();
       const [hostModal, setHostModal] = useState(null);
+      const [loading, setLoading] = useState(true);
       
       
       // Get last 10 bookings
@@ -81,6 +82,19 @@ const MyBooking = () => {
       toast.error(err.response?.data?.message || "Failed to delete booking");
     }
   };
+
+  // useEffect(() => {
+  //   const handleClick = () => {
+  //     setShowMenu(false);
+  //   };
+  
+  //   window.addEventListener("click", handleClick);
+  
+  //   return () => {
+  //     window.removeEventListener("click", handleClick);
+  //   };
+  // }, []);
+
     
   return (
     <>
@@ -123,7 +137,9 @@ const MyBooking = () => {
               <GiHamburgerMenu
                 size={22}
                 className="cursor-pointer"
-                onClick={() => setShowMenu(!showMenu)}
+                onClick={() => {
+               
+                setShowMenu(prev => !prev)}}
               />
               {showMenu && (
                 <div className="absolute right-0 top-12 bg-white rounded-lg shadow w-56">
@@ -173,26 +189,26 @@ const MyBooking = () => {
         </div>
       </nav>
 
-      <h1 className="text-3xl w-[100%] text-center font-bold mb-8 absolute left-3 top-20 z-50">
+      <h1 className="text-3xl w-[100%] text-center font-bold mb-8 absolute left-3 top-20 z-40">
         My Booking
       </h1>
 
       <div className="pt-[140px] max-w-6xl mx-auto px-4 pb-10">
         {/* Active Bookings */}
-       {activeBookings.length > 0 && (
-  <div className="mb-10">
-    <h2 className="text-2xl font-bold mb-5">
-      Active Bookings
-    </h2>
+       
+          {activeBookings.length > 0 && (
+        <div className="mb-10">
+          <h2 className="text-2xl font-bold mb-5">
+            Active Bookings
+          </h2>
 
-    <div className="flex flex-col gap-5">
+          <div className="flex flex-col gap-5">
 
-      {activeBookings.map((booking) => {
-        const listing = booking.Listing || {};
-        const host = booking.host || {};
-
-        console.log("Booking =>", booking);
-        console.log("Host =>", booking.host);
+            {activeBookings.map((booking) => {
+              const listing = booking.Listing || {};
+              const host = booking.host || {};
+              // console.log("Booking =>", booking);
+              // console.log("Host =>", booking.host);
 
         // const listing = booking.Listing || {};
         // const host = booking.host || {};
@@ -269,12 +285,14 @@ const MyBooking = () => {
                 </button>
               </div>
             </div>
+
           </div>
         );
       })}
     </div>
   </div>
 )}
+
 
         {/* Cancelled History */}
         {cancelledBookings.length > 0 && (
@@ -380,7 +398,7 @@ const MyBooking = () => {
           </div>
         </div>
       )}
-
+{/* 
        {hostModal && (
           <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/40 px-4">
             <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
@@ -399,7 +417,7 @@ const MyBooking = () => {
               </div>
             </div>
           </div>
-        )}
+        )} */}
 
         {hostModal && (
   <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/40 px-4">

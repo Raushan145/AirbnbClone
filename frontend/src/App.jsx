@@ -13,6 +13,7 @@ import ViewPage from './pages/ViewPage'
 import MyBooking from './pages/MyBooking'
 import ReservationsList from './pages/ReservationsList'
 import Booked from './pages/Booked'
+import PageNotFound from './Component/PageNotFound'
 
 export const ServerURL = "https://airbnbclone-backend-paga.onrender.com"
 // export const ServerURL = "http://10.146.230.189:8080";
@@ -37,7 +38,7 @@ const App = () => {
       <Route path="/listingpage3" element={<ListingPage3 />} />
       <Route path="/listingpage3" element={<ListingPage3 />} />
       <Route path="/forgot-password" element={<ForgotPassword />} />
-      <Route path="*" element={<Navigate to="/" replace />} />
+      <Route path="*" element= {<PageNotFound />} />
     </Routes>
   )
 }

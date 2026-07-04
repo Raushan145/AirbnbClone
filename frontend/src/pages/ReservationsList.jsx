@@ -8,7 +8,9 @@ import { userDataContext } from '../Context/UserContext';
 import { CgProfile } from "react-icons/cg";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { ServerURL } from '../App';
-   import { RiDeleteBin6Line } from "react-icons/ri";
+import { RiDeleteBin6Line } from "react-icons/ri";
+import { DotLoader } from "react-spinners";
+
 
 
 const ReservationsList = () => {
@@ -60,6 +62,7 @@ const ReservationsList = () => {
     fetchReservations();
   }, []);
 
+
   const handleCancelBooking = async (bookingId) => {
     if (cancelReason.trim() === "") {
       return toast.error("Please provide a reason for cancellation");
@@ -92,6 +95,19 @@ const ReservationsList = () => {
     console.log(error)
    }
   }
+
+  
+  // useEffect(() => {
+  //   const handleClick = () => {
+  //     setShowMenu(false);
+  //   };
+  
+  //   window.addEventListener("click", handleClick);
+  
+  //   return () => {
+  //     window.removeEventListener("click", handleClick);
+  //   };
+  // }, []);
 
   const activeReservations = (reservations || []).filter((booking) => booking?.status === 'booked');
   const cancelledReservations = (reservations || []).filter((booking) => booking?.status !== 'booked');
@@ -142,7 +158,8 @@ const ReservationsList = () => {
                   <GiHamburgerMenu
                     size={22}
                     className="cursor-pointer"
-                    onClick={() => setShowMenu(!showMenu)}
+                    onClick={() => {
+                    setShowMenu(prev => !prev)}}
                   />
       
                   {showMenu && (
@@ -227,19 +244,20 @@ const ReservationsList = () => {
       
           </nav>
 
-           <h1 className="text-3xl w-[100%] text-center font-bold mb-8 absolute left-3 top-20 z-50 ">
+           <h1 className="md:text-3xl text-xl w-[100%] text-center font-bold mb-8 absolute left-3 top-20 z-50 ">
          Reservations-Dashboard
         </h1>
 
         <div className="flex flex-wrap gap-6 justify-center pt-[140px] ">
           {loading ? (
-            <div className="text-2xl text-gray-500 mt-10">Loading reservations...</div>
+            <div className="text-2xl text-gray-500 mt-20">
+              <DotLoader color="#0b110a" size={40} /></div>
           ) : reservations.length === 0 ? (
             <div className="text-3xl text-gray-500 mt-20">No Reservations Found</div>
           ) : (
             <>
               <div className="w-full max-w-6xl">
-                <h2 className="text-xl font-bold mb-4">Active Reservations (Last 10)</h2>
+                {/* <h2 className="text-xl font-bold mb-4">Active Reservations (Last 10)</h2> */}
               </div>
               {activeReservations.map((booking) => {
               const listing = booking.Listing || {};

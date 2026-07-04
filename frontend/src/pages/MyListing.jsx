@@ -1,16 +1,16 @@
-import React, { useContext, useMemo, useState } from "react";
+import React, { useContext, useEffect, useMemo, useState } from "react";
 import Nav from "../Component/Nav";
 import Card from "../Component/Card";
 import { listingDataContext } from "../Context/ListingContex";
 import { userDataContext } from "../Context/UserContext";
 import { HiOutlineDotsVertical } from "react-icons/hi";
+import { SyncLoader } from "react-spinners";
 
 const MyListing = () => {
-  const { allListing } = useContext(listingDataContext);
+  const { allListing,loading } = useContext(listingDataContext);
   const { userData } = useContext(userDataContext);
 
   const [cate, setCate] = useState("All");
-
   const myListings = useMemo(() => {
     return allListing.filter(
       (item) => item.host === userData?._id
@@ -35,7 +35,7 @@ const MyListing = () => {
 
       <div className="pt-[150px] px-10 relative">
 
-        <h1 className="text-3xl font-bold mb-8 absolute left-10 top-20 z-50">
+        <h1 className="md:text-3xl text-lg font-bold mb-8 md:absolute left-5 top-35 bg-white z-50">
           My Listings
         </h1>
 
@@ -49,17 +49,20 @@ const MyListing = () => {
         </div> */}
 
 
-
-          {filteredListings.length > 0 ? (
-            filteredListings.map((item) => (
-              <Card key={item._id} {...item} />
-            ))
-          ) : (
-            <div className="text-3xl text-gray-500 mt-20">
-              No Listing Found
-            </div>
-          )}
-
+            {loading ? (
+              <div className="w-full h-[60vh] flex justify-center items-center">
+                <SyncLoader color="#0b110a" size={13} />
+              </div>
+            ) : filteredListings.length > 0 ? (
+              filteredListings.map((item) => (
+                <Card key={item._id} {...item} />
+              ))
+            ) : (
+              <div className="w-full text-3xl text-gray-500 mt-20 text-center">
+                No Listing Found
+              </div>
+            )}
+    
         </div>
 
       </div>

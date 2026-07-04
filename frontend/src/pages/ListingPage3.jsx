@@ -35,49 +35,84 @@ const ListingPage3 = () => {
        
              {/* Heading */}
              <div className="absolute top-5 right-5 bg-red-600 text-white px-8 py-2 rounded-full shadow-lg text-lg">
-               Setup Your Category
+               Review your listing
              </div>
+<div className="w-[95%] md:w-[80%] flex flex-col pt-40 px-3 md:pt-20">
 
-             <div className='w-[95%]  flex flex-col items-center justify-start text-[25px] md:w-[90%] mb-[10px]  '>
-                        <div className='w-[95%] flex items-start justify-start text-[18px] md:w-[80%] md:text-[25px] '>
-                            {`In ${description.toUpperCase()}, ${title.toUpperCase()}`}
-                        </div>
-                        <div className='w-[95%] md:h-[350px] h-[600px] flex items-center justify-center flex-col md:w-[80%] bg-amber-200 md:flex-row '>
-                                <div className='w-[100%] h-[65%] md:w-[55%] md:h-[100%] overflow-hidden flex items-center justify-start border border-amber-50'>
-                                        <img src={frontEndImage1} alt={title}  className='w-[100%] object-cover'/>
-                                </div>
-                                <div className='w-[100%] h-[65%] md:w-[45%] md:h-[100%] overflow-hidden flex md:flex-col items-center justify-start border border-amber-50'>
-                                    <div className='w-[100%] h-[65%] md:w-full md:h-[100%] overflow-hidden flex items-center justify-center border border-amber-50  '>
-                                            <img src={frontEndImage2} alt={title}  className='w-[100%] object-cover'/>
+  {/* Heading */}
+  <h1 className="text-xl md:text-2xl font-semibold mb-5">
+    In {(description || "").toUpperCase()}, {(title || "").toUpperCase()}
+  </h1>
 
-                                    </div>
-                                    <div className='w-[100%] h-[65%] md:w-full md:h-[100%] overflow-hidden flex items-center justify-center border border-amber-50 '>
-                                            <img src={frontEndImage3} alt={title} className='w-[100%] object-cover'/>
+  {/* Images */}
+  <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
 
-                                    </div>
-                                </div>
-                        </div>
+    <div className="h-[250px] md:h-[350px] rounded-2xl overflow-hidden">
+      <img
+        src={frontEndImage1}
+        alt={title}
+        className="w-full h-full object-cover"
+      />
+    </div>
 
-                        <div className='w-[95%] flex items-start justify-start text-[18px] md:w-[80%] md:text-[25px] '>
-                             {`${category.toUpperCase()} in ${city.toUpperCase()}, ${landmark.toUpperCase()}`}
-                        </div>
+    <div className="grid grid-cols-2 md:grid-cols-1 gap-3">
 
-                        <div className='w-[95%] flex items-start justify-start text-[18px] md:w-[80%] md:text-[25px] '>
-                             {`Rs. ${rent} / day`}
-                        </div>
+      <div className="h-[200px] md:h-[170px] rounded-2xl overflow-hidden">
+        <img
+          src={frontEndImage2}
+          alt={title}
+          className="w-full h-full object-cover"
+        />
+      </div>
 
-                        <div className='w-[95%] h-[50px] flex items-center justify-center '>
-                         <button type="button" className={`px-9 py-2 text-[20px] rounded-3xl mt-2 shadow-lg bg-red-500 text-white cursor-pointer cursor-pointer active:scale-95`} onClick={handleaddListing}
-                         disabled={adding}>
-                          {adding ? "Adding..." : "Add Listing"}
-                        </button>
-                        </div>
-
-             </div>
-
-       
+      <div className="h-[200px] md:h-[170px] rounded-2xl overflow-hidden">
+        <img
+          src={frontEndImage3}
+          alt={title}
+          className="w-full h-full object-cover"
+        />
+      </div>
 
     </div>
+
+  </div>
+
+  {/* Details */}
+  <div className="mt-6 space-y-3">
+
+    <h2 className="text-lg md:text-2xl font-medium">
+      {(category || "").toUpperCase()} in{" "}
+      {(city || "").toUpperCase()},{" "}
+      {(landmark || "").toUpperCase()}
+    </h2>
+
+    <p className="text-2xl md:text-3xl font-bold">
+      ₹ {rent || 0}
+      <span className="text-lg font-normal text-gray-500">
+        {" "}
+        / day
+      </span>
+    </p>
+
+  </div>
+
+  {/* Button */}
+  <div className="mt-8 flex justify-center flex">
+    <button
+      type="button"
+      onClick={handleaddListing}
+      disabled={adding}
+      className="px-10 py-3 rounded-full bg-red-500 text-white text-lg font-semibold hover:bg-red-600 active:scale-95 transition disabled:opacity-60"
+    >
+      {adding ? "Adding...." : "Add Listing"}
+    </button>
+  </div>
+
+</div>
+
+    </div>
+
+
   )
 }
 

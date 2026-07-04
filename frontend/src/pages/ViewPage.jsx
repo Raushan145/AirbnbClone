@@ -373,7 +373,9 @@ const ViewPage = () => {
                 <div className="absolute right-0 top-14 w-56 bg-white rounded-xl shadow-lg overflow-hidden">
                   {!userData ? (
                     <div
-                      onClick={() => navigate("/signin")}
+                      onClick={() => {navigate("/signin")
+                         setShowMenu(false)
+                      }}
                       className="px-5 py-3 hover:bg-gray-100 cursor-pointer"
                     >
                       Login
@@ -388,21 +390,36 @@ const ViewPage = () => {
                   )}
 
                   <div
-                    onClick={() => navigate("/listingpage1")}
+                    onClick={() => {navigate("/listingpage1")
+                       setShowMenu(false)
+                    }}
                     className="px-5 py-3 hover:bg-gray-100 cursor-pointer"
                   >
                     List Your Home
                   </div>
 
+                   <button
+                      onClick={() => {navigate("/Reservations-Dashboard")
+                        setShowMenu(false)
+                      }}
+                      className="px-5 py-3 hover:bg-gray-100 cursor-pointer"
+                   >
+                      Reservations
+                   </button>
+
                   <div
-                    onClick={() => navigate("/mylisting")}
+                    onClick={() => {navigate("/mylisting")
+                       setShowMenu(false)
+                    }}
                     className="px-5 py-3 hover:bg-gray-100 cursor-pointer"
                   >
                     My Listing
                   </div>
 
                   <div
-                    onClick={() => navigate("/Booking")}
+                    onClick={() => {navigate("/Booking")
+                       setShowMenu(false)
+                    }}
                     className="px-5 py-3 hover:bg-gray-100 cursor-pointer"
                   >
                     My Booking

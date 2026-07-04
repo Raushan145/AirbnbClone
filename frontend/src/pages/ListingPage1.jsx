@@ -50,15 +50,15 @@ const ListingPage1 = () => {
           <div className='w-[40px] h-[40px] bg-zinc-100 active:scale-95 cursor-pointer absolute top-[2%] left-[5px] rounded-full flex justify-center items-center ' onClick={()=>navigate("/")}>
               <FaChevronLeft size={25} />
           </div>
-          <div className='w-[40px] h-[40px] bg-zinc-100 active:scale-95 cursor-pointer absolute top-[2%] left-[60px] rounded-full flex justify-center items-center ' onClick={()=>navigate("/listingpage2")}>
+          <div className='w-[40px] h-[40px] bg-zinc-100 active:scale-95 cursor-pointer absolute top-[2%] left-[60px] rounded-full md:flex hidden justify-center items-center ' onClick={()=>navigate("/listingpage2")}>
              <FaChevronRight size={25}/>
           </div>
 
-          <div className='absolute top-[3%] left-30 font-bold text-2xl text-blue-500'>
+          <div className='absolute top-[3%] left-30 font-bold text-2xl text-blue-500 md:pb-0 pb-5'>
               <h2>Create New Listing</h2>
           </div>
 
-          <div className='px-9 py-1 text-[20px] bg-red-600 text-white flex justify-center items-center rounded-3xl absolute top-[2%] right-[20px] shadow-lg '> 
+          <div className='px-9 py-1 text-[20px] bg-red-600 text-white md:flex hidden justify-center items-center rounded-3xl absolute top-[2%] right-[20px] shadow-lg '> 
             Setup Your Home
           </div>
 

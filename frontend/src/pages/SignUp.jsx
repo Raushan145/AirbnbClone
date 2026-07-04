@@ -7,7 +7,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { ServerURL } from '../App';
 import { toast } from "react-toastify";
-import { GoogleAuthProvider, signInWithPopup } from 'firebase/auth';
+import { GoogleAuthProvider, signInWithPopup, signInWithRedirect } from 'firebase/auth';
 import { auth } from '../../firebase';
 import { BeatLoader } from "react-spinners";
 import { userDataContext } from '../Context/UserContext.jsx';

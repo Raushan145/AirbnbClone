@@ -30,6 +30,7 @@ const ListingContex = ({ children }) => {
   const [cardDetails, setCardDetails] = useState(null)
   const [searchData, setSearchData] = useState([])
   const [data, setData] = useState("");
+  const [loading, setLoading] = useState(false)
 
   const navigate = useNavigate()
 
@@ -82,21 +83,24 @@ const ListingContex = ({ children }) => {
   };
 
   // Get Listing
-  const getListing = async ()=>{
+ const getListing = async () => {
+  try {
+    setLoading(true);
+     await new Promise((resolve) => setTimeout(resolve, 6000)); // sirf testing
+    const result = await axios.get(
+      `${ServerURL}/api/listings/get`,
+      { withCredentials: true }
+    );
+    
+    setListingData(result.data);
+    setAllListing(result.data);
 
-    try {
-
-      const result = await axios.get(`${ServerURL}/api/listings/get` ,{ withCredentials: true })
-
-        setListingData(result.data);
-        setAllListing(result.data);
-
-
-    } catch (error) {
-      console.log(error.response);
-      console.log(error?.message)
-    }
+  } catch (error) {
+    console.log(error);
+  } finally {
+    setLoading(false);
   }
+};
 
   const getListingById = async (id) => {
   const result = await axios.get(
@@ -173,6 +177,8 @@ const handleSearch = async () => {
     listingData,
     setListingData,
     getListing,
+    loading,
+    setLoading,
     allListing,
     getListingById,
     setAllListing,
