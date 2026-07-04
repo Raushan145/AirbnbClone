@@ -20,6 +20,8 @@ import axios from "axios";
 import { bookingDataContect } from "../Context/BookingContext";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
+import { SyncLoader } from "react-spinners";
+
 
 const ViewPage = () => {
   const { id } = useParams();
@@ -300,7 +302,7 @@ const ViewPage = () => {
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center text-lg font-medium">
-        Loading listing...
+        <SyncLoader color="#0b110a" size={10} />
       </div>
     );
   }
@@ -647,216 +649,216 @@ const ViewPage = () => {
       )}
 
       {/* Booking page */}
-{bookingPopUP && (
-  <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+      {bookingPopUP && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
 
-    {/* Popup */}
-    <div className="relative w-[95%] max-w-6xl h-[90vh] rounded-2xl overflow-y-auto">
+          {/* Popup */}
+          <div className="relative w-[95%] max-w-6xl h-[90vh] rounded-2xl overflow-y-auto">
 
-      {/* Close */}
-      <span
-        onClick={() => setBookingPopUP(false)}
-        className="absolute top-2 right-4 w-10 h-10 rounded-full bg-zinc-200 hover:bg-zinc-300 flex items-center justify-center cursor-pointer"
-      >
-        <ImCross />
-      </span>
-
-      {/* Center Form */}
-      <div className="w-full min-h-full flex justify-center md:flex-row flex-col gap-10 items-start py-5">
-
-        <form onSubmit={(e)=>e.preventDefault()} className="w-full max-w-lg bg-white border rounded-xl shadow-md px-6 py-4">
-
-          <h2 className="text-2xl font-semibold text-center border-b pb-4">
-            Confirm & Book
-          </h2>
-
-          <div className="flex gap-4 mt-5">
-      <div className="flex-1">
-        <label className="block text-sm font-medium mb-1">
-          Check In
-        </label>
-        <DatePicker
-          selected={checkInDate}
-          onChange={handleCheckInChange}
-          minDate={new Date(minDate)}
-          filterDate={(date) => !isDateReserved(date)}
-          className="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:border-red-500"
-          placeholderText="Select check-in"
-          dateFormat="dd MMM yyyy"
-        />
-      </div>
-
-      <div className="flex-1">
-        <label className="block text-sm font-medium mb-1">
-          Check Out
-        </label>
-        <DatePicker
-          selected={checkOutDate}
-          onChange={handleCheckOutChange}
-          minDate={checkInDate || new Date(minDate)}
-          filterDate={(date) => !isDateReserved(date)}
-          className="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:border-red-500"
-          placeholderText="Select check-out"
-          dateFormat="dd MMM yyyy"
-        />
-      </div>
-</div>
-
-          {/* Price Details */}
-          <div className="mt-6 border rounded-lg p-4 bg-gray-50">
-            <h3 className="font-semibold text-lg mb-3">
-              Price Details
-            </h3>
-
-            <div className="flex justify-between">
-              <span>₹{cardDetails.rent} × {night} nights</span>
-              <span>₹{totalRent}</span>
-            </div>
-
-            <div className="flex justify-between mt-2">
-              <span>Cleaning Fee</span>
-              <span>₹{charges}</span>
-            </div>
-
-            <div className="flex justify-between mt-2">
-              <span>Taxs</span>
-              <span>₹{tax}</span>
-            </div>
-
-            <hr className="my-3" />
-
-            <div className="flex justify-between font-bold text-lg">
-              <span>Total</span>
-              <span>₹{totalCharges}</span>
-            </div>
-          </div>
-
-          <button
-            onClick={() => cardDetails?._id && handleBooking(cardDetails._id)}
-            disabled={!cardDetails?._id}
-            className="w-full mt-6 bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
-          >
-            Confirm Booking
-          </button>
-
-        </form>
-
-
-                {/* Booking view item */}
-
-    <div className="max-w-md w-full rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
-      {/* Property */}
-      <div className="flex gap-4">
-        <img
-          src={cardDetails.image1}
-          alt="Hotel"
-          className="h-24 w-24 rounded-xl object-cover"
-        />
-
-        <div className="flex-1">
-          <h2 className="text-xl font-semibold leading-7">
-           {cardDetails.description}, {cardDetails.landmark} | Pool + Wifi
-          </h2>
-
-          <div className="mt-2 flex items-center gap-2 text-sm">
-            <span>⭐</span>
-            <span className="font-medium">4.97 (36)</span>
-            <span className="text-gray-400">•</span>
-            <span className="font-medium text-gray-700">
-              Guest favourite
+            {/* Close */}
+            <span
+              onClick={() => setBookingPopUP(false)}
+              className="absolute top-2 right-4 w-10 h-10 rounded-full bg-zinc-200 hover:bg-zinc-300 flex items-center justify-center cursor-pointer"
+            >
+              <ImCross />
             </span>
+
+            {/* Center Form */}
+            <div className="w-full min-h-full flex justify-center md:flex-row flex-col gap-10 items-start py-5">
+
+              <form onSubmit={(e)=>e.preventDefault()} className="w-full max-w-lg bg-white border rounded-xl shadow-md px-6 py-4">
+
+                <h2 className="text-2xl font-semibold text-center border-b pb-4">
+                  Confirm & Book
+                </h2>
+
+                <div className="flex gap-4 mt-5">
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1">
+                Check In
+              </label>
+              <DatePicker
+                selected={checkInDate}
+                onChange={handleCheckInChange}
+                minDate={new Date(minDate)}
+                filterDate={(date) => !isDateReserved(date)}
+                className="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:border-red-500"
+                placeholderText="Select check-in"
+                dateFormat="dd MMM yyyy"
+              />
+            </div>
+
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1">
+                Check Out
+              </label>
+              <DatePicker
+                selected={checkOutDate}
+                onChange={handleCheckOutChange}
+                minDate={checkInDate || new Date(minDate)}
+                filterDate={(date) => !isDateReserved(date)}
+                className="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:border-red-500"
+                placeholderText="Select check-out"
+                dateFormat="dd MMM yyyy"
+              />
+            </div>
+      </div>
+
+                {/* Price Details */}
+                <div className="mt-6 border rounded-lg p-4 bg-gray-50">
+                  <h3 className="font-semibold text-lg mb-3">
+                    Price Details
+                  </h3>
+
+                  <div className="flex justify-between">
+                    <span>₹{cardDetails.rent} × {night} nights</span>
+                    <span>₹{totalRent}</span>
+                  </div>
+
+                  <div className="flex justify-between mt-2">
+                    <span>Cleaning Fee</span>
+                    <span>₹{charges}</span>
+                  </div>
+
+                  <div className="flex justify-between mt-2">
+                    <span>Taxs</span>
+                    <span>₹{tax}</span>
+                  </div>
+
+                  <hr className="my-3" />
+
+                  <div className="flex justify-between font-bold text-lg">
+                    <span>Total</span>
+                    <span>₹{totalCharges}</span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => cardDetails?._id && handleBooking(cardDetails._id)}
+                  disabled={!cardDetails?._id}
+                  className="w-full mt-6 bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  Confirm Booking
+                </button>
+
+              </form>
+
+
+                      {/* Booking view item */}
+
+          <div className="max-w-md w-full rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+            {/* Property */}
+            <div className="flex gap-4">
+              <img
+                src={cardDetails.image1}
+                alt="Hotel"
+                className="h-24 w-24 rounded-xl object-cover"
+              />
+
+              <div className="flex-1">
+                <h2 className="text-xl font-semibold leading-7">
+                {cardDetails.description}, {cardDetails.landmark} | Pool + Wifi
+                </h2>
+
+                <div className="mt-2 flex items-center gap-2 text-sm">
+                  <span>⭐</span>
+                  <span className="font-medium">4.97 (36)</span>
+                  <span className="text-gray-400">•</span>
+                  <span className="font-medium text-gray-700">
+                    Guest favourite
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* Cancellation */}
+            <div className="mt-5 text-sm text-gray-700">
+              Cancel before check-in on{" "}
+              <span className="font-medium">3 July</span> for a partial refund.
+              <button className="ml-1 font-semibold underline">
+                Full policy
+              </button>
+            </div>
+
+            <hr className="my-6" />
+
+            {/* Dates */}
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="font-semibold">Dates</h3>
+                <div className="mt-1 text-gray-600">
+                
+                {/* <p> {checkIn ? formatDate(checkIn) : "DD/MM/YYYY"} - {" "} {checkOut ? formatDate(checkOut) : "DD/MM/YYYY"}</p> */}
+                <p> {checkIn ? (checkIn) : "DD/MM/YYYY"} - {" "} {checkOut ? (checkOut) : "DD/MM/YYYY"}</p>
+                </div>
+              </div>
+
+              <button className="font-semibold underline">
+                Change
+              </button>
+            </div>
+
+            <hr className="my-6" />
+
+            {/* Guests */}
+            <div className="flex items-start justify-between">
+              <div>
+                <h3 className="font-semibold">Guests</h3>
+                <p className="mt-1 text-gray-600">
+                  1 adult
+                </p>
+              </div>
+
+              <button className="font-semibold underline">
+                Change
+              </button>
+            </div>
+
+            <hr className="my-6" />
+
+            {/* Price */}
+            {/* <div>
+              <h3 className="mb-4 text-lg font-semibold">
+                Price details
+              </h3>
+
+              <div className="space-y-3">
+                <div className="flex justify-between">
+                  <span>2 nights × ₹4,499.00</span>
+                  <span>₹8,998.00</span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span>Last-minute discount</span>
+                  <span className="text-green-600">
+                    -₹449.90
+                  </span>
+                </div>
+
+                <div className="flex justify-between">
+                  <span>Taxes</span>
+                  <span>₹427.40</span>
+                </div>
+              </div>
+            </div> */}
+
+            {/* <hr className="my-6" /> */}
+
+            {/* Total */}
+            {/* <div className="flex justify-between text-lg font-bold">
+              <span>Total INR</span>
+              <span>₹8,975.50</span>
+            </div> */}
           </div>
+
+            </div>
+
+          </div>
+
         </div>
-      </div>
-
-      {/* Cancellation */}
-      <div className="mt-5 text-sm text-gray-700">
-        Cancel before check-in on{" "}
-        <span className="font-medium">3 July</span> for a partial refund.
-        <button className="ml-1 font-semibold underline">
-          Full policy
-        </button>
-      </div>
-
-      <hr className="my-6" />
-
-      {/* Dates */}
-      <div className="flex items-start justify-between">
-        <div>
-          <h3 className="font-semibold">Dates</h3>
-          <div className="mt-1 text-gray-600">
-           
-          {/* <p> {checkIn ? formatDate(checkIn) : "DD/MM/YYYY"} - {" "} {checkOut ? formatDate(checkOut) : "DD/MM/YYYY"}</p> */}
-          <p> {checkIn ? (checkIn) : "DD/MM/YYYY"} - {" "} {checkOut ? (checkOut) : "DD/MM/YYYY"}</p>
-          </div>
-        </div>
-
-        <button className="font-semibold underline">
-          Change
-        </button>
-      </div>
-
-      <hr className="my-6" />
-
-      {/* Guests */}
-      <div className="flex items-start justify-between">
-        <div>
-          <h3 className="font-semibold">Guests</h3>
-          <p className="mt-1 text-gray-600">
-            1 adult
-          </p>
-        </div>
-
-        <button className="font-semibold underline">
-          Change
-        </button>
-      </div>
-
-      <hr className="my-6" />
-
-      {/* Price */}
-      {/* <div>
-        <h3 className="mb-4 text-lg font-semibold">
-          Price details
-        </h3>
-
-        <div className="space-y-3">
-          <div className="flex justify-between">
-            <span>2 nights × ₹4,499.00</span>
-            <span>₹8,998.00</span>
-          </div>
-
-          <div className="flex justify-between">
-            <span>Last-minute discount</span>
-            <span className="text-green-600">
-              -₹449.90
-            </span>
-          </div>
-
-          <div className="flex justify-between">
-            <span>Taxes</span>
-            <span>₹427.40</span>
-          </div>
-        </div>
-      </div> */}
-
-      {/* <hr className="my-6" /> */}
-
-      {/* Total */}
-      {/* <div className="flex justify-between text-lg font-bold">
-        <span>Total INR</span>
-        <span>₹8,975.50</span>
-      </div> */}
-    </div>
-
-      </div>
-
-    </div>
-
-  </div>
-)}
-    </>
-  );
-};
+      )}
+          </>
+        );
+      };
 
 export default ViewPage;
