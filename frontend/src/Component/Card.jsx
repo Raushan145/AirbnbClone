@@ -27,7 +27,6 @@ const Card = ({
 
   const handleClick = ()=>{
     if(!userData){
-      toast.error("Invalid credentials")
       navigate("/signin")
     }else{
       handleViewCard(_id);
@@ -37,7 +36,7 @@ const Card = ({
   return (
     <div
       onClick={() => handleClick()}
-      className="w-[280px] max-w-[90%] mx-auto  rounded-xl overflow-hidden bg-white shadow hover:shadow-xl duration-300 cursor-pointer relative"
+      className="w-[280px] max-w-[90%] mx-auto  rounded-xl overflow-hidden bg-white shadow hover:shadow-xl duration-300 cursor-pointer relative mb-5"
     >
      {/* { isBooked &&  <div className="text-green-600 bg-white rounded-full mt-1 px-4 py-1 absolute flex items-center gap-2 justify-center right-1 top-1 z-[10]">
          <FaRegCircleCheck className="w-[17px] h-[17px] text-green-600 " /> Booked
@@ -45,7 +44,7 @@ const Card = ({
 
 
       {/* Images */}
-      <div className="w-full md:h-[220px] h-[190px] overflow-x-auto flex cardImg scroll-smooth relative">
+      <div className="w-full md:h-[220px] h-[190px] overflow-x-auto flex cardImg scroll-smooth relative"> 
         <img
           src={image1}
           alt={title}

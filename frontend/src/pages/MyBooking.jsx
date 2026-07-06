@@ -12,6 +12,7 @@ import {GiHamburgerMenu} from "react-icons/gi";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { MdDelete } from "react-icons/md";
 import { ServerURL } from '../App';
+import Footer from '../Component/Footer'
 
 const MyBooking = () => {
 
@@ -466,6 +467,7 @@ const MyBooking = () => {
   </div>
 )}
 
+    <Footer />
     </>
   )
 }

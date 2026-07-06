@@ -115,7 +115,7 @@ const ListingContex = ({ children }) => {
   const handleViewCard = async (id)=>{
     try {
       const result = await axios.get(`${ServerURL}/api/listings/listing/${id}` ,{ withCredentials: true })
-        console.log(result); 
+        console.log(result.data); 
         setCardDetails(result.data);
         navigate(`/listing/${id}`)
     } catch (error) {

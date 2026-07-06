@@ -8,6 +8,7 @@ import cors from 'cors'
 import userRouter from './routes/userRoutes.js';
 import listingRouter from './routes/listingRoute.js';
 import bookingRouter from './routes/bookingRoutes.js';
+import reviewRouter from './routes/reviewroutes.js';
 
 const app = express();
 const port = process.env.PORT || 8080;
@@ -19,21 +20,29 @@ const port = process.env.PORT || 8080;
 
 app.use(
   cors({
-    origin: [
-      "http://localhost:5173",
-      "https://airbnbclone-b7rb.onrender.com",
-    ],
+    origin: "http://localhost:5173",
     credentials: true,
   })
 );
 
+app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
 app.use("/api/auth", authRouter);
 app.use("/api/user", userRouter);
 app.use("/api/listings", listingRouter);
 app.use("/api/booking", bookingRouter);
+app.use("/api/reviews", reviewRouter);
 
+
+app.use((err,req,res,next) => {
+  console.log(error);
+  next(err)
+})
+
+app.use((req,res) => {
+  res.status(404).json({message:"Page Not Found "})
+})
 
 connectDB()
 app.listen(port,()=>{

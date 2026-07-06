@@ -5,6 +5,7 @@ import { listingDataContext } from "../Context/ListingContex";
 import { userDataContext } from "../Context/UserContext";
 import { HiOutlineDotsVertical } from "react-icons/hi";
 import { SyncLoader } from "react-spinners";
+import Footer from "../Component/Footer";
 
 const MyListing = () => {
   const { allListing,loading } = useContext(listingDataContext);
@@ -66,6 +67,8 @@ const MyListing = () => {
         </div>
 
       </div>
+
+      <Footer />
     </>
   );
 };

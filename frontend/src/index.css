@@ -1,6 +1,6 @@
 @import "tailwindcss";
 
-.navvilla , .Page1Form, .cardImg, .catScroll{
+.navvilla , .Page1Form, .cardImg, .catScroll, .bookingPOPUp, .removeScroll{
     scrollbar-width: none;
 }
 /* 

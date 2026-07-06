@@ -41,11 +41,21 @@ const ListingPage1 = () => {
                setFrontEndImage3(URL.createObjectURL(file))
             }
 
+            const isFormValid =
+               title.trim() &&
+               description.trim() &&
+               image1 &&
+               image2 &&
+               image3 &&
+               rent &&
+               city.trim() &&
+               landmark.trim();
+
 
   return (
     <div className='w-[100%] h-[100vh] bg-amber-50 h-screen flex items-center justify-center relative overflow-hidden'>
 
-        <form action="" onSubmit={(e)=>{ e.preventDefault() , navigate("/listingpage2")} } className='max-w-[900px] mt-[120px]  h-[80vh] pb-20  Page1Form w-[90%] h-screen  flex items-center justify-start flex-col md:items-start gap-[10px] overflow-y-auto '>
+        <form action="" onSubmit={(e)=>{ e.preventDefault() ;  if (!isFormValid) return ; navigate("/listingpage2")} } className='max-w-[900px] mt-[120px]  h-[80vh] pb-20  Page1Form w-[90%] h-screen  flex items-center justify-start flex-col md:items-start gap-[10px] overflow-y-auto '>
 
           <div className='w-[40px] h-[40px] bg-zinc-100 active:scale-95 cursor-pointer absolute top-[2%] left-[5px] rounded-full flex justify-center items-center ' onClick={()=>navigate("/")}>
               <FaChevronLeft size={25} />
@@ -139,9 +149,19 @@ const ListingPage1 = () => {
             </div>
 
             <div className='max-w-[90%] w-[80%] text-[20px] mx-auto flex justify-start items-start  flex-col md:items-start gap-[5px] '>
-                <div className='px-9 py-1 text-[20px] bg-red-600 text-white flex justify-center items-center rounded-3xl mt-2 cursor-pointer shadow-lg ' onClick={()=>navigate("/listingpage2")}> 
-             Next
-            </div>
+               <button
+                     type="submit"
+                     disabled={!isFormValid}
+                     onClick={() => navigate("/listingpage2")}
+                     className={`px-9 py-1 text-[20px] text-white rounded-3xl mt-2 shadow-lg transition-all
+                        ${
+                           isFormValid
+                           ? "bg-red-500 cursor-pointer hover:bg-red-700"
+                           : "bg-red-400 cursor-not-allowed"
+                        }`}
+                     >
+                     Next
+                </button>
             </div>
 
           

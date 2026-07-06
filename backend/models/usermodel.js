@@ -41,6 +41,10 @@ const userScheme = new mongoose.Schema({
         type:mongoose.Schema.Types.ObjectId,
         ref:"Listing"
     }],
+    hostingSince: {
+    type: Date,
+    default: Date.now,
+    },
     Booking:[{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Booking"

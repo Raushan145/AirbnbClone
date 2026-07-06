@@ -39,11 +39,11 @@ export const SignUp = async (req,res) => {
 
         const token = await genToken(user._id);
         res.cookie("token", token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+  httpOnly: true,
+  secure: false,
+  sameSite: "lax",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+});
         // res.cookie("token", token, {
         //     httpOnly: true,
         //     secure: process.env.NODE_ENV === "production",
@@ -78,11 +78,11 @@ export const SignIn = async (req,res) => {
 
         const token = await genToken(user._id);
         res.cookie("token", token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+  httpOnly: true,
+  secure: false,
+  sameSite: "lax",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+});
 
         return res.status(200).json({message:"LogIn Successfully"})
             
@@ -209,12 +209,12 @@ export const googleAuth = async (req, res) =>{
         }
 
         const token = await genToken(user._id);
-        res.cookie("token", token, {
-        httpOnly: true,
-        secure: true,
-        sameSite: "none",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+       res.cookie("token", token, {
+  httpOnly: true,
+  secure: false,
+  sameSite: "lax",
+  maxAge: 7 * 24 * 60 * 60 * 1000,
+});
       
 
         return res.status(202).json({message:"SignUp Successfully", user})

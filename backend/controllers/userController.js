@@ -23,7 +23,7 @@ export const getCurrentUser = async (req,res) => {
           populate: [
             {
               path: "Listing",
-              select: "title image1 image2 image3 description rent category city landmark"
+              select: "title image1 image2 image3 description rent category city landmark "
             },
             {
               path: "host",

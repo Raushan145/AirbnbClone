@@ -15,10 +15,9 @@ import ReservationsList from './pages/ReservationsList'
 import Booked from './pages/Booked'
 import PageNotFound from './Component/PageNotFound'
 
-export const ServerURL = "https://airbnbclone-backend-paga.onrender.com";
+// export const ServerURL = "https://airbnbclone-backend-paga.onrender.com";
 
-// export const ServerURL = "http://10.146.230.189:8080";
-
+export const ServerURL = "http://localhost:8080";
 
 const App = () => {
   const {userData} = useContext(userDataContext)

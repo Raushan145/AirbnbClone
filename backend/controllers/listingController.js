@@ -52,8 +52,16 @@ export const getListing = async (req,res)=>{
 }
 
 export const getListingById = async (req, res) => {
+  console.log("🔥 getListingById API HIT");
+  console.log("ID:", req.params.id);
     try {
-        const listing = await Listing.findById(req.params.id);
+        const listing = await Listing.findById(req.params.id)
+        .populate(
+      "host",
+      "fullName profileImg email mobileNo hostingSince"
+    );
+
+    console.log(listing)
 
         if (!listing) {
             return res.status(404).json({

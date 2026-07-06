@@ -10,6 +10,7 @@ import { GiHamburgerMenu } from "react-icons/gi";
 import { ServerURL } from '../App';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { DotLoader } from "react-spinners";
+import Footer from '../Component/Footer';
 
 
 
@@ -495,7 +496,7 @@ const ReservationsList = () => {
         )}
 
 
-      
+      <Footer />
       
     </>
   )

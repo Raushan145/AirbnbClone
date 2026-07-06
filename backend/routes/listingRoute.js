@@ -12,7 +12,7 @@ listingRouter.post("/add",isAuth, upload.fields([
 ]),addListing)
 
 listingRouter.get("/get", getListing)
-listingRouter.get("/listing/:id",isAuth, findListing)
+// listingRouter.get("/listing/:id",isAuth, findListing)
 listingRouter.get("/listing/:id",isAuth, getListingById);
 listingRouter.get("/search", search);
 listingRouter.patch("/update/:id",isAuth, upload.fields([

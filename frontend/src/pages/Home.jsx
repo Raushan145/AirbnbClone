@@ -3,6 +3,7 @@ import Nav from "../Component/Nav";
 import Card from "../Component/Card";
 import { listingDataContext } from "../Context/ListingContex";
 import { DotLoader } from "react-spinners";
+import Footer from "../Component/Footer";
 
 
 const Home = () => {
@@ -50,6 +51,8 @@ const Home = () => {
   )}
 
 </div>
+
+      <Footer />
     </>
   );
 };

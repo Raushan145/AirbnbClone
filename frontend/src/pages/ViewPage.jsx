@@ -21,6 +21,12 @@ import { bookingDataContect } from "../Context/BookingContext";
 import DatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import { SyncLoader } from "react-spinners";
+import Features from "../Component/Features";
+import Footer from "../Component/Footer";
+import { GiCheckMark } from "react-icons/gi";
+import ReviewSection from "../Component/Review/ReviewSection";
+import HostSection from "../Component/HostSection/HostSection";
+import About from "../Component/About/About";
 
 
 const ViewPage = () => {
@@ -52,6 +58,7 @@ const ViewPage = () => {
   const [city, setCity] = useState("");
   const [landmark, setLandmark] = useState("");
   const{  checkIn, setCheckIn, checkOut, setCheckOut,totalCharges, setTotalCharges, totalRent,setTotalRent,night, setNight,tax,setTax,charges,setCharges,bookingData,setBookingData,handleBooking}= useContext(bookingDataContect);
+
 
   const handleLogout = async () => {
     try {
@@ -325,6 +332,51 @@ const ViewPage = () => {
   });
 };
 
+
+//  HostIng Since
+const hostingSince = cardDetails?.host?.hostingSince;
+
+let hostBadge = "New Host";
+let hostingText = "Just started hosting";
+
+if (hostingSince) {
+  const startDate = new Date(hostingSince);
+  const today = new Date();
+
+  const diffMonths =
+    (today.getFullYear() - startDate.getFullYear()) * 12 +
+    (today.getMonth() - startDate.getMonth());
+
+  const diffYears = Math.floor(diffMonths / 12);
+
+  if (diffMonths < 1) {
+    hostBadge = "New Host";
+    hostingText = "Recently joined Airbnb";
+  } else if (diffMonths < 6) {
+    hostBadge = "Rising Host";
+    hostingText = `${diffMonths} months hosting`;
+  } else if (diffYears < 2) {
+    hostBadge = "Experienced Host";
+    hostingText = `${diffYears || 1} year hosting`;
+  } else if (diffYears < 5) {
+    hostBadge = "Superhost";
+    hostingText = `${diffYears} years hosting`;
+  } else if (diffYears < 10) {
+    hostBadge = "Elite Host";
+    hostingText = `${diffYears} years hosting`;
+  } else {
+    hostBadge = "Legend Host";
+    hostingText = `${diffYears} years hosting`;
+  }
+}
+
+const start = new Date();
+const end = new Date();
+end.setDate(start.getDate() + 1);
+
+const month = start.toLocaleString("en-GB", { month: "long" });
+const year = start.getFullYear();
+
   return (
     <>
       <nav className="fixed top-0 left-0 w-full bg-white shadow z-50">
@@ -434,7 +486,7 @@ const ViewPage = () => {
       </nav>
 
       {/* Main */}
-      <div className="max-w-6xl mx-auto mt-20 px-4 pb-10 ">
+      <div className="max-w-6xl mx-auto mt-20 px-4 md:pb-0 pb-10 ">
         {/* Heading */}
         <h1 className="text-xl md:text-xl font-semibold mb-5">
           In {(listing.description || "").toUpperCase()},{" "}
@@ -477,40 +529,209 @@ const ViewPage = () => {
             {(listing.city || "").toUpperCase()},{" "}
             {(listing.landmark || "").toUpperCase()}
           </h2>
+          <div className="flex md:flex-col md:justify-start md:items-start md:gap-0 gap-15 justify-between  items-center">
+            <p className="text-xl md:text-3xl font-bold">
+              ₹ {listing.rent || 0} / day
+            </p>
 
-          <p className="text-xl md:text-3xl font-bold">
-            ₹ {listing.rent || 0} / day
-          </p>
+             {/* Button */}
+            <div className="flex justify-start mt-8">
+              {cardDetails?.host?._id== userData?._id ? (
+                <div className="flex gap-7">
+                  <button
+                    onClick={() => setUpdatePopUP(true)}
+                    className="bg-red-500 hover:bg-red-600 transition text-white px-8 md:px-12 py-2 md:py-3 rounded-full text-base md:text-lg shadow-lg active:scale-95"
+                  >
+                    Edit Listing
+                  </button>
+
+                  <button
+                    onClick={handleDeleteListing}
+                    className="bg-red-500 hover:bg-red-600 transition text-white px-8 md:px-12 py-2 md:py-3 rounded-full text-base md:text-lg shadow-lg active:scale-95"
+                  >
+                    {deleteing ? "Deleteing...." : "Delete Listing"}
+                  </button>
+                </div>
+              ) : (
+                <button
+                  onClick={() => setBookingPopUP(true)}
+                  className="bg-red-500 md:hidden hover:bg-red-600 transition text-white px-8 md:px-12 py-2 md:py-3 rounded-full text-base md:text-lg shadow-lg active:scale-95"
+                >
+                  Reserve
+                </button>
+              )}
+            </div>
+
+          </div>
         </div>
 
-        {/* Button */}
-        <div className="flex justify-start mt-8">
-          {listing.host == userData?._id ? (
+       
+
+         
+
+      </div>
+
+   
+
+        <hr className="mb-6 w-[90%] mx-auto"/>
+      <section className="w-[85%]  mx-auto flex gap-15 ">
+
+              {/*  Profile  */}
+            <div className="md:w-[55%] w-full">
+            {/* Owner Detail */}
+              <div className=" flex items-center gap-6 mb-4 ">
+                <div className="w-11 h-11 rounded-full bg-blue-400 flex items-center justify-center overflow-hidden">
+                      {cardDetails?.host?.profileImg ? (
+                        <img
+                          src={cardDetails.host.profileImg}
+                          alt={cardDetails.host.fullName}
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-white text-xl font-bold ">
+                          {cardDetails?.host?.fullName?.charAt(0).toUpperCase()}
+                        </span>
+                      )}
+                    </div>
+                    <div>
+                      <h3 >Hosted by <span className="font-bold"> {cardDetails?.host?.fullName}</span></h3>
+                      <span className="text-zinc-500"> {hostBadge} · {hostingText}</span>
+                    </div>
+                  </div>
+
+                <hr className="mt-8 md:w-[90%]"/>
+
+              <div className="flex flex-col  items-start gap-5 mb-3 ">
+                <About />
+                <Features /> 
+                  
+              </div>
+            </div>
+          
+          {/* Booking Form */}
+             <div className="md:flex hidden w-[45%]">
+              <div className="sticky top-0">
+
+                  <form onSubmit={(e)=>e.preventDefault()} className="w-full max-w-lg bg-white sticky top-15 border rounded-xl shadow-md px-6 py-4">
+
+                <h2 className="text-2xl font-semibold text-center border-b pb-4">
+                  Confirm & Book
+                </h2>
+
+                <div className="flex gap-4 mt-5">
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1">
+                Check In
+              </label>
+              <DatePicker
+                selected={checkInDate}
+                onChange={handleCheckInChange}
+                minDate={new Date(minDate)}
+                filterDate={(date) => !isDateReserved(date)}
+                className="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:border-red-500"
+                placeholderText="Select check-in"
+                dateFormat="dd MMM yyyy"
+              />
+            </div>
+
+            <div className="flex-1">
+              <label className="block text-sm font-medium mb-1">
+                Check Out
+              </label>
+              <DatePicker
+                selected={checkOutDate}
+                onChange={handleCheckOutChange}
+                minDate={checkInDate || new Date(minDate)}
+                filterDate={(date) => !isDateReserved(date)}
+                className="w-full border rounded-lg px-3 py-2 text-sm outline-none focus:border-red-500"
+                placeholderText="Select check-out"
+                dateFormat="dd MMM yyyy"
+              />
+            </div>
+      </div>
+
+                {/* Price Details */}
+                <div className="mt-6 border rounded-lg p-4 bg-gray-50">
+                  <h3 className="font-semibold text-lg mb-3">
+                    Price Details
+                  </h3>
+
+                  <div className="flex justify-between">
+                    <span>₹{cardDetails.rent} × {night} nights</span>
+                    <span>₹{totalRent}</span>
+                  </div>
+
+                  <div className="flex justify-between mt-2">
+                    <span>Cleaning Fee</span>
+                    <span>₹{charges}</span>
+                  </div>
+
+                  <div className="flex justify-between mt-2">
+                    <span>Taxs</span>
+                    <span>₹{tax}</span>
+                  </div>
+
+                  <hr className="my-3" />
+
+                  <div className="flex justify-between font-bold text-lg">
+                    <span>Total</span>
+                    <span>₹{totalCharges}</span>
+                  </div>
+                </div>
+
+                <button
+                  onClick={() => cardDetails?._id && handleBooking(cardDetails._id)}
+                  disabled={!cardDetails?._id}
+                  className="w-full mt-6 bg-red-500 text-white py-3 rounded-3xl hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+                >
+                  Confirm Booking
+                </button>
+
+              </form>
+              </div>
+              </div>
+
+            
+      </section>
+            <ReviewSection />
+            <HostSection />
+
+            {/*  Button For Mobile  */}
+      <div className="fixed bottom-0 left-0 right-0 z-50 bg-white border-t px-4 py-3 flex items-center justify-between md:hidden">
+        {/* Left */}
+        <div>
+          <h2 className="text-xl font-bold">₹{rent}</h2>
+          <p className="text-sm text-gray-700">For 1 nights · {start.getDate()}-{end.getDate()} {month} {year}</p>
+
+          <div className="mt-2 inline-flex items-center gap-2 bg-gray-100 rounded-full px-3 py-1 text-sm">
+            <GiCheckMark size={15}/>
+            <span>Free cancellation</span>
+          </div>
+        </div>
+
+        {/* Right */}
+        <div className="bg-rose-500 hover:bg-rose-600 text-white font-semibold px-8 py-3 cursor-pointer rounded-full">
+
+          {cardDetails?.host?._id== userData?._id ? (
             <div className="flex gap-7">
               <button
                 onClick={() => setUpdatePopUP(true)}
-                className="bg-red-500 hover:bg-red-600 transition text-white px-8 md:px-12 py-3 rounded-full text-base md:text-lg shadow-lg active:scale-95"
               >
                 Edit Listing
-              </button>
-
-              <button
-                onClick={handleDeleteListing}
-                className="bg-red-500 hover:bg-red-600 transition text-white px-8 md:px-12 py-3 rounded-full text-base md:text-lg shadow-lg active:scale-95"
-              >
-                {deleteing ? "Deleteing...." : "Delete Listing"}
               </button>
             </div>
           ) : (
             <button
               onClick={() => setBookingPopUP(true)}
-              className="bg-red-500 hover:bg-red-600 transition text-white px-8 md:px-12 py-3 rounded-full text-base md:text-lg shadow-lg active:scale-95"
             >
-              Booking
+              Reserve
             </button>
           )}
         </div>
-      </div>
+        </div>
+   
+
+      <Footer />
 
       {/* Update Listing Popup */}
 
@@ -650,10 +871,10 @@ const ViewPage = () => {
 
       {/* Booking page */}
       {bookingPopUP && (
-        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
+        <div className="fixed inset-0  z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4">
 
           {/* Popup */}
-          <div className="relative w-[95%] max-w-6xl h-[90vh] rounded-2xl overflow-y-auto">
+          <div className="relative w-[95%] bookingPOPUp max-w-6xl h-[90vh] rounded-2xl overflow-y-auto">
 
             {/* Close */}
             <span
@@ -736,7 +957,7 @@ const ViewPage = () => {
                 <button
                   onClick={() => cardDetails?._id && handleBooking(cardDetails._id)}
                   disabled={!cardDetails?._id}
-                  className="w-full mt-6 bg-red-500 text-white py-3 rounded-lg hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
+                  className="w-full mt-6 bg-red-500 text-white py-3 rounded-3xl hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
                 >
                   Confirm Booking
                 </button>
@@ -746,7 +967,7 @@ const ViewPage = () => {
 
                       {/* Booking view item */}
 
-          <div className="max-w-md w-full rounded-3xl border border-gray-200 bg-white p-6 shadow-sm">
+          <div className="max-w-lg w-full rounded-xl border border-gray-200 bg-white px-6 shadow-md py-4">
             {/* Property */}
             <div className="flex gap-4">
               <img
@@ -860,5 +1081,7 @@ const ViewPage = () => {
           </>
         );
       };
+
+     
 
 export default ViewPage;

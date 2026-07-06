@@ -55,7 +55,8 @@ export const listingSchema = mongoose.Schema({
     isBooked:{
         type:Boolean,
         default:false
-    }
+    },
+    
 
 },{timestamps:true})
 
