@@ -197,7 +197,7 @@ const Features = () => {
   const [showFeaturesPopUp, setShowFeaturesPopUp] = useState(false);
 
   return (
-    <div>
+    <div className="w-full">
        <h2 className="text-2xl font-bold py-4">What this place offers</h2>
       {features.slice(0, 5).map((item, index) => {
         const Icon = item.icon;
@@ -218,7 +218,7 @@ const Features = () => {
 
       <button
         onClick={() => setShowFeaturesPopUp(true)}
-        className="mt-5 px-6 py-2  border-black bg-zinc-200  cursor-pointer rounded-lg font-semibold hover:bg-black hover:text-white duration-300"
+        className="mt-5 md:px-6 py-2 md:w-[80%] w-full border-black bg-zinc-200  cursor-pointer rounded-lg font-semibold hover:bg-black hover:text-white duration-300"
       >
         Show All {features.length} amenities
       </button>

@@ -11,7 +11,7 @@ export default function About() {
 
                 The space
 
-               <b> Living & Dining</b>
+                Living & Dining
 
                 - Spacious living area with an elegant L-
 
@@ -227,13 +227,13 @@ export default function About() {
 
         </div>
 
-        <p className="mt-8 text-gray-700 line-clamp-5">
+        <p className="mt-8 text-gray-700 line-clamp-6 md:w-[80%]">
           {description}
         </p>
 
         <button
           onClick={() => setOpenAboutPopUp(true)}
-          className="mt-6 w-full bg-gray-100 rounded-xl py-3 font-semibold hover:bg-gray-200"
+          className="mt-6 w-full bg-gray-100 rounded-xl py-3 md:w-[80%] font-semibold hover:bg-gray-200"
         >
           Show more
         </button>
@@ -242,7 +242,7 @@ export default function About() {
 
          {openAboutPopUp && (
         <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-500">
-          <div className="bg-white w-[60%] md:w-[60%] h-[80vh] rounded-2xl overflow-hidden">
+          <div className="bg-white w-[90%] md:w-[60%]  h-[80vh] rounded-2xl overflow-hidden">
 
             {/* Fixed Header */}
             <div className="sticky top-0 bg-white border-b px-6 h-16 flex items-center justify-between z-10">
@@ -262,7 +262,7 @@ export default function About() {
             </div>
 
             {/* Scrollable Content */}
-            <div className="overflow-y-auto h-[calc(80vh-64px)] px-6 ">
+            <div className="overflow-y-auto h-[calc(80vh-64px)] px-6 pb-10">
                     <p className="mt-8 text-gray-700 ">
                         {description}
                     </p>

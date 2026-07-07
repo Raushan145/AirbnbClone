@@ -8,6 +8,7 @@ import AuthContext from './Context/AuthContext.jsx'
 import UserContext from './Context/UserContext.jsx'
 import ListingContex from './Context/ListingContex.jsx'
 import BookingContext from './Context/BookingContext.jsx'
+import { ReviewProvider } from './Context/ReviewContext.jsx'
 
 
 createRoot(document.getElementById('root')).render(
@@ -15,10 +16,10 @@ createRoot(document.getElementById('root')).render(
       <AuthContext>
         <ListingContex>
          <UserContext>
-            <BookingContext>
-
-               <App /> 
-
+            <BookingContext>        
+               <ReviewProvider>
+                  <App />
+               </ReviewProvider>
             </BookingContext>
          </UserContext> 
         </ListingContex>

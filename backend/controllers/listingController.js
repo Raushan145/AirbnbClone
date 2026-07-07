@@ -102,7 +102,6 @@ export const updateListing = async (req, res) => {
     const { id } = req.params;
 
     const updateData = {};
-
     // Text fields
     if (req.body.title) updateData.title = req.body.title;
     if (req.body.description) updateData.description = req.body.description;

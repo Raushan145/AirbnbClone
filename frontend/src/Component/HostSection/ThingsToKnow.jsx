@@ -25,8 +25,7 @@ const items = [
 
 export default function ThingsToKnow() {
   return (
-    <div className="border-t mt-10 pt-10 w-[90%] mx-auto ">
-
+    <div className=" mt-10 pt-10 w-[90%] mx-auto ">
       <h2 className="text-3xl font-semibold mb-8">
         Things to know
       </h2>

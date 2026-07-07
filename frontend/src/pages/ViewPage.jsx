@@ -27,6 +27,7 @@ import { GiCheckMark } from "react-icons/gi";
 import ReviewSection from "../Component/Review/ReviewSection";
 import HostSection from "../Component/HostSection/HostSection";
 import About from "../Component/About/About";
+import ReviewCreate from "../Component/ReviewCreate/ReviewCreate";
 
 
 const ViewPage = () => {
@@ -57,6 +58,7 @@ const ViewPage = () => {
   const [rent, setRent] = useState("");
   const [city, setCity] = useState("");
   const [landmark, setLandmark] = useState("");
+  const [imgError, setImgError] = useState(false);
   const{  checkIn, setCheckIn, checkOut, setCheckOut,totalCharges, setTotalCharges, totalRent,setTotalRent,night, setNight,tax,setTax,charges,setCharges,bookingData,setBookingData,handleBooking}= useContext(bookingDataContect);
 
 
@@ -377,6 +379,12 @@ end.setDate(start.getDate() + 1);
 const month = start.toLocaleString("en-GB", { month: "long" });
 const year = start.getFullYear();
 
+// const { getReviews } = useReview();
+
+// useEffect(() => {
+//     getReviews(id);
+// }, [id]);
+
   return (
     <>
       <nav className="fixed top-0 left-0 w-full bg-white shadow z-50">
@@ -486,7 +494,7 @@ const year = start.getFullYear();
       </nav>
 
       {/* Main */}
-      <div className="max-w-6xl mx-auto mt-20 px-4 md:pb-0 pb-10 ">
+      <div className="max-w-6xl mx-auto mt-20 px-4  ">
         {/* Heading */}
         <h1 className="text-xl md:text-xl font-semibold mb-5">
           In {(listing.description || "").toUpperCase()},{" "}
@@ -540,7 +548,7 @@ const year = start.getFullYear();
                 <div className="flex gap-7">
                   <button
                     onClick={() => setUpdatePopUP(true)}
-                    className="bg-red-500 hover:bg-red-600 transition text-white px-8 md:px-12 py-2 md:py-3 rounded-full text-base md:text-lg shadow-lg active:scale-95"
+                    className="bg-red-500 hidden md:flex hover:bg-red-600 transition text-white px-8 md:px-12 py-2 md:py-3 rounded-full text-base md:text-lg shadow-lg active:scale-95"
                   >
                     Edit Listing
                   </button>
@@ -573,26 +581,27 @@ const year = start.getFullYear();
 
    
 
-        <hr className="mb-6 w-[90%] mx-auto"/>
+        <hr className="mb-6 w-[90%] mx-auto mt-10"/>
       <section className="w-[85%]  mx-auto flex gap-15 ">
 
               {/*  Profile  */}
             <div className="md:w-[55%] w-full">
             {/* Owner Detail */}
               <div className=" flex items-center gap-6 mb-4 ">
-                <div className="w-11 h-11 rounded-full bg-blue-400 flex items-center justify-center overflow-hidden">
-                      {cardDetails?.host?.profileImg ? (
-                        <img
-                          src={cardDetails.host.profileImg}
-                          alt={cardDetails.host.fullName}
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-white text-xl font-bold ">
-                          {cardDetails?.host?.fullName?.charAt(0).toUpperCase()}
-                        </span>
-                      )}
-                    </div>
+               <div className="w-11 h-11 rounded-full overflow-hidden bg-blue-400 flex items-center justify-center">
+            {cardDetails?.host?.profileImg && !imgError ? (
+              <img
+                src={cardDetails.host.profileImg}
+                alt={cardDetails.host.fullName}
+                className="w-full h-full object-cover"
+                onError={() => setImgError(true)}
+              />
+            ) : (
+              <span className="text-white text-xl font-bold">
+                {cardDetails?.host?.fullName?.charAt(0).toUpperCase()}
+              </span>
+            )}
+          </div>
                     <div>
                       <h3 >Hosted by <span className="font-bold"> {cardDetails?.host?.fullName}</span></h3>
                       <span className="text-zinc-500"> {hostBadge} · {hostingText}</span>
@@ -603,7 +612,9 @@ const year = start.getFullYear();
 
               <div className="flex flex-col  items-start gap-5 mb-3 ">
                 <About />
+                
                 <Features /> 
+                <ReviewCreate />
                   
               </div>
             </div>
@@ -965,7 +976,7 @@ const year = start.getFullYear();
               </form>
 
 
-                      {/* Booking view item */}
+         {/* Booking view item */}
 
           <div className="max-w-lg w-full rounded-xl border border-gray-200 bg-white px-6 shadow-md py-4">
             {/* Property */}

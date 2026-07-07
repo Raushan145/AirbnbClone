@@ -4,6 +4,9 @@ import { FaHome, FaCalendarAlt, FaMoneyBillWave } from "react-icons/fa";
 import { MdOutlineEmail } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { bookingDataContect } from "../Context/BookingContext";
+import { MdOutlineStar } from "react-icons/md"; // Fill Star  <MdOutlineStar />
+import { MdOutlineStarBorder } from "react-icons/md"; // Blank star   <MdOutlineStarBorder />
+import ReviewCreate from "../Component/ReviewCreate/ReviewCreate";
 
 const Booked = () => {
   const { bookingData } = useContext(bookingDataContect);
@@ -24,11 +27,11 @@ const Booked = () => {
       <div className="w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden">
 
         {/* Header */}
-        <div className="bg-green-600 text-white flex flex-col items-center py-10">
+        <div className="bg-green-600 text-white flex flex-col items-center py-3">
 
-          <GiConfirmed className="text-7xl mb-4" />
+          <GiConfirmed className="text-3xl mb-4" />
 
-          <h1 className="text-3xl font-bold">
+          <h1 className="text-xl font-bold">
             Booking Confirmed
           </h1>
 
@@ -48,7 +51,7 @@ const Booked = () => {
               Booking Summary
             </h2>
 
-            <div className="space-y-4">
+            <div className="space-y-2">
 
               <div className="flex justify-between">
                 <span className="text-gray-500">
@@ -119,9 +122,13 @@ const Booked = () => {
 
           </div>
 
-          {/* Notice */}
 
-          <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-sm text-blue-700">
+         {/* Reviews & Rating*/}
+            <ReviewCreate />
+
+
+          {/* Notice */}
+          <div className="bg-blue-50 border border-blue-200 rounded-xl p-2 text-sm text-blue-700">
             🎉 Thank you for choosing us. The host will be able to see your reservation immediately. Please carry a valid ID during check-in.
           </div>
 
