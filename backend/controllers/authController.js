@@ -40,20 +40,20 @@ export const SignUp = async (req,res) => {
         const token = await genToken(user._id);
        
         // Development
-        res.cookie("token", token, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "lax",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+        // res.cookie("token", token, {
+        // httpOnly: true,
+        // secure: false,
+        // sameSite: "lax",
+        // maxAge: 7 * 24 * 60 * 60 * 1000,
+        // });
 
         // Production
-        //  res.cookie("token", token, {
-        //  httpOnly: true,
-        //  secure: true,
-        //  sameSite: "None",
-        //  maxAge: 7 * 24 * 60 * 60 * 1000,
-        //  });
+         res.cookie("token", token, {
+         httpOnly: true,
+         secure: true,
+         sameSite: "None",
+         maxAge: 7 * 24 * 60 * 60 * 1000,
+         });
 
         return res.status(202).json({message:"SignUp Successfully", user})
             
@@ -83,20 +83,20 @@ export const SignIn = async (req,res) => {
         const token = await genToken(user._id);
 
         // Development
-        res.cookie("token", token, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "lax",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+        // res.cookie("token", token, {
+        // httpOnly: true,
+        // secure: false,
+        // sameSite: "lax",
+        // maxAge: 7 * 24 * 60 * 60 * 1000,
+        // });
 
         // Production
-        //  res.cookie("token", token, {
-        //  httpOnly: true,
-        //  secure: true,
-        //  sameSite: "None",
-        //  maxAge: 7 * 24 * 60 * 60 * 1000,
-        //  });
+         res.cookie("token", token, {
+         httpOnly: true,
+         secure: true,
+         sameSite: "None",
+         maxAge: 7 * 24 * 60 * 60 * 1000,
+         });
 
         return res.status(200).json({message:"LogIn Successfully"})
             
@@ -225,20 +225,20 @@ export const googleAuth = async (req, res) =>{
         const token = await genToken(user._id);
       
         // Development
-        res.cookie("token", token, {
-        httpOnly: true,
-        secure: false,
-        sameSite: "lax",
-        maxAge: 7 * 24 * 60 * 60 * 1000,
-        });
+        // res.cookie("token", token, {
+        // httpOnly: true,
+        // secure: false,
+        // sameSite: "lax",
+        // maxAge: 7 * 24 * 60 * 60 * 1000,
+        // });
 
         // Production
-        //  res.cookie("token", token, {
-        //  httpOnly: true,
-        //  secure: true,
-        //  sameSite: "None",
-        //  maxAge: 7 * 24 * 60 * 60 * 1000,
-        //  });
+         res.cookie("token", token, {
+         httpOnly: true,
+         secure: true,
+         sameSite: "None",
+         maxAge: 7 * 24 * 60 * 60 * 1000,
+         });
       
 
         return res.status(202).json({message:"SignUp Successfully", user})
