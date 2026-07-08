@@ -66,7 +66,7 @@ export const SignUp = asyncHandler (async (req,res) => {
 
  // Sign In 
 export const SignIn =asyncHandler (async (req,res) => {
-        // console.log("SignIn API Hit");
+        console.log("SignIn API Hit");
         try {
         const {email,password} = req.body;
 
@@ -207,7 +207,7 @@ export const resetPassword = asyncHandler (async (req,res)=>{
 
 // Google Authencation
 export const googleAuth = asyncHandler (async (req, res) =>{
-    // console.log("Google Auth API Hit");
+    console.log("Google Auth API Hit");
     try {
         
         const {email,fullName,mobile,profileImg} = req.body;
