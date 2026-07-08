@@ -5,7 +5,4 @@ const userRouter = express.Router();
 
 userRouter.get("/currentUser", isAuth, getCurrentUser);
 
-
-
-
 export default userRouter;

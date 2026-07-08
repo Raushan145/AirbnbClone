@@ -49,6 +49,7 @@ const ListingPage3 = () => {
 
     <div className="h-[250px] md:h-[350px] rounded-2xl overflow-hidden">
       <img
+        loading="lazy"
         src={frontEndImage1}
         alt={title}
         className="w-full h-full object-cover"

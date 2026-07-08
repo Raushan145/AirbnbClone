@@ -306,7 +306,7 @@ const MyBooking = () => {
                 return (
                   <div key={booking._id} className="w-full bg-gray-50 rounded-2xl shadow-md hover:shadow-xl transition flex md:flex-row flex-col overflow-hidden">
                     <div className="md:w-[350px] w-full h-[250px] flex-shrink-0">
-                      <img src={listing.image1 || ''} alt={listing.title} className="w-full h-full object-cover opacity-75" />
+                      <img loading="lazy" src={listing.image1 || ''} alt={listing.title} className="w-full h-full object-cover opacity-75" />
                     </div>
                     <div className="flex-1 px-6 py-4">
                       <div className="flex justify-between items-start gap-4">

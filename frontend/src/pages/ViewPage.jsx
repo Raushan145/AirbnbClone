@@ -479,7 +479,7 @@ const year = start.getFullYear();
                   </div>
 
                   <div
-                    onClick={() => {navigate("/Booking")
+                    onClick={() => {navigate("/mybooking")
                        setShowMenu(false)
                     }}
                     className="px-5 py-3 hover:bg-gray-100 cursor-pointer"

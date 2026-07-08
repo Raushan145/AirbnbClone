@@ -1,6 +1,7 @@
+import asyncHandler from "../middlewares/asyncHandler.js";
 import User from "../models/usermodel.js";
 
-export const getCurrentUser = async (req,res) => {
+export const getCurrentUser =asyncHandler (async (req,res) => {
 
     try {
 
@@ -46,4 +47,4 @@ export const getCurrentUser = async (req,res) => {
         return res.status(400).json({message:`Get Current User Error ${error}`})
     }
 
-}
+})

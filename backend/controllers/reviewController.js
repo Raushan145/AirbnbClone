@@ -1,8 +1,9 @@
+import asyncHandler from "../middlewares/asyncHandler.js";
 import Review from "../models/Reviewmodel.js";
 
 // import Review from "../models/review.model.js";
 // Add Review
-export const createReview = async (req, res) => {
+export const createReview = asyncHandler (async (req, res) => {
   try {
     const { listingId } = req.params;
     const { rating, comment } = req.body;
@@ -24,11 +25,11 @@ export const createReview = async (req, res) => {
       message: err.message,
     });
   }
-};
+})
 
 
 // Get Reviews by Listing
-export const getListingReviews = async (req, res) => {
+export const getListingReviews = asyncHandler (async (req, res) => {
   try {
     const { listingId } = req.params;
 
@@ -60,11 +61,10 @@ export const getListingReviews = async (req, res) => {
       message: err.message,
     });
   }
-};
-
+})
 
 // Delete Review
-export const deleteReview = async (req, res) => {
+export const deleteReview = asyncHandler(async (req, res) => {
   try {
     await Review.findByIdAndDelete(req.params.reviewId);
 
@@ -78,4 +78,4 @@ export const deleteReview = async (req, res) => {
       message: err.message,
     });
   }
-};
+})

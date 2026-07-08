@@ -7,19 +7,19 @@ const isAuth = async (req, res, next) => {
         const token = req.cookies.token
         
         if(!token){
-            return res.status(400).json({message:"token not Found"})
+            return res.status(400).json({success: false, message: "Please login first",})
         }
 
         const decodeToken = jwt.verify(token,process.env.JWT_SECRET);
         if(!decodeToken){
-             return res.status(400).json({message:"token not Verify"})
+             return res.status(400).json({success:false, message:"access Denied"})
         }
         
         req.userId = decodeToken.userId;
         next()
-
+        
     } catch (error) {
-        res.status(500).json({message:`isAuth Error ${error}`});
+        res.status(500).json({success:false, message:`Invalid or expired token , isAuth Error ${error}`});
     }
 
 }

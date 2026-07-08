@@ -266,7 +266,7 @@ const ReservationsList = () => {
               return (
                 <div key={booking._id} className="w-[95%] max-w-6xl bg-white rounded-2xl shadow-md hover:shadow-xl transition flex md:flex-row flex-col overflow-hidden">
                   <div className="md:w-[380px] w-full px-10 md:pb-0 pb-2 h-[300px] flex items-center justify-center">
-                    <img src={listing.image1 || ''} alt={listing.title} className="w-full h-full object-cover" />
+                    <img loading="lazy" src={listing.image1 || ''} alt={listing.title} className="w-full h-full object-cover" />
                   </div>
 
                   <div className="flex-1 px-10 pb-5">

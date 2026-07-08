@@ -22,6 +22,8 @@ import { ServerURL } from "../App";
 import { userDataContext } from "../Context/UserContext";
 import { useEffect } from "react";
 import { listingDataContext } from "../Context/ListingContex";
+import Skeleton from "react-loading-skeleton";
+import NavSkeleton from "./Skeleton/NavSkeleton";
 
 const categories = [
   { name: "All", icon: <MdOutlineWhatshot /> },
@@ -44,7 +46,7 @@ const Nav = ({
 
   const { userData, setUserData } = useContext(userDataContext);
   const[input,setInput] = useState("")
-  const{listingData,setListingData,searchData, handleSearch ,data, setData} = useContext(listingDataContext)
+  const{listingData,setListingData,searchData, handleSearch ,data, setData, loading} = useContext(listingDataContext)
 
   const [showMenu, setShowMenu] = useState(false);
 
@@ -85,11 +87,20 @@ const Nav = ({
 // }, []);
 
   return (
-    <nav className="fixed top-0 bg-white z-50 w-full">
+    <>
+    {loading ? (
+  <div className="fixed top-0 left-0 w-full bg-white z-50 shadow-sm ">
+    
+      <NavSkeleton />
+   
+  </div>
+) : (
+  <>
+   <nav className="fixed top-0 bg-white z-50 w-full">
 
       {/* Navbar */}
 
-      <div className="w-full h-17 shadow flex justify-between items-center md:px-10 px-2">
+      <div className="w-full h-17 shadow flex justify-between items-center lg:px-10 md:px-3 px-2">
 
         <img
           src={logo}
@@ -117,7 +128,7 @@ const Nav = ({
 
           <button
             onClick={() => navigate("/listingpage1")}
-            className="hidden md:block bg-zinc-100 px-4 py-2 rounded-full hover:bg-zinc-200 cursor-pointer"
+            className="hidden md:block bg-zinc-100 px-4 whitespace-nowrap  py-2 rounded-full hover:bg-zinc-200 cursor-pointer"
           >
             List Your Home
           </button>
@@ -186,7 +197,7 @@ const Nav = ({
                   onClick={() => {navigate("/listingpage1")
                     setShowMenu(false)
                   }}
-                  className="px-5 py-3 hover:bg-gray-100 cursor-pointer"
+                  className="px-5 py-3 hover:bg-gray-100 cursor-pointer "
                 >
                   List Your Home
                 </div>
@@ -256,7 +267,11 @@ const Nav = ({
       </div>
 
     </nav>
-  );
-};
+  </>
+)}
+   
+</>
+
+  )};
 
 export default Nav;

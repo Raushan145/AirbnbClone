@@ -9,6 +9,7 @@ import UserContext from './Context/UserContext.jsx'
 import ListingContex from './Context/ListingContex.jsx'
 import BookingContext from './Context/BookingContext.jsx'
 import { ReviewProvider } from './Context/ReviewContext.jsx'
+import 'react-loading-skeleton/dist/skeleton.css'
 
 
 createRoot(document.getElementById('root')).render(

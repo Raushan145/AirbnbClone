@@ -1,8 +1,10 @@
+import asyncHandler from "../middlewares/asyncHandler.js";
 import Booking from "../models/Bookingmodel.js";
 import Listing from "../models/listingmodel.js";
 import User from "../models/usermodel.js";
 
-export const getBookingsForHost = async (req, res) => {
+
+export const getBookingsForHost = asyncHandler (async (req, res) => {
     try {
         const hostId = req.userId;
         console.log("Logged in Host:", hostId);
@@ -27,9 +29,10 @@ export const getBookingsForHost = async (req, res) => {
   console.log(error);
         return res.status(500).json({ message: `Get Host Bookings Error: ${error.message}` });
     }
-};
+})
 
-export const getBookingsForListing = async (req, res) => {
+
+export const getBookingsForListing = asyncHandler(async (req, res) => {
     try {
         const { id } = req.params;
         const bookings = await Booking.find({ Listing: id, status: "booked" }).sort({ checkIn: 1 });
@@ -41,9 +44,10 @@ export const getBookingsForListing = async (req, res) => {
         return res.status(500).json({ message: `Get Listing Bookings Error: ${error.message}` });
 
     }
-};
+})
 
-export const createBooking =async (req,res) => {
+
+export const createBooking =  asyncHandler  (async (req,res) => {
 
     try {
 
@@ -140,7 +144,7 @@ export const createBooking =async (req,res) => {
         
     }
 
-}
+})
 
 // export const cancleBooking = async(req,res) => {
 
@@ -189,7 +193,7 @@ export const createBooking =async (req,res) => {
 //     }
 // }
 
-export const cancelBooking = async (req, res) => {
+export const cancelBooking =asyncHandler (async (req, res) => {
     try {
 
         const { id } = req.params;
@@ -263,9 +267,10 @@ export const cancelBooking = async (req, res) => {
             message: "Cancel Booking Error"
         });
     }
-};
+})
 
-export const deleteBooking = async (req, res) => {
+
+export const deleteBooking =asyncHandler (async (req, res) => {
     try {
         const { id } = req.params;
         const booking = await Booking.findById(id);
@@ -297,4 +302,4 @@ export const deleteBooking = async (req, res) => {
         console.error("Delete Booking Error:", error);
         return res.status(500).json({ message: "Delete Booking Error" });
     }
-};
+})

@@ -25,7 +25,6 @@ const userScheme = new mongoose.Schema({
         type:String,
         enum:["user"],
         default:"user",
-        required:true
     },
     resetOtp:{
         type:String,

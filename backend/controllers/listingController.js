@@ -1,8 +1,9 @@
+import asyncHandler from "../middlewares/asyncHandler.js";
 import Listing from "../models/listingmodel.js";
 import User from "../models/usermodel.js";
 import uploadOnCloudinary from "../utils/cloudinary.js";
 
-export const addListing = async (req ,res)=>{
+export const addListing =asyncHandler (async (req ,res)=>{
 
     try {
         let host = req.userId;
@@ -36,9 +37,9 @@ export const addListing = async (req ,res)=>{
        return res.status(500).json({message:`Add Listing Error ${error}`})
     }
 
-}
+})
 
-export const getListing = async (req,res)=>{
+export const getListing =asyncHandler (async (req,res)=>{
 
     try {
 
@@ -49,11 +50,11 @@ export const getListing = async (req,res)=>{
         return res.status(500).json({message: `getListing Error ${error?.data?.message}`})
     }
 
-}
+})
 
-export const getListingById = async (req, res) => {
-  console.log("🔥 getListingById API HIT");
-  console.log("ID:", req.params.id);
+export const getListingById = asyncHandler (async (req, res) => {
+  // console.log("🔥 getListingById API HIT");
+  // console.log("ID:", req.params.id);
     try {
         const listing = await Listing.findById(req.params.id)
         .populate(
@@ -65,6 +66,7 @@ export const getListingById = async (req, res) => {
 
         if (!listing) {
             return res.status(404).json({
+                success:false,
                 message: "Listing not found"
             });
         }
@@ -76,16 +78,16 @@ export const getListingById = async (req, res) => {
             message: error.message
         });
     }
-};
+})
 
-export const findListing = async (req, res) => {
+export const findListing =asyncHandler (async (req, res) => {
   try {
     const { id } = req.params;
 
     const listing = await Listing.findById(id);
 
     if (!listing) {
-      return res.status(404).json({ message: "Listing Not Found" });
+      return res.status(404).json({success:false, message: "Listing Not Found" });
     }
 
     return res.status(200).json(listing);
@@ -95,9 +97,9 @@ export const findListing = async (req, res) => {
       message: `Find Listing Error: ${error.message}`,
     });
   }
-};
+})
 
-export const updateListing = async (req, res) => {
+export const updateListing =asyncHandler (async (req, res) => {
   try {
     const { id } = req.params;
 
@@ -139,10 +141,10 @@ export const updateListing = async (req, res) => {
       message: `Update Listing Error: ${error.message}`
     });
   }
-};
+})
 
 
-export const DeleteListing = async (req, res) => {
+export const DeleteListing =asyncHandler (async (req, res) => {
   
   try {
     const { id } = req.params;
@@ -169,9 +171,9 @@ export const DeleteListing = async (req, res) => {
       message: `Delete Listing Error: ${error.message}`
     });
   }
-};
+})
 
-export const search = async(req,res) =>{
+export const search =asyncHandler (async(req,res) =>{
 
   try {
 
@@ -196,4 +198,4 @@ export const search = async(req,res) =>{
      return res.status(500).json({message:"Internal Server error"})
   }
 
-}
+})

@@ -2,10 +2,12 @@ import express from 'express'
 import isAuth from '../middlewares/isAuth.js'
 import upload from '../middlewares/multer.js'
 import { addListing, DeleteListing, findListing, getListing, getListingById, search, updateListing } from '../controllers/listingController.js'
+import isValidate from '../middlewares/isValidate.js'
+import { listingSchema } from '../Schema.js'
 
 const listingRouter = express.Router()
 
-listingRouter.post("/add",isAuth, upload.fields([
+listingRouter.post("/add",isAuth, isValidate(listingSchema), upload.fields([
     {name:"image1",maxCount:1},
     {name:"image2",maxCount:1},
     {name:"image3",maxCount:1}
