@@ -13,7 +13,7 @@ import reviewRouter from './routes/reviewroutes.js';
 import compression from 'compression';
 import {apiLimiter} from "./middlewares/rateLimiter.js"
 import errorHandler from './middlewares/errorHandler.js';
-import PaymentRouter from './routes/RazorPayRoutes.js';
+import PaymentRouter from './routes/razorPayRoutes.js';
 import Razorpay from "razorpay";
 
 const app = express();
