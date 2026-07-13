@@ -13,7 +13,19 @@ export const getBookingsForHost = asyncHandler (async (req, res) => {
         // Get all listings owned by this host
         const hostListings = await Listing.find({ host: hostId }).select("_id");
         const listingIds = hostListings.map(listing => listing._id);
+        console.log("Host Listings:", hostListings);
+        console.log("Listing IDs:", listingIds);
         
+        const allBookings = await Booking.find();
+
+        console.log(allBookings);
+
+        const booking = await Booking.findOne({
+          Listing: "6a480945fe064a82c0a891b9"
+        });
+
+        console.log(booking);
+
         // Get bookings only for these listings
         const bookings = await Booking.find({ Listing: { $in: listingIds } })
             // .populate("guest", "fullName email mobileNo")
