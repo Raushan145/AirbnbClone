@@ -13,25 +13,35 @@ import reviewRouter from './routes/reviewroutes.js';
 import compression from 'compression';
 import {apiLimiter} from "./middlewares/rateLimiter.js"
 import errorHandler from './middlewares/errorHandler.js';
+import PaymentRouter from './routes/RazorPayRoutes.js';
+import Razorpay from "razorpay";
 
 const app = express();
+
+export const instance = new Razorpay({
+  key_id: process.env.KEY_ID,
+  key_secret: process.env.TEST_KEY_SECRET,
+});
+
+//  console.log(process.env.KEY_ID)
+// console.log(process.env.TEST_KEY_SECRET);
 
 const port = process.env.PORT || 8080;
 
 app.use(helmet());
 app.use(compression());
 
-app.use(cors({
-    origin:"https://airbnbclone-b7rb.onrender.com",
-    credentials:true
-}))
+// app.use(cors({
+//     origin:"https://airbnbclone-b7rb.onrender.com",
+//     credentials:true
+// }))
 
-// app.use(
-//   cors({
-//     origin: "http://localhost:5173",
-//     credentials: true,
-//   })
-// );
+app.use(
+  cors({
+    origin: "http://localhost:5173",
+    credentials: true,
+  })
+);
 
 app.use(cookieParser());
 app.use(express.json());
@@ -43,6 +53,7 @@ app.use("/api/user", userRouter);
 app.use("/api/listings", listingRouter);
 app.use("/api/booking", bookingRouter);
 app.use("/api/reviews", reviewRouter);
+app.use("/api/payment/razorpay", PaymentRouter)
 
 
 app.use((err,req,res,next) => {

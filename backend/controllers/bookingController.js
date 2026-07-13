@@ -1,5 +1,6 @@
 import asyncHandler from "../middlewares/asyncHandler.js";
 import Booking from "../models/Bookingmodel.js";
+import Payment from "../models/PaymentModel.js";
 import Listing from "../models/listingmodel.js";
 import User from "../models/usermodel.js";
 
@@ -15,9 +16,13 @@ export const getBookingsForHost = asyncHandler (async (req, res) => {
         
         // Get bookings only for these listings
         const bookings = await Booking.find({ Listing: { $in: listingIds } })
-            .populate("guest", "fullName email mobileNo")
-            .populate("host", "fullName email mobileNo")
-            .populate("Listing", "title image1 image2 image3 description rent category city landmark")
+            // .populate("guest", "fullName email mobileNo")
+            // .populate("host", "fullName email mobileNo")
+            // .populate("Listing", "title image1 image2 image3 description rent category city landmark")
+            .populate("guest")
+            .populate("host")
+            .populate("Listing")
+            .populate("Payment")
             .sort({ createdAt: -1 });
 
         console.log(bookings);
@@ -25,12 +30,11 @@ export const getBookingsForHost = asyncHandler (async (req, res) => {
         return res.status(200).json(bookings);
     } catch (error) {
         console.log("Status:", error.response?.status);
-  console.log("Data:", error.response?.data);
-  console.log(error);
+        console.log("Data:", error.response?.data);
+        console.log(error);
         return res.status(500).json({ message: `Get Host Bookings Error: ${error.message}` });
     }
 })
-
 
 export const getBookingsForListing = asyncHandler(async (req, res) => {
     try {
@@ -46,105 +50,258 @@ export const getBookingsForListing = asyncHandler(async (req, res) => {
     }
 })
 
+export const createBooking = asyncHandler(async (req, res) => {
+  try {
+    console.log("Create Booking API Hit");
 
-export const createBooking =  asyncHandler  (async (req,res) => {
+    const { id } = req.params;
 
-    try {
+    const {
+      checkIn,
+      checkOut,
+      totalRent,
+      cleaningFee,
+      serviceFee,
+      taxes,
+      night,
+      rent,
+      paymentMethod,
+      paymentStatus,
+      method,
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+    } = req.body;
 
-        let {id} = req.params;
-        let {checkIn, checkOut, totalRent} = req.body;
 
-        let listing = await Listing.findById(id).populate("host", "fullName email");
-        if (!listing) {
-            return res.status(404).json({ message: "Listing Not Found" });
-        }
+    const listing = await Listing.findById(id)
+      .populate("host", "fullName email");
 
-        const bookingHostId = listing.host?._id || listing.host || req.userId;
-        const bookingHostUser = listing.host && listing.host._id ? listing.host : await User.findById(bookingHostId).select("fullName email");
 
-        const parseDateOnly = (value) => {
-            if (!value) return null;
-            if (typeof value === "string") {
-                const [year, month, day] = value.split("-").map(Number);
-                if (!year || !month || !day) return null;
-                return new Date(year, month - 1, day);
-            }
-            return new Date(value);
-        };
-
-        const checkInDate = parseDateOnly(checkIn);
-        const checkOutDate = parseDateOnly(checkOut);
-
-        if (!checkInDate || !checkOutDate) {
-            return res.status(400).json({ message: "Invalid date selected" });
-        }
-
-        if (checkInDate >= checkOutDate) {
-            return res.status(400).json({ message: "Check-out must be after check-in" });
-        }
-
-        const today = new Date();
-        today.setHours(0, 0, 0, 0);
-
-        if (checkInDate < today) {
-            return res.status(400).json({ message: "Check-in date cannot be in the past" });
-        }
-        
-       
-        const overlapping = await Booking.find({
-            Listing: listing._id,
-            status: "booked",
-            $or: [
-                {
-                    checkIn: { $lt: checkOutDate },
-                    checkOut: { $gt: checkInDate }
-                }
-            ]
-        });
-
-        if (overlapping.length > 0) {
-            return res.status(400).json({ message: "Selected dates are already reserved" });
-        }
-       
-        let booking = await Booking.create({
-             checkIn,
-             checkOut,
-             totalRent,
-             host: bookingHostId,
-             guest: req.userId,
-             Listing: listing._id
-        })
-
-        booking = await Booking.findById(booking._id)
-          .populate("host", "fullName email")
-          .populate("guest", "fullName email")
-          .populate({
-            path: "Listing",
-            select: "title image1 image2 image3 rent description host",
-            populate: { path: "host", select: "fullName email" }
-          });
-
-        let user = await User.findByIdAndUpdate(req.userId,{
-            $push:{Booking:booking._id}
-        },{new:true})
-
-         if(!user){
-            return res.status(404).json({message:"user Not Found"})
-        }
-
-        listing.guest = req.userId;
-        listing.isBooked = true
-        await listing.save();
-        console.log(booking)
-        return res.status(201).json(booking)
-        
-    } catch (error) {   
-      console.error("Booking Error:", error);  
-      return res.status(501).json({message:`Booking Error ${error}`})
-        
+    if (!listing) {
+      return res.status(404).json({
+        message: "Listing Not Found",
+      });
     }
 
-})
+
+    const parseDateOnly = (value) => {
+
+      if (!value) return null;
+
+      const [year, month, day] = value.split("-").map(Number);
+
+      return new Date(
+        year,
+        month - 1,
+        day
+      );
+    };
+
+
+    const checkInDate = parseDateOnly(checkIn);
+    const checkOutDate = parseDateOnly(checkOut);
+
+    if (!checkInDate || !checkOutDate) {
+      return res.status(400).json({
+        message:"Invalid Date"
+      });
+    }
+
+    if(checkInDate >= checkOutDate){
+
+      return res.status(400).json({
+        message:"Check out must be after check in"
+      });
+
+    }
+
+    // date availability check
+
+    const alreadyBooked = await Booking.find({
+
+      Listing: listing._id,
+
+      bookingStatus:{
+        $in:[
+          "confirmed",
+          "checked_in"
+        ]
+      },
+
+      checkIn:{
+        $lt:checkOutDate
+      },
+
+      checkOut:{
+        $gt:checkInDate
+      }
+
+    });
+
+    if(alreadyBooked.length){
+
+      return res.status(400).json({
+
+        message:"Dates already booked"
+
+      });
+
+    }
+
+    // Payment validation
+
+    if(paymentMethod==="online"){
+
+      if(
+        paymentStatus !== "paid" ||
+        !razorpay_payment_id
+      ){
+
+        return res.status(400).json({
+
+          message:"Payment not completed"
+
+        });
+
+      }
+
+    }
+
+    
+      const booking = await Booking.create({
+        checkIn,
+        checkOut,
+        totalRent,
+        basePrice:rent,
+        cleaningFee,
+        serviceFee,
+        taxes,
+        night,
+        host:
+        listing.host._id,
+        guest:
+        req.userId,
+        Listing:
+        listing._id,
+        paymentMethod,
+        paymentStatus:
+        paymentStatus || "pending",
+        razorpay_order_id,
+        razorpay_payment_id,
+        razorpay_signature,
+        bookingStatus:"confirmed"
+  
+  
+      });
+
+    // const totalAmount = Number(totalRent) + Number(cleaningFee) +  Number(serviceFee) +  Number(taxes);
+     // Create Payment
+
+      const payment = await Payment.create({
+
+        booking: booking._id,
+        user: req.userId,
+        amount: totalRent,
+        currency: "INR",
+        method: paymentMethod === "online" ? "razorpay" : "pay_at_property",
+
+        paymentStatus: paymentMethod === "online" ? "paid" : "pending",
+          
+        transactionId: paymentMethod === "online" ? razorpay_payment_id: null,
+
+        razorpayOrderId:paymentMethod === "online" ? razorpay_order_id : null,
+
+        razorpayPaymentId:paymentMethod === "online" ? razorpay_payment_id : null,
+
+        razorpaySignature: paymentMethod === "online" ? razorpay_signature : null,
+
+        paidAt:  paymentMethod === "online" ? new Date()  : null,
+      });
+
+
+     booking.Payment = payment._id;
+     await booking.save();
+      
+    // Add booking to user
+
+    await User.findByIdAndUpdate(
+
+      req.userId,
+
+      {
+        $push:{
+          Booking:booking._id
+        }
+      }
+
+    );
+
+    // listing booked
+
+    listing.isBooked=true;
+
+    await listing.save();
+
+
+
+    const populatedBooking =
+    await Booking.findById(booking._id)
+
+    .populate(
+      "host",
+      "fullName email"
+    )
+
+    .populate(
+      "guest",
+      "fullName email"
+    )
+
+    .populate(
+      "Payment"
+    )
+
+    .populate({
+
+      path:"Listing",
+
+      select:
+      "title image1 image2 image3 rent description host",
+
+      populate:{
+        path:"host",
+        select:"fullName email"
+      }
+
+    });
+
+
+
+    return res.status(201).json(
+
+      populatedBooking
+
+    );
+
+
+  } catch(error){
+
+    console.log(
+      "Create Booking Error",
+      error
+    );
+
+
+    return res.status(500).json({
+
+      message:error.message
+
+    });
+
+  }
+
+});
 
 // export const cancleBooking = async(req,res) => {
 
@@ -193,82 +350,114 @@ export const createBooking =  asyncHandler  (async (req,res) => {
 //     }
 // }
 
-export const cancelBooking =asyncHandler (async (req, res) => {
-    try {
+export const checkoutBooking = async (req, res) => {
+  try {
+    const booking = await Booking.findByIdAndUpdate(
+      req.params.id,
+      {
+        status: "complete",
+        paymentStatus:"paid",
+        completedAt: new Date(),
+      },
+      { new: true }
+    );
 
-        const { id } = req.params;
-        const { cancelReason } = req.body;
+    res.status(200).json({
+      success: true,
+      message: "Booking Completed",
+      booking,
+    });
+  } catch (err) {
+    res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
 
-        const booking = await Booking.findById(id);
+export const cancelBooking = asyncHandler(async (req, res) => {
+  try {
+    console.log("CancelBooking API Hit");
 
-        if (!booking) {
-            return res.status(404).json({
-                message: "Booking Not Found"
-            });
-        }
+    const { id } = req.params;
+    const { cancelReason } = req.body;
 
-        const listing = await Listing.findById(booking.Listing);
+    const booking = await Booking.findById(id);
 
-        if (!listing) {
-            return res.status(404).json({
-                message: "Listing Not Found"
-            });
-        }
-
-        if (booking.guest.toString() === req.userId) {
-            booking.status = "cancelled_by_guest";
-        }
-        else if (booking.host.toString() === req.userId) {
-            booking.status = "cancelled_by_host";
-        }
-        else {
-            return res.status(403).json({
-                message: "Unauthorized"
-            });
-        }
-
-        booking.cancelReason = cancelReason;
-        booking.cancelledAt = new Date();
-
-        // console.log(cancelReason)
-        // console.log(req.userId)
-        // console.log(booking.status)
-
-        await booking.save();
-
-        await Listing.findByIdAndUpdate(
-            listing._id,
-            {
-                isBooked: false,
-                guest: null
-            }
-        );
-
-        await User.findByIdAndUpdate(
-            booking.guest,
-            {
-                $pull: {
-                    Booking: booking._id
-                }
-            }
-        );
-
-        return res.status(200).json({
-            message: "Booking Cancelled Successfully"
-        });
-
-    } catch (error) {
-           console.error(error);
-    //     console.log(error);
-    //     console.log(error.message);
-    //     console.log(error.stack);
-
-        return res.status(500).json({
-            message: "Cancel Booking Error"
-        });
+    if (!booking) {
+      return res.status(404).json({
+        message: "Booking Not Found"
+      });
     }
-})
 
+    const listing = await Listing.findById(booking.Listing);
+
+    if (!listing) {
+      return res.status(404).json({
+        message: "Listing Not Found"
+      });
+    }
+
+
+    let status;
+
+    if (booking.guest.toString() === req.userId) {
+      status = "cancelled_by_guest";
+    }
+    else if (booking.host.toString() === req.userId) {
+      status = "cancelled_by_host";
+    }
+    else {
+      return res.status(403).json({
+        message: "Unauthorized"
+      });
+    }
+
+
+    await Booking.findByIdAndUpdate(
+      id,
+      {
+        status,
+        cancelReason,
+        cancelledAt: new Date()
+      }
+    );
+
+
+    await Listing.findByIdAndUpdate(
+      listing._id,
+      {
+        isBooked: false,
+        guest: null
+      }
+    );
+
+
+    await User.findByIdAndUpdate(
+      booking.guest,
+      {
+        $pull: {
+          Booking: booking._id
+        }
+      }
+    );
+
+
+    return res.status(200).json({
+      success:true,
+      message:"Booking Cancelled Successfully"
+    });
+
+
+  } catch (error) {
+    console.error("Cancel Booking Error:", error);
+
+    return res.status(500).json({
+      success:false,
+      message:error.message
+    });
+  }
+});
 
 export const deleteBooking =asyncHandler (async (req, res) => {
     try {

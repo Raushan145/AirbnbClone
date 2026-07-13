@@ -10,6 +10,7 @@ import ReviewCreate from "../Component/ReviewCreate/ReviewCreate";
 
 const Booked = () => {
   const { bookingData } = useContext(bookingDataContect);
+  console.log(bookingData)
   const navigate = useNavigate();
 
   const formatDate = (date) => {
@@ -51,7 +52,7 @@ const Booked = () => {
               Booking Summary
             </h2>
 
-            <div className="space-y-2">
+            <div className="space-y-3">
 
               <div className="flex justify-between">
                 <span className="text-gray-500">
@@ -98,23 +99,59 @@ const Booked = () => {
 
               <div className="flex justify-between">
                 <span className="flex items-center gap-2 text-gray-500">
-                  <FaMoneyBillWave />
-                  Total Paid
-                </span>
-
-                <span className="font-bold text-2xl text-green-600">
-                  ₹{bookingData?.totalRent}
-                </span>
-              </div>
-
-              <div className="flex justify-between">
-                <span className="flex items-center gap-2 text-gray-500">
                   <FaHome />
                   Status
                 </span>
 
                 <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full font-semibold">
                   Confirmed
+                </span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="flex items-center gap-2 text-gray-500">
+                  <FaHome />
+                 Payment Menthod
+                </span>
+
+                <span className="bg-green-100 text-green-700 px-3 py-1 rounded-full font-semibold">
+                   {bookingData?.paymentMethod}
+                </span>
+              </div>
+
+              <div className="flex justify-between">
+                <span className="flex items-center gap-2 text-gray-500">
+                  <FaHome />
+                  Payment Status
+                </span>
+
+                <span
+                    className={`px-3 py-1 rounded-full font-semibold ${
+                      bookingData?.paymentStatus === "pending"
+                        ? "bg-yellow-100 text-yellow-700"
+                        : bookingData?.paymentStatus === "confirmed"
+                        ? "bg-green-100 text-green-700"
+                        : bookingData?.paymentStatus === "checked_in"
+                        ? "bg-blue-100 text-blue-700"
+                        : bookingData?.paymentStatus === "completed"
+                        ? "bg-emerald-100 text-emerald-700"
+                        : bookingData?.paymentStatus === "cancelled"
+                        ? "bg-red-100 text-red-700"
+                        : "bg-gray-100 text-gray-700"
+                    }`}
+                  >
+                    {bookingData?.paymentStatus}
+                </span>
+              </div>
+
+               <div className="flex justify-between">
+                <span className="flex items-center gap-2 text-gray-500">
+                  <FaMoneyBillWave />
+                  Total Amount
+                </span>
+
+                <span className="font-bold text-2xl text-green-600">
+                  ₹{bookingData?.totalRent}
                 </span>
               </div>
 

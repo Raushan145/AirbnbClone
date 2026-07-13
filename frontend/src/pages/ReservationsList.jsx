@@ -5,13 +5,14 @@ import { toast } from 'react-toastify'
 import logo from "../assets/logo2.jpeg";
 import { IoIosSearch } from "react-icons/io";
 import { userDataContext } from '../Context/UserContext';
+import { BiSolidUserDetail } from "react-icons/bi";
 import { CgProfile } from "react-icons/cg";
 import { GiHamburgerMenu } from "react-icons/gi";
 import { ServerURL } from '../App';
 import { RiDeleteBin6Line } from "react-icons/ri";
 import { DotLoader } from "react-spinners";
 import Footer from '../Component/Footer';
-
+import { bookingDataContect } from '../Context/BookingContext';
 
 
 const ReservationsList = () => {
@@ -22,8 +23,15 @@ const ReservationsList = () => {
    const [guestModal, setGuestModal] = useState(null);
    const [cancelBookingId, setCancelBookingId] = useState(null);
    const [cancelReason, setCancelReason] = useState("");
+   const [filterStatus, setFilterStatus] = useState("current")
+   const [viewDetails, setViewDetails] = useState(null);
+   const [noOfCompleteReservation, setNoOfCompleteReservation] = useState(null)
+   const [noOfCurrentReservation, setNoOfCurrentReservation] = useState(null)
+   const [noOfUpcomingReservation, setNoOfupComingReservation] = useState(null)
+   const [noOfCancelledReservation, setNoOfCancelledReservation] = useState(null)
   const navigate = useNavigate()
-
+  const { checkoutBooking } = useContext(bookingDataContect);
+  const filter = ["current","upComing","complete","cancelled"];
   const handleLogout = async () => {
     try {
       await axios.post(
@@ -46,6 +54,7 @@ const ReservationsList = () => {
       const result = await axios.get(`${ServerURL}/api/booking/host`, { withCredentials: true });
       const bookings = Array.isArray(result.data) ? result.data : [];
       setReservations(bookings);
+      console.log(bookings)
 
     } catch (error) {
       console.log(error);
@@ -97,7 +106,6 @@ const ReservationsList = () => {
    }
   }
 
-  
   // useEffect(() => {
   //   const handleClick = () => {
   //     setShowMenu(false);
@@ -112,6 +120,108 @@ const ReservationsList = () => {
 
   const activeReservations = (reservations || []).filter((booking) => booking?.status === 'booked');
   const cancelledReservations = (reservations || []).filter((booking) => booking?.status !== 'booked');
+  const completeReservations = (reservations || []).filter((booking) => booking?.status === 'complete');
+  const CurrentReservations = (reservations || []).filter((booking) => booking?.status === 'current');
+
+
+  const today = new Date();
+
+const filteredReservations = reservations.filter((booking) => {
+  const checkIn = new Date(booking.checkIn);
+  const checkOut = new Date(booking.checkOut);
+
+  switch (filterStatus) {
+    case "current":
+      return (
+
+        booking.status === "booked" &&
+        checkIn <= today &&
+        checkOut >= today
+      );
+
+    case "upComing":
+      return (
+        booking.status === "booked" &&
+        checkIn > today
+      );
+
+    case "complete":
+      return (
+        booking.status === "complete" ||
+        (booking.status === "booked" && checkOut < today)
+      );
+
+    case "cancelled":
+      return (
+        booking.status === "cancelled_by_guest" ||
+        booking.status === "cancelled_by_host"
+      );
+
+    default:
+      return true;
+  }
+
+});
+
+
+const getReservationsByStatus = (status) => {
+  const today = new Date();
+
+  return reservations.filter((booking) => {
+    const checkIn = new Date(booking.checkIn);
+    const checkOut = new Date(booking.checkOut);
+
+    switch (status) {
+      case "current":
+        return (
+          booking.status === "booked" &&
+          checkIn <= today &&
+          checkOut >= today
+        );
+
+      case "upComing":
+        return (
+          booking.status === "booked" &&
+          checkIn > today
+        );
+
+      case "complete":
+        return (
+          booking.status === "complete" ||
+          (booking.status === "booked" && checkOut < today)
+        );
+
+      case "cancelled":
+        return (
+          booking.status === "cancelled_by_guest" ||
+          booking.status === "cancelled_by_host"
+        );
+
+      default:
+        return false;
+    }
+  });
+};
+
+const handleCheckout = async (bookingId) => {
+  try {
+    await axios.patch(
+      `${ServerURL}/api/booking/checkout/${bookingId}`,
+      {},
+      { withCredentials: true }
+    );
+
+    toast.success("Guest Checked Out Successfully");
+    fetchReservations();
+    getCurrentUser();
+  } catch (error) {
+    console.log(error);
+    toast.error(error.response?.data?.message || "Checkout Failed");
+  }
+};
+  
+
+// const filteredReservation = getReservationsByStatus(filterStatus);
 
   return (
     <>
@@ -245,35 +355,61 @@ const ReservationsList = () => {
       
           </nav>
 
-           <h1 className="md:text-3xl text-xl w-[100%] text-center font-bold mb-8 absolute left-3 top-20 z-50 ">
+          <div className='w-[80%] flex justify-around  text-center font-bold mb-8 absolute left-3 top-20 z-50 '>
+           <h1 className="md:text-3xl text-xl ">
          Reservations-Dashboard
-        </h1>
+            </h1>
+
+            <div className='flex items-center border rounded-2xl overflow-hidden'>
+            
+              {filter.map((item) => (
+                  <button
+                    key={item}
+                    onClick={() => setFilterStatus(item)}
+                    className={`px-5 py-2 rounded capitalize transition-all ${
+                      filterStatus === item
+                        ? "bg-black text-white"
+                        : "bg-white text-black hover:bg-gray-100"
+                    }`}
+                  >
+                    {item} ({getReservationsByStatus(item).length})
+                  </button>
+                ))}
+                
+            </div>
+
+          </div>
 
         <div className="flex flex-wrap gap-6 justify-center pt-[140px] ">
-          {loading ? (
-            <div className="text-2xl text-gray-500 mt-20">
-              <DotLoader color="#0b110a" size={40} /></div>
-          ) : reservations.length === 0 ? (
-            <div className="text-3xl text-gray-500 mt-20">No Reservations Found</div>
-          ) : (
-            <>
+          
               <div className="w-full max-w-6xl">
                 {/* <h2 className="text-xl font-bold mb-4">Active Reservations (Last 10)</h2> */}
               </div>
-              {activeReservations.map((booking) => {
+              
+             
+              {filterStatus === "current" &&filteredReservations.map((booking) => {
               const listing = booking.Listing || {};
               const guest = booking.guest || {};
               return (
-                <div key={booking._id} className="w-[95%] max-w-6xl bg-white rounded-2xl shadow-md hover:shadow-xl transition flex md:flex-row flex-col overflow-hidden">
+                   <div key={booking._id} className="w-[95%] max-w-6xl bg-white rounded-2xl shadow-md hover:shadow-xl transition flex md:flex-row flex-col overflow-hidden">
                   <div className="md:w-[380px] w-full px-10 md:pb-0 pb-2 h-[300px] flex items-center justify-center">
                     <img loading="lazy" src={listing.image1 || ''} alt={listing.title} className="w-full h-full object-cover" />
                   </div>
 
                   <div className="flex-1 px-10 pb-5">
                     <div className="flex justify-between items-start gap-4 relative">
-                      <span className="px-3 py-1 rounded-full absolute right-3 top-1 text-sm font-semibold bg-green-100 text-green-700">
-                        Booked
-                      </span>
+                      <div className="px-3 py-1 rounded-full absolute right-3 top-1 text-sm font-semibold">
+                       <div className='flex gap-5 items-center'>
+                         <span className='bg-green-100 text-green-700 px-2 py-1 rounded-full'>{booking?.status}</span>
+                        <span  className='bg-cyan-100 text-cyan-700 px-2 py-1 rounded-full'>{booking?.Payment?.paymentStatus}</span>
+                        <span  className='bg-red-100 text-red-700 px-2 py-1 rounded-full'>{booking?.paymentMethod} </span>
+                        {/* <span  className='bg-red-100 text-red-700 px-2 py-1 rounded-full'>{filteredReservations.length} </span> */}
+                       </div>
+                      </div>
+                        {/* Booked
+                       {booking?.Payment?.paymentStatus}
+                       {booking?.paymentMethod} */}
+                     
                       <div className='flex-1'>
                         <h1 className="text-2xl font-bold mt-2">{listing.title || 'Untitled Listing'}</h1>
                         <p className="text-gray-500">• {listing.category || 'Listing'} • {listing.city || '-'} • {listing.landmark || '-'}</p>
@@ -291,7 +427,7 @@ const ReservationsList = () => {
                         <p className="text-gray-400">Guest Email</p>
                         <h3 className="font-semibold">{guest.email || '-'}</h3>
                       </div>
-                      <div>
+                      <div >
                         <p className="text-gray-400">Check In</p>
                         <h3>{new Date(booking.checkIn).toLocaleDateString('en-IN')}</h3>
                       </div>
@@ -312,133 +448,240 @@ const ReservationsList = () => {
                     </div>
 
                     <div className="flex gap-3 mt-4">
+
                       <button
                         onClick={() => setGuestModal(guest)}
                         className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
                       >
                         View Guest
                       </button>
+
                       <button
                         onClick={() => setCancelBookingId(booking._id)}
                         className="px-5 py-2 rounded-lg text-white bg-red-500 hover:bg-red-600"
                       >
                         Cancel Reservation
                       </button>
+
+                      {filterStatus === "current" && (<button
+                         onClick={() => checkoutBooking(booking._id)}
+                        className="px-5 py-2 rounded-lg text-white bg-cyan-500 hover:bg-cyan-600"
+                      >
+                        CheckOut
+                      </button>)}
+
+                    {!booking?.Payment?.paymentStatus == "paid" && (  <button
+                        onClick={() => setCancelBookingId(booking._id)}
+                        className="px-5 py-2 rounded-lg text-white bg-red-500 hover:bg-red-600"
+                      >
+                       Pay Online
+                      </button>)}
+
                     </div>
                   </div>
                 </div>
               );
               })}
 
-           {cancelledReservations.length > 0 && (
-              <div className="w-full max-w-6xl mt-8 mb-5">
-                <h2 className="text-2xl font-bold mb-5">
-                  Cancelled History
-                </h2>
+              {filterStatus === "cancelled" && cancelledReservations.length > 0 && (
+                  <div className="w-full max-w-6xl  mb-5">
+                    {/* <h2 className="text-2xl font-bold mb-5">
+                      Cancelled History
+                    </h2> */}
 
-                <div className="flex flex-col gap-5">
-                  {cancelledReservations.map((booking) => {
-                    const listing = booking.Listing || {};
-                    const guest = booking.guest || {};
+                    <div className="flex flex-col gap-5">
+                      {cancelledReservations.map((booking) => {
+                        const listing = booking.Listing || {};
+                        const guest = booking.guest || {};
 
-                    return (
-                      <div
-                        key={booking._id}
-                        className="bg-white rounded-2xl shadow-md hover:shadow-lg duration-300 p-5 border"
-                      >
-                        <div className="flex flex-col md:flex-row justify-between gap-6">
+                        return (
+                          <div
+                            key={booking._id}
+                            className="bg-white rounded-2xl shadow-md hover:shadow-lg duration-300 p-5 border"
+                          >
+                            <div className="flex flex-col md:flex-row justify-between gap-6">
 
-                          {/* Left */}
-                          <div className="flex gap-4">
+                              {/* Left */}
+                              <div className="flex gap-4">
 
-                            <img
-                              src={listing.image1}
-                              alt={listing.title}
-                              className="w-42 h-40 rounded-xl object-cover"
-                            />
+                                <img
+                                  src={listing.image1}
+                                  alt={listing.title}
+                                  className="w-42 h-40 rounded-xl object-cover"
+                                />
 
-                            <div>
-                              <h3 className="text-xl font-bold">
-                                {listing.title || "Untitled Listing"}
-                              </h3>
+                                <div>
+                                  <h3 className="text-xl font-bold">
+                                    {listing.title || "Untitled Listing"}
+                                  </h3>
 
-                              <p className="text-gray-500">
-                                {listing.category} • {listing.city}
-                              </p>
+                                  <p className="text-gray-500">
+                                    {listing.category} • {listing.city}
+                                  </p>
 
-                              <p className="text-gray-600 mt-2">
-                                <span className="font-semibold">Guest :</span>{" "}
-                                {guest.fullName}
-                              </p>
+                                  <p className="text-gray-600 mt-2">
+                                    <span className="font-semibold">Guest :</span>{" "}
+                                    {guest.fullName}
+                                  </p>
 
-                              <p className="text-gray-500 text-sm">
-                                {guest.email}
-                              </p>
+                                  <p className="text-gray-500 text-sm">
+                                    {guest.email}
+                                  </p>
+                                </div>
+
+                              </div>
+
+                              {/* Right */}
+                              <div className="flex flex-col items-start md:items-end gap-2 pr-10  relative">
+                                <span className='absolute right-0 -top-4 h-7 w-7 rounded-full bg-zinc-200 flex justify-center items-center cursor-pointer text-black font-bold active:scale-95'
+                                onClick={()=> {handleDeleteHistory(booking._id)} }><RiDeleteBin6Line /></span>
+
+                                {booking.status === "cancelled_by_guest" && (
+                                  <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                    Cancelled by Guest
+                                  </span>
+                                )}
+
+                                {booking.status === "cancelled_by_host" && (
+                                  <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-semibold">
+                                    Cancelled by Host
+                                  </span>
+                                )}
+
+                                <p className="text-sm text-gray-600">
+                                  <span className="font-semibold">Check In:</span>{" "}
+                                  {new Date(booking.checkIn).toLocaleDateString("en-IN")}
+                                </p>
+
+                                <p className="text-sm text-gray-600">
+                                  <span className="font-semibold">Check Out:</span>{" "}
+                                  {new Date(booking.checkOut).toLocaleDateString("en-IN")}
+                                </p>
+
+                                <p className="text-sm text-gray-600">
+                                  <span className="font-semibold">Total Rent:</span> ₹
+                                  {booking.totalRent}
+                                </p>
+
+                                {booking.cancelReason && (
+                                  <p className="text-sm text-red-500 max-w-xs text-right">
+                                    <span className="font-semibold">Reason:</span>{" "}
+                                    {booking.cancelReason}
+                                  </p>
+                                )}
+
+                                {booking.cancelledAt && (
+                                  <p className="text-xs text-gray-400">
+                                    Cancelled on{" "}
+                                    {new Date(booking.cancelledAt).toLocaleString("en-IN")}
+                                  </p>
+                                )}
+
+                              </div>
+
                             </div>
-
                           </div>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
-                          {/* Right */}
-                          <div className="flex flex-col items-start md:items-end gap-2 pr-10  relative">
-                            <span className='absolute right-0 -top-4 h-7 w-7 rounded-full bg-zinc-200 flex justify-center items-center cursor-pointer text-black font-bold active:scale-95'
-                            onClick={()=> {handleDeleteHistory(booking._id)} }><RiDeleteBin6Line /></span>
+                {filterStatus === "complete" && filteredReservations.map((booking) => {
+              const listing = booking.Listing || {};
+              const guest = booking.guest || {};
+              return (
+                   <div key={booking._id} className="w-[95%] max-w-6xl bg-white rounded-2xl shadow-md hover:shadow-xl transition flex md:flex-row flex-col overflow-hidden">
+                  <div className="md:w-[380px] w-full px-10 md:pb-0 pb-2 h-[300px] flex items-center justify-center">
+                    <img loading="lazy" src={listing.image1 || ''} alt={listing.title} className="w-full h-full object-cover" />
+                  </div>
 
-                            {booking.status === "cancelled_by_guest" && (
-                              <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-semibold">
-                                Cancelled by Guest
-                              </span>
-                            )}
-
-                            {booking.status === "cancelled_by_host" && (
-                              <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-semibold">
-                                Cancelled by Host
-                              </span>
-                            )}
-
-                            <p className="text-sm text-gray-600">
-                              <span className="font-semibold">Check In:</span>{" "}
-                              {new Date(booking.checkIn).toLocaleDateString("en-IN")}
-                            </p>
-
-                            <p className="text-sm text-gray-600">
-                              <span className="font-semibold">Check Out:</span>{" "}
-                              {new Date(booking.checkOut).toLocaleDateString("en-IN")}
-                            </p>
-
-                            <p className="text-sm text-gray-600">
-                              <span className="font-semibold">Total Rent:</span> ₹
-                              {booking.totalRent}
-                            </p>
-
-                            {booking.cancelReason && (
-                              <p className="text-sm text-red-500 max-w-xs text-right">
-                                <span className="font-semibold">Reason:</span>{" "}
-                                {booking.cancelReason}
-                              </p>
-                            )}
-
-                            {booking.cancelledAt && (
-                              <p className="text-xs text-gray-400">
-                                Cancelled on{" "}
-                                {new Date(booking.cancelledAt).toLocaleString("en-IN")}
-                              </p>
-                            )}
-
-                          </div>
-
-                        </div>
+                  <div className="flex-1 px-10 pb-5">
+                    <div className="flex justify-between items-start gap-4 relative">
+                      <div className="px-3 py-1 rounded-full absolute right-3 top-1 text-sm font-semibold">
+                       <div className='flex gap-5 items-center'>
+                         <span className='bg-green-100 text-green-700 px-2 py-1 rounded-full'>{booking?.status}</span>
+                        <span  className='bg-cyan-100 text-cyan-700 px-2 py-1 rounded-full'>{booking?.paymentStatus}</span>
+                        <span  className='bg-red-100 text-red-700 px-2 py-1 rounded-full'>{booking?.paymentMethod} </span>
+                         <span className='bg-zinc-100 text-black  px-2 py-1 cursor-pointer rounded-full' onClick={()=>setViewDetails(booking)}><BiSolidUserDetail size={28}/></span>
+                       </div>
                       </div>
-                    );
-                  })}
+                        {/* Booked
+                       {booking?.Payment?.paymentStatus}
+                       {booking?.paymentMethod} */}
+                     
+                      <div className='flex-1'>
+                        <h1 className="text-2xl font-bold mt-2">{listing.title || 'Untitled Listing'}</h1>
+                        <p className="text-gray-500">• {listing.category || 'Listing'} • {listing.city || '-'} • {listing.landmark || '-'}</p>
+                      </div>
+                    </div>
+
+                    <hr className="my-2"/>
+
+                    <div className="grid md:grid-cols-2 grid-cols-1 gap-y-2 gap-15">
+
+                      <div>
+                        <p className="text-gray-400">Guest Name</p>
+                        <h3 className="font-semibold">{guest.fullName || 'Guest'}</h3>
+                      </div>
+
+                      <div>
+                        <p className="text-gray-400">Guest Email</p>
+                        <h3 className="font-semibold">{guest.email || '-'}</h3>
+                      </div>
+
+                      <div >
+                        <p className="text-gray-400">Check In</p>
+                        <h3>{new Date(booking.checkIn).toLocaleDateString('en-IN')}</h3>
+                      </div>
+
+                      <div>
+                        <p className="text-gray-400">Check Out</p>
+                        <h3>{new Date(booking.checkOut).toLocaleDateString('en-IN')}</h3>
+                      </div>
+
+                      <div>
+                        <p className="text-gray-400">Total Rent</p>
+                        <h3 className="text-xl font-bold text-green-600">₹{booking.totalRent || 0}</h3>
+                      </div>
+
+                      
+
+                      <div>
+                        <p className="text-gray-400">Booking Id</p>
+                      <span className=" py-1 rounded-lg ">
+                          {booking._id}
+                        </span>
+                      </div>
+                    </div>
+
+                    <div className="flex gap-3 mt-4">
+
+                      <button
+                        onClick={() => setGuestModal(guest)}
+                        className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      >
+                        View Guest
+                      </button>
+
+                     
+
+                   
+
+                    {/* {!booking?.Payment?.paymentStatus == "paid" && (  <button
+                        onClick={() => setCancelBookingId(booking._id)}
+                        className="px-5 py-2 rounded-lg text-white bg-red-500 hover:bg-red-600"
+                      >
+                       Pay Online
+                      </button>)} */}
+
+                    </div>
+                  </div>
                 </div>
-              </div>
-            )}
+              );
+              })}
 
-
-
-
-            </>
-          )}
+         
         </div>
 
         {cancelBookingId && (
@@ -487,6 +730,108 @@ const ReservationsList = () => {
                 <button
                   onClick={() => setGuestModal(null)}
                   className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
+       {viewDetails && (
+          <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/40 px-4 mt-2">
+            <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 h-[80vh] mt-5 overflow-scroll removeScroll">
+              <h3 className="text-lg font-semibold">Booking Details</h3>
+
+              <div className="mt-4 space-y-2 text-sm text-gray-700 flex gap-2 flex-col">
+
+                <p>
+                  <span className="font-semibold">Booking ID:</span>{" "}
+                  {viewDetails._id}
+                </p>
+
+                <p>
+                  <span className="font-semibold">Reservation Date:</span>{" "}
+                  {new Date(viewDetails.createdAt).toLocaleDateString("en-IN")}
+                </p>
+
+                <p>
+                  <span className="font-semibold">Check In:</span>{" "}
+                  {new Date(viewDetails.checkIn).toLocaleDateString("en-IN")}
+                </p>
+
+                <p>
+                  <span className="font-semibold">Check Out:</span>{" "}
+                  {new Date(viewDetails.checkOut).toLocaleDateString("en-IN")}
+                </p>
+
+                <p>
+                  <span className="font-semibold">Payment Method:</span>{" "}
+                  {viewDetails.paymentMethod}
+                </p>
+
+                <p>
+                  <span className="font-semibold">Completed On:</span>{" "}
+                  {viewDetails.completedAt
+                    ? new Date(viewDetails.completedAt).toLocaleDateString("en-IN")
+                    : "-"}
+                </p>
+
+                <p>
+                  <span className="font-semibold">Total Rent:</span> ₹
+                  {viewDetails?.Listing?.rent}
+                </p>
+
+                <p>
+                  <span className="font-semibold">Cleaning Fee:</span> ₹
+                  {viewDetails.cleaningFee}
+                </p>
+
+                <p>
+                  <span className="font-semibold">Service Fee:</span> ₹
+                  {viewDetails.serviceFee}
+                </p>
+
+                <p>
+                  <span className="font-semibold">Taxes:</span> ₹
+                  {viewDetails.taxes}
+                </p>
+
+                <p>
+                  <span className="font-semibold">Grand Total:</span> ₹
+                  {viewDetails.totalRent}
+                </p>
+
+               {viewDetails?.paymentMethod !== "pay_at_property" && (<> <p>
+                  <span className="font-semibold">Payment Status:</span>{" "}
+                  {viewDetails.paymentStatus}
+                </p>
+
+                <p>
+                  <span className="font-semibold">Order ID:</span>{" "}
+                  {viewDetails?.Payment?.razorpayOrderId}
+                </p>
+
+                <p>
+                  <span className="font-semibold">Transaction ID:</span>{" "}
+                  {viewDetails?.Payment?.transactionId}
+                </p>
+
+                <p>
+                  <span className="font-semibold">Transaction Date:</span>{" "}
+                  {viewDetails?.Payment?.createdAt
+                    ? new Date(viewDetails?.Payment?.createdAt).toLocaleString("en-IN")
+                    : "-"}
+                </p>
+                </>
+              )}
+
+              </div>
+
+              <div className="flex justify-end mt-6">
+                <button
+                  onClick={() => setViewDetails(null)}
+                  className="px-4 py-2 rounded-lg bg-gray-100"
                 >
                   Close
                 </button>

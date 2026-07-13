@@ -263,7 +263,7 @@ const Nav = ({
             <span className="text-xs">{item.name}</span>
           </div>
         ))}
-
+        
       </div>
 
     </nav>

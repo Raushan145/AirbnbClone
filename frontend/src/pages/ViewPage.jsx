@@ -563,7 +563,7 @@ const year = start.getFullYear();
               ) : (
                 <button
                   onClick={() => setBookingPopUP(true)}
-                  className="bg-red-500 md:hidden hover:bg-red-600 transition text-white px-8 md:px-12 py-2 md:py-3 rounded-full text-base md:text-lg shadow-lg active:scale-95"
+                  className="bg-red-500 md:hidden hidden hover:bg-red-600 transition text-white px-8 md:px-12 py-2 md:py-3 rounded-full text-base md:text-lg shadow-lg active:scale-95"
                 >
                   Reserve
                 </button>
@@ -581,7 +581,7 @@ const year = start.getFullYear();
 
    
 
-        <hr className="mb-6 w-[90%] mx-auto mt-10"/>
+        <hr className="mb-3 md:mb-9 w-[90%] mx-auto mt-5 md:mt-5"/>
       <section className="w-[85%]  mx-auto flex gap-15 ">
 
               {/*  Profile  */}
@@ -691,11 +691,11 @@ const year = start.getFullYear();
                 </div>
 
                 <button
-                  onClick={() => cardDetails?._id && handleBooking(cardDetails._id)}
-                  disabled={!cardDetails?._id}
+                  onClick={() => navigate("/check-out")}
+                  disabled={!cardDetails?._id || !checkIn || !checkOut}
                   className="w-full mt-6 bg-red-500 text-white py-3 rounded-3xl hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  Confirm Booking
+                  >
+                    Continue to Checkout
                 </button>
 
               </form>
@@ -966,11 +966,11 @@ const year = start.getFullYear();
                 </div>
 
                 <button
-                  onClick={() => cardDetails?._id && handleBooking(cardDetails._id)}
-                  disabled={!cardDetails?._id}
+                  onClick={() => navigate("/check-out")}
+                  disabled={!cardDetails?._id || !checkIn || !checkOut}
                   className="w-full mt-6 bg-red-500 text-white py-3 rounded-3xl hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                  Confirm Booking
+                  Continue to Checkout
                 </button>
 
               </form>

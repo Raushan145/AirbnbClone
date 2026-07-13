@@ -32,6 +32,7 @@ const borderColor = '#ddd'
 
 
  const handleSignIn = async ()=>{
+    console.log("handleSignIn API Hit")
     setLoading(true);
     if(email == ''){
          toast.error("Email is required");
@@ -47,13 +48,14 @@ const borderColor = '#ddd'
        const result =  await axios.post(`${ServerURL}/api/auth/signin`,{
             email,password
         },{withCredentials:true})
+        console.log(email,password)
         setUserData(result.data);
         toast.success("Signed in successfully");
         getCurrentUser();
         navigate("/home");
         setLoading(false);
     } catch (error) {
-        // console.log(error)
+        console.log(error)
         setLoading(false);
         toast.error(error.response?.data?.message || "Something went wrong");
     }
@@ -77,7 +79,7 @@ const borderColor = '#ddd'
         navigate("/");
 
     } catch (error) {
-            console.log(error);
+         console.log(error);
         
         if(error.code === 'auth/popup-closed-by-user') {
             toast.error("Popup closed. Please try again.");
