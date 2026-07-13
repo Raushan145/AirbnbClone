@@ -1,7 +1,6 @@
 import React, { useContext, useState } from 'react'
 import { IoIosAdd } from "react-icons/io";
 import { GrFormSubtract } from "react-icons/gr";
-import { steps } from 'motion';
 import { listingDataContext } from '../../Context/ListingContex';
 import { FaChevronLeft } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";

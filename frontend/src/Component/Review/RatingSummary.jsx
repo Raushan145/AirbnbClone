@@ -9,7 +9,6 @@ import {
   FaTag,
 } from "react-icons/fa";
 import { listingDataContext } from "../../Context/ListingContex";
-import { li } from "motion/react-client";
 
 export default function RatingSummary() {
   const ratings = [
