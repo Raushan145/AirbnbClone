@@ -18,8 +18,8 @@ import ListingDetails from './pages/Become a Host/ListingDetails'
 import CheckOut from './pages/Payments/CheckOut'
 import PaymentSuccess from './pages/PaymentSuccess'
 
-// export const ServerURL = "https://airbnbclone-backend-paga.onrender.com";
-export const ServerURL = "http://localhost:8080";
+export const ServerURL = "https://airbnbclone-backend-paga.onrender.com";
+// export const ServerURL = "http://localhost:8080";
 
 const App = () => {
   const {userData} = useContext(userDataContext)
