@@ -41,7 +41,8 @@ const BookingContext = ({ children }) => {
   ) => {
     try {
       setCreateBookingLoading(true);
-
+        console.log("Frontend CheckIn:", checkIn);
+        console.log("Frontend CheckOut:", checkOut);
       const payload = {
         checkIn,
         checkOut,

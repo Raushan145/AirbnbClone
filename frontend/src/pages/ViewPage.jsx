@@ -261,14 +261,17 @@ const ViewPage = () => {
   };
 
   const isDateReserved = (date) => {
-    if (!date) return false;
-    const normalized = normalizeDate(date);
-    return reservedDates.some((range) => {
-      const start = normalizeDate(range.start);
-      const end = normalizeDate(range.end);
-      return normalized >= start && normalized <= end;
-    });
-  };
+  if (!date) return false;
+
+  const normalized = normalizeDate(date);
+
+  return reservedDates.some((range) => {
+    const start = normalizeDate(range.start);
+    const end = normalizeDate(range.end);
+
+    return normalized >= start && normalized < end;
+  });
+};
 
   const handleCheckInChange = (date) => {
     if (!date) {
@@ -290,23 +293,21 @@ const ViewPage = () => {
   };
 
   const handleCheckOutChange = (date) => {
-    if (!date) {
-      setCheckOut("");
-      setCheckOutDate(null);
-      return;
-    }
-    if (isDateReserved(date)) {
-      toast.error("Already reserved, please choose another date");
-      return;
-    }
-    if (checkIn && date < new Date(checkIn)) {
-      toast.error("Checkout must be after check-in");
-      return;
-    }
-    const formatted = formatDateOnly(date);
-    setCheckOut(formatted);
-    setCheckOutDate(date);
-  };
+  if (!date) {
+    setCheckOut("");
+    setCheckOutDate(null);
+    return;
+  }
+
+  if (checkIn && date <= new Date(checkIn)) {
+    toast.error("Checkout must be after check-in");
+    return;
+  }
+
+  const formatted = formatDateOnly(date);
+  setCheckOut(formatted);
+  setCheckOutDate(date);
+};
 
   if (loading) {
     return (

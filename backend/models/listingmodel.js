@@ -52,10 +52,7 @@ export const listingSchema = mongoose.Schema({
         max:5,
         default:0
     },
-    isBooked:{
-        type:Boolean,
-        default:false
-    },
+    
     reviews:{
         type:mongoose.Schema.Types.ObjectId,
         ref:"Review",

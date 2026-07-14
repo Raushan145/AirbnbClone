@@ -97,18 +97,17 @@ export const createBooking = asyncHandler(async (req, res) => {
     }
 
 
-    const parseDateOnly = (value) => {
+   const parseDateOnly = (value) => {
+  if (!value) return null;
 
-      if (!value) return null;
+  const [year, month, day] = value.split("-").map(Number);
 
-      const [year, month, day] = value.split("-").map(Number);
-
-      return new Date(
-        year,
-        month - 1,
-        day
-      );
-    };
+  return new Date(Date.UTC(
+    year,
+    month - 1,
+    day
+  ));
+};
 
 
     const checkInDate = parseDateOnly(checkIn);
@@ -128,7 +127,14 @@ export const createBooking = asyncHandler(async (req, res) => {
 
     }
 
-    // date availability check
+
+    console.log("New Booking Dates");
+console.log("Check In:", checkInDate);
+console.log("Check Out:", checkOutDate);
+
+
+
+// date availability check
 
     const alreadyBooked = await Booking.find({
 
@@ -144,12 +150,14 @@ export const createBooking = asyncHandler(async (req, res) => {
       checkIn:{
         $lt:checkOutDate
       },
-
+      
       checkOut:{
         $gt:checkInDate
       }
-
+      
     });
+    
+    console.log("Already Booked Result:", alreadyBooked);
 
     if(alreadyBooked.length){
 
@@ -182,8 +190,8 @@ export const createBooking = asyncHandler(async (req, res) => {
 
     
       const booking = await Booking.create({
-        checkIn,
-        checkOut,
+        checkIn: checkInDate,
+        checkOut: checkOutDate,
         totalRent,
         basePrice:rent,
         cleaningFee,
@@ -251,7 +259,7 @@ export const createBooking = asyncHandler(async (req, res) => {
 
     // listing booked
 
-    listing.isBooked=true;
+    // listing.isBooked=true;
 
     await listing.save();
 
@@ -303,7 +311,9 @@ export const createBooking = asyncHandler(async (req, res) => {
       "Create Booking Error",
       error
     );
-
+ console.log("Create Booking Error");
+  console.log(error);
+  console.log(error.message);
 
     return res.status(500).json({
 
