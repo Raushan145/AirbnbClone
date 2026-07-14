@@ -54,7 +54,7 @@ export const SignUp = asyncHandler (async (req,res) => {
          secure: true,
          sameSite: "None",
          maxAge: 7 * 24 * 60 * 60 * 1000,
-         });,
+         });
 
 
         return res.status(201).json({success: true, message:"SignUp Successfully", user})
