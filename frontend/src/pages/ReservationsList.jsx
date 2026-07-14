@@ -345,7 +345,7 @@ const ReservationsList = () => {
         </div>
       </nav>
 
-      <div className="w-[100%] md:w-[80%] mx-auto flex md:flex-row flex-col gap-2 justify-around items-center text-center font-bold mb-8 absolute  top-20 z-50 ">
+      <div className="w-[100%] lg:w-[80%] mx-auto flex md:flex-row flex-col gap-2 justify-around items-center text-center font-bold mb-8 absolute  top-20 z-50 ">
         <h1 className="md:text-3xl text-xl ">Reservations-Dashboard</h1>
 
         <div className="flex border overflow-x-auto whitespace-nowrap mt-2 rounded-xl scrollbar-hide">
@@ -551,7 +551,7 @@ const ReservationsList = () => {
                 </div>
 
                 {/* Content */}
-                <div className="flex-1 p-5 md:p-6">
+                <div className="flex-1 px-5 md:p-6">
                   {/* Header */}
                   <div className="flex justify-between gap-3 flex-col md:flex-row">
                     <div>
@@ -584,7 +584,7 @@ const ReservationsList = () => {
                   <hr className="my-4" />
 
                   {/* Details */}
-                  <div className="grid md:grid-cols-3 grid-cols-2 gap-4">
+                  <div className="grid md:grid-cols-3 grid-cols-2 gap-2">
                     <div>
                       <p className="text-xs text-gray-400">Guest Name</p>
                       <p className="font-semibold text-gray-700">
@@ -796,14 +796,14 @@ const ReservationsList = () => {
            return (
               <div
                 key={booking._id}
-                className="w-[95%] max-w-6xl bg-white rounded-2xl shadow-md hover:shadow-xl transition flex md:flex-row flex-col overflow-hidden"
+                className="w-[95%] max-w-6xl bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 flex md:flex-row flex-col"
               >
-                <div className="md:w-[380px] w-full md:px-10 px-4 md:pb-0 pb-2 h-[300px] flex items-center justify-center">
+                <div className="md:w-[320px] w-full md:h-[280px] h-[220px] p-3 ">
                   <img
                     loading="lazy"
                     src={listing.image1 || ""}
                     alt={listing.title}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full object-cover rounded-2xl"
                   />
                 </div>
 
@@ -824,7 +824,7 @@ const ReservationsList = () => {
                       </div>
 
                       {/* Badges */}
-                      <div className="flex flex-wrap md:gap-4 gap-6 md:justify-end items-start h-fit">
+                      <div className="flex  md:gap-4 gap-4 md:justify-end items-start h-fit">
                         <span className="bg-green-100 text-green-700 px-2 py-1 rounded-full">
                           {booking?.status}
                         </span>
@@ -910,7 +910,7 @@ const ReservationsList = () => {
                     <div>
                       <p className="text-gray-400">Total Rent</p>
                       <h3 className="text-xl font-bold text-green-600">
-                        ₹{booking.totalRent || 0}
+                        ₹{Math.round(booking.totalRent || 0)}
                       </h3>
                     </div>
 
@@ -1055,7 +1055,7 @@ const ReservationsList = () => {
 
       {viewDetails && (
         <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/40 px-4 mt-2">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 h-[80vh] mt-5 overflow-scroll removeScroll">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 pb-3 mt-5 overflow-scroll removeScroll">
             <h3 className="text-lg font-semibold">Booking Details</h3>
 
             <div className="mt-4 space-y-2 text-sm text-gray-700 flex gap-2 flex-col">

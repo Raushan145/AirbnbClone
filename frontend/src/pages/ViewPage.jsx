@@ -153,7 +153,7 @@ const ViewPage = () => {
         { withCredentials: true },
       );
 
-      console.log(result.data);
+      // console.log(result.data);
       setDeleteing(false);
       toast.success("Listing Deleted Successfully");
       navigate("/");

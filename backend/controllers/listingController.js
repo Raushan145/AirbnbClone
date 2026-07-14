@@ -62,7 +62,7 @@ export const getListingById = asyncHandler (async (req, res) => {
       "fullName profileImg email mobileNo hostingSince"
     );
 
-    console.log(listing)
+    // console.log(listing)
 
         if (!listing) {
             return res.status(404).json({

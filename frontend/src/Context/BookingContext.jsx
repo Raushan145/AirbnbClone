@@ -21,6 +21,7 @@ const BookingContext = ({ children }) => {
   const [serviceCharge, setServiceCharge] = useState(0);
   const [paymentMethod, setPaymentMethod] = useState("online");
   const [createBookingLoading, setCreateBookingLoading] = useState(false);
+  const [payingLoading, setPayingLoading] = useState(false);
 
   const { getCurrentUser } = useContext(userDataContext);
   const { getListing } = useContext(listingDataContext);
@@ -41,8 +42,9 @@ const BookingContext = ({ children }) => {
   ) => {
     try {
       setCreateBookingLoading(true);
-        console.log("Frontend CheckIn:", checkIn);
-        console.log("Frontend CheckOut:", checkOut);
+      setPayingLoading(true)
+        // console.log("Frontend CheckIn:", checkIn);
+        // console.log("Frontend CheckOut:", checkOut);
       const payload = {
         checkIn,
         checkOut,
@@ -88,6 +90,7 @@ const BookingContext = ({ children }) => {
       throw error;
     } finally {
       setCreateBookingLoading(false);
+      setPayingLoading(false)
     }
   };
 
@@ -168,7 +171,9 @@ const BookingContext = ({ children }) => {
         handleCancelBooking,
         checkoutBooking,
         checkOutLoading,
-        setCheckOutLoading
+        setCheckOutLoading,
+        payingLoading, 
+        setPayingLoading
       }}
     >
       {children}

@@ -55,7 +55,7 @@ const ListingContex = ({ children }) => {
         formData,
         { withCredentials: true }
       );
-      console.log(result)
+      // console.log(result)
       toast.success("Listing Add Successfully");
       setAdding(false)
       navigate("/")

@@ -14,10 +14,10 @@ const PaymentSuccess = () => {
 
   const { paymentData } = useContext(RazorPayDataContext);
   const { bookingData } = useContext(bookingDataContect);
-    console.log(bookingData)
+    // console.log(bookingData)
 
     const { cardDetails } = useContext(listingDataContext);
-    console.log(cardDetails);
+    // console.log(cardDetails);
       const listingId = cardDetails._id;
 
 //   const bookingData = paymentData?.booking;

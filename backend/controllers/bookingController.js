@@ -8,23 +8,23 @@ import User from "../models/usermodel.js";
 export const getBookingsForHost = asyncHandler (async (req, res) => {
     try {
         const hostId = req.userId;
-        console.log("Logged in Host:", hostId);
+        // console.log("Logged in Host:", hostId);
         
         // Get all listings owned by this host
         const hostListings = await Listing.find({ host: hostId }).select("_id");
         const listingIds = hostListings.map(listing => listing._id);
-        console.log("Host Listings:", hostListings);
-        console.log("Listing IDs:", listingIds);
+        // console.log("Host Listings:", hostListings);
+        // console.log("Listing IDs:", listingIds);
         
         const allBookings = await Booking.find();
 
-        console.log(allBookings);
+        // console.log(allBookings);
 
         const booking = await Booking.findOne({
           Listing: "6a480945fe064a82c0a891b9"
         });
 
-        console.log(booking);
+        // console.log(booking);
 
         // Get bookings only for these listings
         const bookings = await Booking.find({ Listing: { $in: listingIds } })
@@ -37,7 +37,7 @@ export const getBookingsForHost = asyncHandler (async (req, res) => {
             .populate("Payment")
             .sort({ createdAt: -1 });
 
-        console.log(bookings);
+        // console.log(bookings);
 
         return res.status(200).json(bookings);
     } catch (error) {
@@ -55,8 +55,8 @@ export const getBookingsForListing = asyncHandler(async (req, res) => {
         return res.status(200).json(bookings);
     } catch (error) {
         console.log("Status:", error.response?.status);
-  console.log("Data:", error.response?.data);
-  console.log(error);
+        console.log("Data:", error.response?.data);
+        console.log(error);
         return res.status(500).json({ message: `Get Listing Bookings Error: ${error.message}` });
 
     }
@@ -128,9 +128,9 @@ export const createBooking = asyncHandler(async (req, res) => {
     }
 
 
-    console.log("New Booking Dates");
-console.log("Check In:", checkInDate);
-console.log("Check Out:", checkOutDate);
+//     console.log("New Booking Dates");
+    // console.log("Check In:", checkInDate);
+    // console.log("Check Out:", checkOutDate);
 
 
 
@@ -157,7 +157,7 @@ console.log("Check Out:", checkOutDate);
       
     });
     
-    console.log("Already Booked Result:", alreadyBooked);
+    // console.log("Already Booked Result:", alreadyBooked);
 
     if(alreadyBooked.length){
 
@@ -311,7 +311,7 @@ console.log("Check Out:", checkOutDate);
       "Create Booking Error",
       error
     );
- console.log("Create Booking Error");
+  console.log("Create Booking Error");
   console.log(error);
   console.log(error.message);
 

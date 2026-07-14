@@ -12,6 +12,10 @@ import { userDataContext } from "../../Context/UserContext";
 import { bookingDataContect } from "../../Context/BookingContext";
 import { listingDataContext } from "../../Context/ListingContex";
 import { RazorPayDataContext } from "../../Context/RazorpayContext";
+import { GridLoader   } from "react-spinners";
+import { PulseLoader   } from "react-spinners";
+
+
 
 export default function CheckoutPage(req) {
   const { userData, setUserData, getCurrentUser } = useContext(userDataContext);
@@ -37,11 +41,12 @@ export default function CheckoutPage(req) {
     setPaymentMethod,
     createBookingLoading,
     setCreateBookingLoading,
+    payingLoading,
+    setPayingLoading
   } = useContext(bookingDataContect);
   const { checkOutHandler } = useContext(RazorPayDataContext);
 
   const { cardDetails } = useContext(listingDataContext);
-  console.log(cardDetails);
   const listingId = cardDetails._id;
   //    console.log(listingId)
   const [agree, setAgree] = useState(false);
@@ -53,7 +58,7 @@ export default function CheckoutPage(req) {
         `${ServerURL}/api/listings/listing/${listingId}`,
         { withCredentials: true },
       );
-      console.log(result);
+      // console.log(result);
       const listingData = result.data;
       setCardDetails(listingData);
       setTitle(listingData.title || "");
@@ -103,7 +108,29 @@ export default function CheckoutPage(req) {
   };
 
   return (
+    
     <div className="bg-gray-50 min-h-screen ">
+      {createBookingLoading ? 
+       <div className="fixed inset-0 z-[9999] bg-black/50 backdrop-blur-sm flex flex-col items-center justify-center">
+    
+    <div className="bg-white rounded-2xl shadow-2xl px-8 py-8 flex flex-col items-center gap-5">
+      
+      <GridLoader
+        color="#2563EB"
+        size={18}
+      />
+
+      <div className="text-center">
+        <h2 className="text-xl font-bold text-gray-800">
+          Confirming Your Booking
+        </h2>
+        <p className="text-gray-500 mt-2">
+          Please wait while we securely process your booking...
+        </p>
+      </div>
+    </div>
+  </div>
+       :
       <div className="max-w-6xl mx-auto grid lg:grid-cols-3 gap-8 p-5">
         {/* Left */}
         <div className="lg:col-span-2 ">
@@ -308,7 +335,7 @@ export default function CheckoutPage(req) {
               }`}
             >
               {paymentMethod === "online"
-                ? `Pay ₹${total}`
+                ? createBookingLoading ? <PulseLoader /> : `Pay ₹${total}`
                 : createBookingLoading
                   ? "Processing..."
                   : "Confirm Booking"}
@@ -321,6 +348,7 @@ export default function CheckoutPage(req) {
           </div>
         </div>
       </div>
+   } 
 
       {/* Mobile Sticky Button */}
       {/* <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 lg:hidden flex items-center justify-between">
