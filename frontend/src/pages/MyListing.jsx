@@ -36,11 +36,11 @@ const MyListing = () => {
 
       <div className="pt-[150px] px-10 relative">
 
-        <h1 className="md:text-3xl text-lg font-bold mb-8 md:absolute left-5 top-35 bg-white z-50">
+        <h1 className="md:text-3xl text-lg font-bold mb-8 md:fixed left-5 top-20 bg-white z-50">
           My Listings
         </h1>
 
-        <div className="flex flex-wrap gap-6 justify-center">
+        {/* <div className="flex flex-wrap items-center"> */}
 
              {/* Three line bar for edit and delete */}
        {/* <span className="w-7 h-7 rounded-full flex justify-center items-center absolute right-2 top-1 text-xl bg-gray-200 cursor-pointer"> <HiOutlineDotsVertical /> </span>
@@ -50,21 +50,30 @@ const MyListing = () => {
         </div> */}
 
 
-            {loading ? (
-              <div className="w-full h-[60vh] flex justify-center items-center">
-                <SyncLoader color="#0b110a" size={13} />
+         <div className="grid grid-cols-1 md:grid-cols-3 lg:grid-cols-4 gap-6 mt-2">
+
+              {
+              loading ? (
+                  <div className="w-[90vw] h-[60vh] flex justify-center items-center">
+                    <SyncLoader color="#0b110a" size={13}/>
+                  </div>
+              )
+              :
+              filteredListings.length > 0 ? (
+                  filteredListings.map((item)=>(
+                    <Card key={item._id} {...item}/>
+                  ))
+              )
+              :
+              (
+                <div className="col-span-full text-3xl text-gray-500 mt-20 text-center">
+                    No Listing Found
+                </div>
+              )
+
+              }
+
               </div>
-            ) : filteredListings.length > 0 ? (
-              filteredListings.map((item) => (
-                <Card key={item._id} {...item} />
-              ))
-            ) : (
-              <div className="w-full text-3xl text-gray-500 mt-20 text-center">
-                No Listing Found
-              </div>
-            )}
-    
-        </div>
 
       </div>
 

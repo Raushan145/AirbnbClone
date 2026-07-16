@@ -29,9 +29,11 @@ const MyBooking = () => {
       const allBookings = userData?.Booking || [];
       const lastTenBookings = allBookings.slice(-10).reverse();
       const activeBookings = allBookings.filter((item) => item?.status === "booked");
-      const cancelledBookings = allBookings.filter((item) => item?.status === "cancelled_by_host" || "cancelled_by_guest");
+      const cancelledBookings = allBookings.filter((item) => item?.status === "cancelled_by_host" || item?.status === "cancelled_by_guest");
 
-
+      console.log(userData?.Booking)
+      // console.log(userData?.Booking?.Payment.paymentStatus);
+      
 
   const handleLogout = async () => {
     try {
@@ -228,6 +230,9 @@ const MyBooking = () => {
             </div>
 
             <div className="flex-1 px-6 py-4">
+
+              <div className='flex justify-between gap-3 flex-col md:flex-row'>
+
               <div className="flex justify-between items-start gap-4">
                 <div className="flex-1">
                   <h1 className="text-2xl font-bold">
@@ -240,14 +245,45 @@ const MyBooking = () => {
                   </p>
                 </div>
 
-                <span className="px-3 py-1 rounded-full bg-green-100 text-green-700 text-sm font-semibold">
-                  Booked
-                </span>
+
+              
+              </div>
+
+               {/* Badges */}
+                      <div className="flex flex-wrap gap-3 md:justify-end items-start h-fit">
+                        <span className="px-3 py-2 rounded-full flex justify-center items-center text-sm font-semibold bg-green-100 text-green-700">
+                         {booking.status}
+                        </span>
+
+                        <span className="px-3 py-2 rounded-full flex justify-center items-center text-sm font-semibold bg-cyan-100 text-cyan-700">
+                          {booking.Payment?.paymentStatus}
+                        </span>
+
+                        <span className="px-3 py-2 rounded-full flex justify-center items-center text-sm font-semibold bg-orange-100 text-orange-700">
+                           {booking.Payment?.method === "razorpay" ? "Online" : booking.Payment?.method}
+                        </span>
+                      </div>
               </div>
 
               <hr className="my-3" />
 
-              <div className="grid md:grid-cols-2 grid-cols-1 gap-3 text-sm">
+              <div className="grid md:grid-cols-3 grid-cols-2 gap-3 text-sm">
+
+                {/* Host Details */}
+                <div>
+                  <p className="text-gray-400">Host Name</p>
+                  <h3 className="font-semibold">
+                    {host?.fullName}
+                  </h3>
+                </div>
+                <div>
+                  <p className="text-gray-400">Host Email</p>
+                  <h3 className="font-semibold">
+                   {host?.email}
+                  </h3>
+                </div>
+
+                {/* CheckIn - checkOut Details */}
                 <div>
                   <p className="text-gray-400">Check In</p>
                   <h3 className="font-semibold">
@@ -268,23 +304,45 @@ const MyBooking = () => {
                     ₹{booking.totalRent}
                   </h3>
                 </div>
+
+                {/* <div>
+                  <p className="text-gray-400">Status</p>
+                  <h3 className="text-lg font-bold text-green-600">
+                      Confirm
+                  </h3>
+                </div> */}
               </div>
 
-              <div className="flex gap-3 mt-4">
+              {/* Button for navigate other case */}
+              <div className="flex flex-wrap gap-3 mt-5">
                 <button
                   onClick={() => setHostModal(host)}
-                  className="px-5 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                  className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs py-2.5 whitespace-nowrap  rounded-xl bg-blue-600 text-white  hover:bg-blue-700"
                 >
                   View Owner
                 </button>
 
                 <button
                   onClick={() => setCancelBookingId(booking._id)}
-                  className="px-5 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600"
+                  className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs  py-2.5 whitespace-nowrap  rounded-xl bg-red-500 text-white hover:bg-red-600"
                 >
-                  Cancel Booking
+                  Cancel
                 </button>
+
+
+          {booking.Payment?.method !== "razorpay" && (
+                <button
+                  onClick={()=> {handlePay(booking.totalRent)}}
+                  className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs  py-2.5 whitespace-nowrap  rounded-xl bg-yellow-400 text-white font-medium hover:bg-yellow-500 transition"
+                >
+                  pay
+                </button>
+          )}
+
+               
               </div>
+
+
             </div>
 
           </div>

@@ -80,6 +80,7 @@ export const createBooking = asyncHandler(async (req, res) => {
       paymentMethod,
       paymentStatus,
       method,
+      totalCharges,
       razorpay_order_id,
       razorpay_payment_id,
       razorpay_signature,
@@ -205,6 +206,7 @@ export const createBooking = asyncHandler(async (req, res) => {
         Listing:
         listing._id,
         paymentMethod,
+        grandTotal: totalCharges,
         paymentStatus:paymentStatus || "pending",
         razorpay_order_id,
         razorpay_payment_id,

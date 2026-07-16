@@ -33,6 +33,11 @@ export const getCurrentUser =asyncHandler (async (req,res) => {
             {
               path: "guest",
               select: "fullName email profileImg mobileNo"
+            },
+             {
+              path: "Payment",
+              select:
+                "amount currency paymentStatus paymentMethod razorpayOrderId razorpayPaymentId transactionId paidAt method"
             }
           ]
          })

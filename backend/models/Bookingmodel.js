@@ -34,8 +34,9 @@ const BookingSchema = new mongoose.Schema({
         type:Date,
         required:true
     },
-    basePrice:{
+    grandTotal:{
       type:Number,
+      
     },
     totalRent:{
         type:Number,
