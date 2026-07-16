@@ -49,14 +49,14 @@ export default function CheckoutPage(req) {
 
   const { cardDetails } = useContext(listingDataContext);
 
-  useEffect(()=>{
- if(cardDetails){
-   sessionStorage.setItem(
-    "cardDetails",
-    JSON.stringify(cardDetails)
-   );
- }
-},[cardDetails])
+//   useEffect(()=>{
+//  if(cardDetails){
+//    sessionStorage.setItem(
+//     "cardDetails",
+//     JSON.stringify(cardDetails)
+//    );
+//  }
+// },[cardDetails])
   
   const cardInfo = JSON.parse(
   sessionStorage.getItem("cardDetails")

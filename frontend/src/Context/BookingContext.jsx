@@ -36,6 +36,8 @@ const BookingContext = ({ children }) => {
     }
   });
 
+  const { cardDetails } = useContext(listingDataContext);
+  
  const savedBooking = JSON.parse(
   sessionStorage.getItem("bookingInfo") || "{}"
 );
@@ -167,6 +169,12 @@ const saveBookingInfo = () => {
     charges,
     serviceCharge
   };
+
+
+    sessionStorage.setItem(
+      "cardDetails",
+      JSON.stringify(cardDetails)
+    );
 
 
   sessionStorage.setItem(
