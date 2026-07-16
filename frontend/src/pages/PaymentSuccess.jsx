@@ -18,7 +18,10 @@ const PaymentSuccess = () => {
 
     const { cardDetails } = useContext(listingDataContext);
     // console.log(cardDetails);
-      const listingId = cardDetails._id;
+    const cardInfo = JSON.parse(
+  sessionStorage.getItem("cardDetails")
+);
+      const listingId = cardInfo?._id;
 
 //   const bookingData = paymentData?.booking;
   const payment = paymentData?.payment;

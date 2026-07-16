@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import axios from 'axios'
 import { toast } from 'react-toastify'
 import Nav from '../Component/Nav'
-
+import { RiDeleteBin6Line } from "react-icons/ri";
 import logo from "../assets/logo2.jpeg";
 import { IoIosSearch } from "react-icons/io";
 import { userDataContext } from '../Context/UserContext';
@@ -28,8 +28,8 @@ const MyBooking = () => {
       // Get last 10 bookings
       const allBookings = userData?.Booking || [];
       const lastTenBookings = allBookings.slice(-10).reverse();
-      const activeBookings = lastTenBookings.filter((item) => item?.status === "booked");
-      const cancelledBookings = lastTenBookings.filter((item) => item?.status !== "booked");
+      const activeBookings = allBookings.filter((item) => item?.status === "booked");
+      const cancelledBookings = allBookings.filter((item) => item?.status === "cancelled_by_host" || "cancelled_by_guest");
 
 
 
@@ -197,7 +197,7 @@ const MyBooking = () => {
       <div className="pt-[140px] max-w-6xl mx-auto px-4 pb-10">
         {/* Active Bookings */}
        
-          {activeBookings.length > 0 && (
+         {activeBookings.length > 0 && (
         <div className="mb-10">
           <h2 className="text-2xl font-bold mb-5">
             Active Bookings
@@ -298,59 +298,94 @@ const MyBooking = () => {
         {/* Cancelled History */}
         {cancelledBookings.length > 0 && (
           <div className="mb-10">
-            <h2 className="text-2xl font-bold mb-5">Cancelled History</h2>
+             <h2 className="text-2xl font-bold mb-5">Cancelled History</h2>
             <div className="flex flex-col gap-5">
               {cancelledBookings.map((booking) => {
                 const listing = booking.Listing || {};
                 const isCancelledByGuest = booking.status === 'cancelled_by_guest';
                 return (
-                  <div key={booking._id} className="w-full bg-gray-50 rounded-2xl shadow-md hover:shadow-xl transition flex md:flex-row flex-col overflow-hidden">
-                    <div className="md:w-[350px] w-full h-[250px] flex-shrink-0">
-                      <img loading="lazy" src={listing.image1 || ''} alt={listing.title} className="w-full h-full object-cover opacity-75" />
-                    </div>
-                    <div className="flex-1 px-6 py-4">
-                      <div className="flex justify-between items-start gap-4">
-                        <div className='flex-1'>
-                          <h1 className="text-2xl font-bold text-gray-600">{listing.title || 'Untitled Listing'}</h1>
-                          <p className="text-gray-500">• {listing.category || 'Listing'} • {listing.city || '-'} • {listing.landmark || '-'}</p>
-                        </div>
-                        <span className="px-3 py-1 rounded-full bg-gray-200 text-gray-600 text-sm font-semibold">
-                          Cancelled
-                        </span>
-                      </div>
-                      <hr className="my-3"/>
-                      <div className="grid md:grid-cols-2 grid-cols-1 gap-3 text-sm mb-3">
+                  <div
+                    key={booking._id}
+                    className="bg-white rounded-2xl shadow-md hover:shadow-lg duration-300 p-5 border"
+                  >
+                    <div className="flex flex-col md:flex-row justify-between gap-6">
+                      {/* Left */}
+                      <div className="flex gap-4">
+                        <img
+                          src={listing.image1}
+                          alt={listing.title}
+                          className="w-42 h-40 rounded-xl object-cover"
+                        />
+
                         <div>
-                          <p className="text-gray-400">Check In</p>
-                          <h3 className="font-semibold">{new Date(booking.checkIn).toLocaleDateString('en-IN')}</h3>
-                        </div>
-                        <div>
-                          <p className="text-gray-400">Check Out</p>
-                          <h3 className="font-semibold">{new Date(booking.checkOut).toLocaleDateString('en-IN')}</h3>
-                        </div>
-                        <div>
-                          <p className="text-gray-400">Cancelled By</p>
-                          <h3 className="font-semibold">{isCancelledByGuest ? 'You' : 'Host'}</h3>
-                        </div>
-                        <div>
-                          <p className="text-gray-400">Cancelled On</p>
-                          <h3 className="font-semibold">{new Date(booking.cancelledAt).toLocaleDateString('en-IN')}</h3>
-                        </div>
-                      </div>
-                      {booking.cancelReason && (
-                        <div className="bg-gray-100 p-3 rounded-lg mb-3">
-                          <p className="text-gray-600 text-sm">
-                            <span className="font-semibold">Reason:</span> {booking.cancelReason}
+                          <h3 className="text-xl font-bold">
+                            {listing.title || "Untitled Listing"}
+                          </h3>
+
+                          <p className="text-gray-500">
+                            {listing.category} • {listing.city}
                           </p>
-                        </div>
-                      )}
-                      <div className="flex gap-3">
-                        <button
-                          onClick={() => handleDeleteBooking(booking._id)}
-                          className="px-5 py-2 bg-red-500 text-white rounded-lg hover:bg-red-600 flex items-center gap-2"
+
+                       </div>
+                      </div>
+
+                      {/* Right */}
+                      <div className="flex flex-col items-start md:items-end gap-2 pr-10  relative">
+                        <span
+                          className="absolute right-0 -top-4 h-7 w-7 rounded-full bg-zinc-200 flex justify-center items-center cursor-pointer text-black font-bold active:scale-95"
+                          onClick={() => {
+                            handleDeleteHistory(booking._id);
+                          }}
                         >
-                          <MdDelete size={18} /> Delete from History
-                        </button>
+                          <RiDeleteBin6Line />
+                        </span>
+
+                        {booking.status === "cancelled_by_guest" && (
+                          <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-semibold">
+                            Cancelled by Guest
+                          </span>
+                        )}
+
+                        {booking.status === "cancelled_by_host" && (
+                          <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-semibold">
+                            Cancelled by Host
+                          </span>
+                        )}
+
+                        <p className="text-sm text-gray-600">
+                          <span className="font-semibold">Check In:</span>{" "}
+                          {new Date(booking.checkIn).toLocaleDateString(
+                            "en-IN",
+                          )}
+                        </p>
+
+                        <p className="text-sm text-gray-600">
+                          <span className="font-semibold">Check Out:</span>{" "}
+                          {new Date(booking.checkOut).toLocaleDateString(
+                            "en-IN",
+                          )}
+                        </p>
+
+                        <p className="text-sm text-gray-600">
+                          <span className="font-semibold">Total Rent:</span> ₹
+                          {booking.totalRent}
+                        </p>
+
+                        {booking.cancelReason && (
+                          <p className="text-sm text-red-500 max-w-xs text-right">
+                            <span className="font-semibold">Reason:</span>{" "}
+                            {booking.cancelReason}
+                          </p>
+                        )}
+
+                        {booking.cancelledAt && (
+                          <p className="text-xs text-gray-400">
+                            Cancelled on{" "}
+                            {new Date(booking.cancelledAt).toLocaleString(
+                              "en-IN",
+                            )}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>

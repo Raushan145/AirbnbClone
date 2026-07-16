@@ -14,6 +14,7 @@ import { listingDataContext } from "../../Context/ListingContex";
 import { RazorPayDataContext } from "../../Context/RazorpayContext";
 import { GridLoader   } from "react-spinners";
 import { PulseLoader   } from "react-spinners";
+import { useEffect } from "react";
 
 
 
@@ -47,9 +48,35 @@ export default function CheckoutPage(req) {
   const { checkOutHandler } = useContext(RazorPayDataContext);
 
   const { cardDetails } = useContext(listingDataContext);
-  const listingId = cardDetails._id;
+
+  useEffect(()=>{
+ if(cardDetails){
+   sessionStorage.setItem(
+    "cardDetails",
+    JSON.stringify(cardDetails)
+   );
+ }
+},[cardDetails])
+  
+  const cardInfo = JSON.parse(
+  sessionStorage.getItem("cardDetails")
+);
+
+  console.log(" CardInfo" , JSON.parse(
+    sessionStorage.getItem("cardDetails")))
+
+  
+  const BookingInfo = JSON.parse(
+  sessionStorage.getItem("bookingInfo"));
+
+  console.log(" BookingInfo" , JSON.parse(
+    sessionStorage.getItem("bookingInfo")))
+
+
   //    console.log(listingId)
+
   const [agree, setAgree] = useState(false);
+  const listingId = cardInfo?._id;
 
   const getListingById = async (listingId) => {
     try {
@@ -74,25 +101,28 @@ export default function CheckoutPage(req) {
     }
   };
 
-  const booking = {
-    image: cardDetails.image1,
-    title: cardDetails.title,
-    location: `${cardDetails.city}, ${cardDetails.landmark}`,
-    checkIn: checkIn,
-    checkOut: checkOut,
-    guests: 2,
-    nights: night,
-    price: totalRent,
-    cleaning: charges,
-    service: 0,
-    tax: tax,
-  };
+ const booking = {
+
+  image: cardInfo?.image1,
+  title: cardInfo?.title,
+  location: `${cardInfo?.city}, ${cardInfo?.landmark}`,
+  checkIn: BookingInfo?.checkIn,
+  checkOut: BookingInfo?.checkOut,
+  guests: 2,
+  nights: BookingInfo?.night || 0,
+  price: BookingInfo?.totalRent || 0,
+  cleaning: BookingInfo?.charges || 0,
+  service: 0,
+  tax: BookingInfo?.tax || 0,
+};
 
   const total =
-    booking.price * booking.nights +
-    booking.cleaning +
-    booking?.service +
-    booking.tax;
+  (BookingInfo?.totalRent || 0) *
+  (BookingInfo?.night || 0)
+  +
+  (BookingInfo?.charges || 0)
+  +
+  (BookingInfo?.tax || 0);
 
   const handleCheckout = (amount) => {
     if (paymentMethod === "online") {
@@ -286,17 +316,17 @@ export default function CheckoutPage(req) {
 
               <div className="flex justify-between">
                 <span>Cleaning Fee</span>
-                <span>₹{booking.cleaning}</span>
+                <span>₹{Math.round(booking.cleaning)}</span>
               </div>
 
               <div className="flex justify-between">
                 <span>Service Fee</span>
-                <span>₹{booking.service}</span>
+                <span>₹{Math.round(booking.service)}</span>
               </div>
 
               <div className="flex justify-between">
                 <span>Taxes</span>
-                <span>₹{booking.tax}</span>
+                <span>₹{Math.round(booking.tax)}</span>
               </div>
 
               <hr />
@@ -304,7 +334,7 @@ export default function CheckoutPage(req) {
               <div className="flex justify-between font-bold text-lg">
                 <span>Total</span>
 
-                <span>₹{total}</span>
+                <span>₹{Math.round(total)}</span>
               </div>
             </div>
             {/* Terms */}
@@ -335,7 +365,7 @@ export default function CheckoutPage(req) {
               }`}
             >
               {paymentMethod === "online"
-                ? createBookingLoading ? <PulseLoader /> : `Pay ₹${total}`
+                ? createBookingLoading ? <PulseLoader /> : `Pay ₹${Math.round(total)}`
                 : createBookingLoading
                   ? "Processing..."
                   : "Confirm Booking"}

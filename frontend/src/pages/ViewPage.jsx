@@ -59,7 +59,7 @@ const ViewPage = () => {
   const [city, setCity] = useState("");
   const [landmark, setLandmark] = useState("");
   const [imgError, setImgError] = useState(false);
-  const{  checkIn, setCheckIn, checkOut, setCheckOut,totalCharges, setTotalCharges, totalRent,setTotalRent,night, setNight,tax,setTax,charges,setCharges,bookingData,setBookingData,handleBooking}= useContext(bookingDataContect);
+  const{  checkIn, setCheckIn, checkOut, setCheckOut,totalCharges, setTotalCharges, totalRent,setTotalRent,night, setNight,tax,setTax,charges,setCharges,bookingData,setBookingData,handleBooking ,saveBookingInfo}= useContext(bookingDataContect);
 
 
   const handleLogout = async () => {
@@ -670,29 +670,32 @@ const year = start.getFullYear();
 
                   <div className="flex justify-between">
                     <span>₹{cardDetails.rent} × {night} nights</span>
-                    <span>₹{totalRent}</span>
+                    <span>₹{Math.round(totalRent)}</span>
                   </div>
 
                   <div className="flex justify-between mt-2">
                     <span>Cleaning Fee</span>
-                    <span>₹{charges}</span>
+                    <span>₹{Math.round(charges)}</span>
                   </div>
 
                   <div className="flex justify-between mt-2">
                     <span>Taxs</span>
-                    <span>₹{tax}</span>
+                    <span>₹{Math.round(tax)}</span>
                   </div>
 
                   <hr className="my-3" />
 
                   <div className="flex justify-between font-bold text-lg">
                     <span>Total</span>
-                    <span>₹{totalCharges}</span>
+                    <span>₹{Math.round(totalCharges)}</span>
                   </div>
                 </div>
 
                 <button
-                  onClick={() => navigate("/check-out")}
+                  onClick={() =>{
+                      saveBookingInfo();
+                      navigate("/check-out");
+                    }}
                   disabled={!cardDetails?._id || !checkIn || !checkOut}
                   className="w-full mt-6 bg-red-500 text-white py-3 rounded-3xl hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
                   >
@@ -945,29 +948,32 @@ const year = start.getFullYear();
 
                   <div className="flex justify-between">
                     <span>₹{cardDetails.rent} × {night} nights</span>
-                    <span>₹{totalRent}</span>
+                    <span>₹{Math.round(totalRent)}</span>
                   </div>
 
                   <div className="flex justify-between mt-2">
                     <span>Cleaning Fee</span>
-                    <span>₹{charges}</span>
+                    <span>₹{Math.round(charges)}</span>
                   </div>
 
                   <div className="flex justify-between mt-2">
                     <span>Taxs</span>
-                    <span>₹{tax}</span>
+                    <span>₹{Math.round(tax)}</span>
                   </div>
 
                   <hr className="my-3" />
 
                   <div className="flex justify-between font-bold text-lg">
                     <span>Total</span>
-                    <span>₹{totalCharges}</span>
+                    <span>₹{Math.round(totalCharges)}</span>
                   </div>
                 </div>
 
                 <button
-                  onClick={() => navigate("/check-out")}
+                  onClick={() => {
+                    saveBookingInfo();
+                    navigate("/check-out");
+                  }}
                   disabled={!cardDetails?._id || !checkIn || !checkOut}
                   className="w-full mt-6 bg-red-500 text-white py-3 rounded-3xl hover:bg-red-600 disabled:cursor-not-allowed disabled:opacity-60"
                 >

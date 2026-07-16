@@ -36,24 +36,33 @@ const BookingContext = ({ children }) => {
     }
   });
 
+ const savedBooking = JSON.parse(
+  sessionStorage.getItem("bookingInfo") || "{}"
+);
+
+console.log("Saved Bookin",  JSON.parse(
+  sessionStorage.getItem("bookingInfo") || "{}"
+))
+
   const handleBooking = async (
     listingId,
     paymentInfo = {}
   ) => {
     try {
       setCreateBookingLoading(true);
-      setPayingLoading(true)
         // console.log("Frontend CheckIn:", checkIn);
-        // console.log("Frontend CheckOut:", checkOut);
+        console.log("Frontend Payment:", paymentMethod);
+
+      
       const payload = {
-        checkIn,
-        checkOut,
-        totalRent: totalCharges,
-        totalCharges,
-        night,
-        cleaningFee: charges,
+        checkIn:savedBooking?.checkIn,
+        checkOut:savedBooking?.checkOut,
+        totalRent: savedBooking?.totalRent,
+        totalCharges: savedBooking?.totalCharge,
+        night:savedBooking?.night,
+        cleaningFee: savedBooking?.charges,
         serviceFee: serviceCharge,
-        taxes: tax,
+        taxes: savedBooking?.tax,
         paymentMethod,
 
         ...paymentInfo,
@@ -79,10 +88,13 @@ const BookingContext = ({ children }) => {
 
       toast.success("Booking Successful");
       navigate("/booked")
+      
+  sessionStorage.removeItem("bookingInfo");
       return result.data;
     } catch (error) {
       setBookingData(null);
-
+      
+  sessionStorage.removeItem("bookingInfo");
       toast.error(
         error.response?.data?.message || "Booking Failed"
       );
@@ -141,6 +153,27 @@ const BookingContext = ({ children }) => {
   }
 };
 
+const saveBookingInfo = () => {
+
+   sessionStorage.removeItem("bookingInfo");
+
+  const bookingInfo = {
+    checkIn,
+    checkOut,
+    totalRent,
+    totalCharges,
+    night,
+    tax,
+    charges,
+    serviceCharge
+  };
+
+
+  sessionStorage.setItem(
+    "bookingInfo",
+    JSON.stringify(bookingInfo)
+  );
+};
 
   return (
     <bookingDataContect.Provider
@@ -173,7 +206,8 @@ const BookingContext = ({ children }) => {
         checkOutLoading,
         setCheckOutLoading,
         payingLoading, 
-        setPayingLoading
+        saveBookingInfo,
+        setPayingLoading,
       }}
     >
       {children}

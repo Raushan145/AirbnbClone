@@ -494,12 +494,13 @@ const ReservationsList = () => {
                         View Guest
                       </button>
 
+                    {booking?.Payment?.paymentStatus !== "paid" && (
                       <button
                         onClick={() => setCancelBookingId(booking._id)}
-                        className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs md:py-2 py-2.5 whitespace-nowrap  rounded-xl bg-red-500 text-white font-medium hover:bg-red-600 transition"
+                        className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs md:py-2 py-2.5 whitespace-nowrap  rounded-xl bg-green-500 text-white font-medium hover:bg-green-600 transition"
                       >
-                        Cancel
-                      </button>
+                         Confirm Check-In
+                      </button>)}
 
                       {filterStatus === "current" && (
                         <button

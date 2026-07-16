@@ -55,12 +55,22 @@ const RazorpayContext = ({ children }) => {
               withCredentials:true
             }
             );
+            const cardInfo = JSON.parse(
+                sessionStorage.getItem("cardDetails")
+              );
 
+              const listingId = cardInfo?._id
 
+             if(!listingId){
+               toast.error("Listing not found");
+               return;
+             }
             if(verify.data.success){
 
-            await handleBooking(cardDetails._id,{
-              
+            await handleBooking(cardInfo?._id,{
+
+
+
               paymentMethod:"online",
 
               paymentStatus:"paid",
