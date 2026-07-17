@@ -235,21 +235,21 @@ const PaymentSuccess = () => {
               <div className="flex justify-between">
                 <span>Cleaning Fee</span>
                 <span>
-                  ₹{bookingData?.cleaningFee}
+                  ₹{Math.round(bookingData?.cleaningFee)}
                 </span>
               </div>
 
               <div className="flex justify-between">
                 <span>Service Fee</span>
                 <span>
-                  ₹{bookingData?.serviceFee}
+                  ₹{Math.round(bookingData?.serviceFee)}
                 </span>
               </div>
 
               <div className="flex justify-between">
                 <span>Taxes</span>
                 <span>
-                  ₹{bookingData?.taxes}
+                  ₹{Math.round(bookingData?.taxes)}
                 </span>
               </div>
 

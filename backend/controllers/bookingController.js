@@ -51,7 +51,7 @@ export const getBookingsForHost = asyncHandler (async (req, res) => {
 export const getBookingsForListing = asyncHandler(async (req, res) => {
     try {
         const { id } = req.params;
-        const bookings = await Booking.find({ Listing: id, status: "booked" }).sort({ checkIn: 1 });
+        const bookings = await Booking.find({ Listing: id, status: { $in: ["booked", "current"] }}).sort({ checkIn: 1 });
         return res.status(200).json(bookings);
     } catch (error) {
         console.log("Status:", error.response?.status);
@@ -193,16 +193,14 @@ export const createBooking = asyncHandler(async (req, res) => {
       const booking = await Booking.create({
         checkIn: checkInDate,
         checkOut: checkOutDate,
-        totalRent,
-        basePrice:rent,
+        rent: totalRent,
         cleaningFee,
         serviceFee,
         taxes,
         night,
         host:
         listing.host._id,
-        guest:
-        req.userId,
+        guest: req.userId,
         Listing:
         listing._id,
         paymentMethod,
@@ -223,7 +221,7 @@ export const createBooking = asyncHandler(async (req, res) => {
 
         booking: booking._id,
         user: req.userId,
-        amount: totalRent,
+        amount: totalCharges,
         currency: "INR",
         method: paymentMethod === "online" ? "razorpay" : "pay_at_property",
 

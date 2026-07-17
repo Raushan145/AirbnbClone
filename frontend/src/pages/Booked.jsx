@@ -151,7 +151,7 @@ const Booked = () => {
                 </span>
 
                 <span className="font-bold text-2xl text-green-600">
-                  ₹{bookingData?.totalRent}
+                  ₹{bookingData?.grandTotal}
                 </span>
               </div>
 

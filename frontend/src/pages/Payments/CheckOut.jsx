@@ -130,6 +130,8 @@ export default function CheckoutPage(req) {
     //   console.log("Open Razorpay");
     //   console.log(amount);
       checkOutHandler(amount);
+      handleBooking(listingId);
+
     } else {
       // Cash Booking API
       console.log("Create Cash Booking");

@@ -301,7 +301,7 @@ const MyBooking = () => {
                 <div>
                   <p className="text-gray-400">Total Rent</p>
                   <h3 className="text-lg font-bold text-green-600">
-                    ₹{booking.totalRent}
+                    ₹{booking?.Payment?.amount}
                   </h3>
                 </div>
 

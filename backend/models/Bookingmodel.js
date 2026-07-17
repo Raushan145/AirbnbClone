@@ -34,11 +34,11 @@ const BookingSchema = new mongoose.Schema({
         type:Date,
         required:true
     },
-    grandTotal:{
-      type:Number,
-      
+    rent:{
+        type:Number,
+        required:true
     },
-    totalRent:{
+    grandTotal:{
         type:Number,
         required:true
     },
@@ -90,6 +90,9 @@ const BookingSchema = new mongoose.Schema({
     type: Date
     },
     completedAt:{
+      type: Date
+    },
+    createdAt:{
       type: Date
     }
 

@@ -42,9 +42,9 @@ const BookingContext = ({ children }) => {
   sessionStorage.getItem("bookingInfo") || "{}"
 );
 
-console.log("Saved Bookin",  JSON.parse(
-  sessionStorage.getItem("bookingInfo") || "{}"
-))
+// console.log("Saved Bookin",  JSON.parse(
+//   sessionStorage.getItem("bookingInfo") || "{}"
+// ))
 
   const handleBooking = async (
     listingId,
@@ -54,13 +54,13 @@ console.log("Saved Bookin",  JSON.parse(
       setCreateBookingLoading(true);
         // console.log("Frontend CheckIn:", checkIn);
         console.log("Frontend Payment:", paymentMethod);
-
+        console.log("totalCharge", savedBooking?.totalCharges)
       
       const payload = {
         checkIn:savedBooking?.checkIn,
         checkOut:savedBooking?.checkOut,
         totalRent: savedBooking?.totalRent,
-        totalCharges: savedBooking?.totalCharge,
+        totalCharges: savedBooking?.totalCharges,
         night:savedBooking?.night,
         cleaningFee: savedBooking?.charges,
         serviceFee: serviceCharge,

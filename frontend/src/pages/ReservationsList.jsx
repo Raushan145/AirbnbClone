@@ -451,7 +451,7 @@ const ReservationsList = () => {
                         <p className="text-xs text-gray-400">Total Rent</p>
 
                         <p className="font-bold text-xl text-green-600">
-                          ₹{Math.round(booking.totalRent || 0)}
+                          ₹{Math.round(booking?.Payment?.amount || 0)}
                         </p>
                       </div>
 
@@ -605,7 +605,7 @@ const ReservationsList = () => {
                       <p className="text-xs text-gray-400">Total Rent</p>
 
                       <p className="font-bold text-xl text-green-600">
-                        ₹{Math.round(booking.totalRent || 0)}
+                        ₹{Math.round(booking?.Payment?.amount || 0)}
                       </p>
                     </div>
 
@@ -911,7 +911,7 @@ const ReservationsList = () => {
                     <div>
                       <p className="text-gray-400">Total Rent</p>
                       <h3 className="text-xl font-bold text-green-600">
-                        ₹{Math.round(booking.totalRent || 0)}
+                        ₹{Math.round(booking?.Payment?.amount || 0)}
                       </h3>
                     </div>
 
