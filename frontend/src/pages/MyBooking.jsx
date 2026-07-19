@@ -13,22 +13,29 @@ import { HiOutlineDotsVertical } from "react-icons/hi";
 import { MdDelete } from "react-icons/md";
 import { ServerURL } from '../App';
 import Footer from '../Component/Footer'
+import { bookingDataContect } from '../Context/BookingContext'
+import { RazorPayDataContext } from '../Context/RazorpayContext'
 
 const MyBooking = () => {
 
     const { userData, setUserData, getCurrentUser } = useContext(userDataContext);
+    const { updateBookingPayment } = useContext(bookingDataContect);
+      const { checkOutHandler } = useContext(RazorPayDataContext);
       const [showMenu, setShowMenu] = useState(false);
       const [cancelBookingId, setCancelBookingId] = useState(null);
       const [cancelReason, setCancelReason] = useState("");
       const navigate = useNavigate();
       const [hostModal, setHostModal] = useState(null);
       const [loading, setLoading] = useState(true);
+
+
+        // const {fetchReservations,reservations,setReservations} = useContext(ReservationDataContext)
       
       
       // Get last 10 bookings
       const allBookings = userData?.Booking || [];
       const lastTenBookings = allBookings.slice(-10).reverse();
-      const activeBookings = allBookings.filter((item) => item?.status === "booked");
+      const activeBookings = allBookings.filter((item) => (item?.status === "booked" || item?.status === "active"));
       const cancelledBookings = allBookings.filter((item) => item?.status === "cancelled_by_host" || item?.status === "cancelled_by_guest");
 
       console.log(userData?.Booking)
@@ -85,6 +92,17 @@ const MyBooking = () => {
       toast.error(err.response?.data?.message || "Failed to delete booking");
     }
   };
+
+  const handlePay = (booking) => {
+    // console.log('Handle PAy Api Hit')
+    //   console.log(booking)
+    //   console.log(booking?.Payment?.amount)
+    //   console.log(booking._id)
+      const BookingId = booking._id;
+      const amount = booking?.Payment?.amount
+      checkOutHandler(amount ,BookingId)
+      getCurrentUser()
+  }
 
   // useEffect(() => {
   //   const handleClick = () => {
@@ -199,157 +217,166 @@ const MyBooking = () => {
       <div className="pt-[140px] max-w-6xl mx-auto px-4 pb-10">
         {/* Active Bookings */}
        
-         {activeBookings.length > 0 && (
-        <div className="mb-10">
-          <h2 className="text-2xl font-bold mb-5">
-            Active Bookings
-          </h2>
+       {activeBookings.length === 0 ? (
+          <div className="flex flex-col items-center justify-center mt-20 text-center">
 
-          <div className="flex flex-col gap-5">
-
-            {activeBookings.map((booking) => {
-              const listing = booking.Listing || {};
-              const host = booking.host || {};
-              // console.log("Booking =>", booking);
-              // console.log("Host =>", booking.host);
-
-        // const listing = booking.Listing || {};
-        // const host = booking.host || {};
-
-        return (
-          <div
-            key={booking._id}
-            className="w-full bg-white rounded-2xl shadow-md hover:shadow-xl transition flex md:flex-row flex-col overflow-hidden"
-          >
-            <div className="md:w-[350px] w-full h-[250px] flex-shrink-0">
-              <img
-                src={listing.image1 || ""}
-                alt={listing.title}
-                className="w-full h-full object-cover"
-              />
+            <div className="text-6xl mb-4">
+              🏡
             </div>
 
-            <div className="flex-1 px-6 py-4">
+            <h2 className="text-3xl font-bold text-gray-700">
+              No Current Bookings
+            </h2>
 
-              <div className='flex justify-between gap-3 flex-col md:flex-row'>
+            <p className="text-gray-500 mt-2 text-lg">
+              You don't have any active bookings right now.
+            </p>
 
-              <div className="flex justify-between items-start gap-4">
-                <div className="flex-1">
-                  <h1 className="text-2xl font-bold">
-                    {listing.title || "Untitled Listing"}
-                  </h1>
-
-                  <p className="text-gray-500">
-                    • {listing.category || "Listing"} • {listing.city || "-"} •{" "}
-                    {listing.landmark || "-"}
-                  </p>
-                </div>
-
-
-              
-              </div>
-
-               {/* Badges */}
-                      <div className="flex flex-wrap gap-3 md:justify-end items-start h-fit">
-                        <span className="px-3 py-2 rounded-full flex justify-center items-center text-sm font-semibold bg-green-100 text-green-700">
-                         {booking.status}
-                        </span>
-
-                        <span className="px-3 py-2 rounded-full flex justify-center items-center text-sm font-semibold bg-cyan-100 text-cyan-700">
-                          {booking.Payment?.paymentStatus}
-                        </span>
-
-                        <span className="px-3 py-2 rounded-full flex justify-center items-center text-sm font-semibold bg-orange-100 text-orange-700">
-                           {booking.Payment?.method === "razorpay" ? "Online" : booking.Payment?.method}
-                        </span>
-                      </div>
-              </div>
-
-              <hr className="my-3" />
-
-              <div className="grid md:grid-cols-3 grid-cols-2 gap-3 text-sm">
-
-                {/* Host Details */}
-                <div>
-                  <p className="text-gray-400">Host Name</p>
-                  <h3 className="font-semibold">
-                    {host?.fullName}
-                  </h3>
-                </div>
-                <div>
-                  <p className="text-gray-400">Host Email</p>
-                  <h3 className="font-semibold">
-                   {host?.email}
-                  </h3>
-                </div>
-
-                {/* CheckIn - checkOut Details */}
-                <div>
-                  <p className="text-gray-400">Check In</p>
-                  <h3 className="font-semibold">
-                    {new Date(booking.checkIn).toLocaleDateString("en-IN")}
-                  </h3>
-                </div>
-
-                <div>
-                  <p className="text-gray-400">Check Out</p>
-                  <h3 className="font-semibold">
-                    {new Date(booking.checkOut).toLocaleDateString("en-IN")}
-                  </h3>
-                </div>
-
-                <div>
-                  <p className="text-gray-400">Total Rent</p>
-                  <h3 className="text-lg font-bold text-green-600">
-                    ₹{booking?.Payment?.amount}
-                  </h3>
-                </div>
-
-                {/* <div>
-                  <p className="text-gray-400">Status</p>
-                  <h3 className="text-lg font-bold text-green-600">
-                      Confirm
-                  </h3>
-                </div> */}
-              </div>
-
-              {/* Button for navigate other case */}
-              <div className="flex flex-wrap gap-3 mt-5">
-                <button
-                  onClick={() => setHostModal(host)}
-                  className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs py-2.5 whitespace-nowrap  rounded-xl bg-blue-600 text-white  hover:bg-blue-700"
-                >
-                  View Owner
-                </button>
-
-                <button
-                  onClick={() => setCancelBookingId(booking._id)}
-                  className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs  py-2.5 whitespace-nowrap  rounded-xl bg-red-500 text-white hover:bg-red-600"
-                >
-                  Cancel
-                </button>
-
-
-          {booking.Payment?.method !== "razorpay" && (
-                <button
-                  onClick={()=> {handlePay(booking.totalRent)}}
-                  className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs  py-2.5 whitespace-nowrap  rounded-xl bg-yellow-400 text-white font-medium hover:bg-yellow-500 transition"
-                >
-                  pay
-                </button>
-          )}
-
-               
-              </div>
-
-
-            </div>
+            <button
+              onClick={() => navigate("/")}
+              className="mt-6 px-6 py-3 rounded-xl bg-green-600 text-white font-semibold hover:bg-green-700 transition"
+            >
+              Continue Booking
+            </button>
 
           </div>
-        );
-      })}
-    </div>
-  </div>
+        ) : (
+          activeBookings.map((booking) => {
+            const listing = booking.Listing || {};
+            const host = booking.host || {};
+
+          return (
+                <div
+                  key={booking._id}
+                  className="w-full bg-white rounded-2xl shadow-md hover:shadow-xl transition flex md:flex-row flex-col overflow-hidden"
+                >
+                  <div className="md:w-[350px] w-full h-[250px] flex-shrink-0">
+                    <img
+                      src={listing.image1 || ""}
+                      alt={listing.title}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+
+                  <div className="flex-1 px-6 py-4">
+
+                    <div className='flex justify-between gap-3 flex-col md:flex-row'>
+
+                    <div className="flex justify-between items-start gap-4">
+                      <div className="flex-1">
+                        <h1 className="text-2xl font-bold">
+                          {listing.title || "Untitled Listing"}
+                        </h1>
+
+                        <p className="text-gray-500">
+                          • {listing.category || "Listing"} • {listing.city || "-"} •{" "}
+                          {listing.landmark || "-"}
+                        </p>
+                      </div>
+
+
+                    
+                    </div>
+
+                    {/* Badges */}
+                            <div className="flex flex-wrap gap-3 md:justify-end items-start h-fit">
+                              <span className="px-3 py-2 rounded-full flex justify-center items-center text-sm font-semibold bg-green-100 text-green-700">
+                              {booking.status}
+                              </span>
+
+                              <span className="px-3 py-2 rounded-full flex justify-center items-center text-sm font-semibold bg-cyan-100 text-cyan-700">
+                                {booking.Payment?.paymentStatus}
+                              </span>
+
+                              <span className="px-3 py-2 rounded-full flex justify-center items-center text-sm font-semibold bg-orange-100 text-orange-700">
+                                {booking.Payment?.method === "razorpay" ? "Online" : booking.Payment?.method}
+                              </span>
+                            </div>
+                    </div>
+
+                    <hr className="my-3" />
+
+                    <div className="grid md:grid-cols-3 grid-cols-2 gap-3 text-sm">
+
+                      {/* Host Details */}
+                      <div>
+                        <p className="text-gray-400">Host Name</p>
+                        <h3 className="font-semibold">
+                          {host?.fullName}
+                        </h3>
+                      </div>
+                      <div>
+                        <p className="text-gray-400">Host Email</p>
+                        <h3 className="font-semibold">
+                        {host?.email}
+                        </h3>
+                      </div>
+
+                      {/* CheckIn - checkOut Details */}
+                      <div>
+                        <p className="text-gray-400">Check In</p>
+                        <h3 className="font-semibold">
+                          {new Date(booking.checkIn).toLocaleDateString("en-IN")}
+                        </h3>
+                      </div>
+
+                      <div>
+                        <p className="text-gray-400">Check Out</p>
+                        <h3 className="font-semibold">
+                          {new Date(booking.checkOut).toLocaleDateString("en-IN")}
+                        </h3>
+                      </div>
+
+                      <div>
+                        <p className="text-gray-400">Total Rent</p>
+                        <h3 className="text-lg font-bold text-green-600">
+                          ₹{booking?.Payment?.amount}
+                        </h3>
+                      </div>
+
+                      {/* <div>
+                        <p className="text-gray-400">Status</p>
+                        <h3 className="text-lg font-bold text-green-600">
+                            Confirm
+                        </h3>
+                      </div> */}
+                    </div>
+
+                    {/* Button for navigate other case */}
+                    <div className="flex flex-wrap gap-3 mt-5">
+                      <button
+                        onClick={() => setHostModal(host)}
+                        className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs py-2.5 whitespace-nowrap  rounded-xl bg-blue-600 text-white  hover:bg-blue-700"
+                      >
+                        View Owner
+                      </button>
+
+                      <button
+                        onClick={() => setCancelBookingId(booking._id)}
+                        className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs  py-2.5 whitespace-nowrap  rounded-xl bg-red-500 text-white hover:bg-red-600"
+                      >
+                        Cancel
+                      </button>
+
+
+                {booking.Payment?.method !== "razorpay" && (
+                      <button
+                        onClick={()=> {handlePay(booking)}}
+                        className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs  py-2.5 whitespace-nowrap  rounded-xl bg-yellow-400 text-white font-medium hover:bg-yellow-500 transition"
+                      >
+                        pay
+                      </button>
+                )}
+
+                    
+                    </div>
+
+
+                  </div>
+
+                </div>
+              );
+  })
 )}
 
 

@@ -94,8 +94,7 @@ const borderColor = '#ddd'
  return (
     <div className='min-h-screen w-full flex items-center justify-center p-4' style={{backgroundColor: bgColor}}>
         <div className={`bg-white rounded-xl shadow-lg w-full max-w-md p-4 border-[1px] `} style={{border: `1px solid ${borderColor}`}} >
-             <div
-                    className="px-4 py-2 bg-white rounded-full shadow cursor-pointer flex justify-center items-center hover:bg-zinc-50 absolute top-5 left-5 active:scale-95"
+             <div className="px-4 py-2 bg-white rounded-full shadow cursor-pointer flex justify-center items-center hover:bg-zinc-50 absolute top-5 left-5 active:scale-95"
                     onClick={() => navigate("/")}
                   >
                    <span className='flex justify-center items-center gap-2'> <FaChevronLeft size={15}/> Back</span>

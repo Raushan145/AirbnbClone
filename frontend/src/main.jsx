@@ -12,6 +12,7 @@ import BookingContext from './Context/BookingContext.jsx'
 import { ReviewProvider } from './Context/ReviewContext.jsx'
 import 'react-loading-skeleton/dist/skeleton.css'
 import RazorpayContext from './Context/RazorpayContext.jsx'
+import ReservationContext from './Context/ReservationContext.jsx';
 
 
 createRoot(document.getElementById('root')).render(
@@ -19,13 +20,15 @@ createRoot(document.getElementById('root')).render(
       <AuthContext>
         <ListingContex>
          <UserContext>
-            <BookingContext>        
-               <ReviewProvider>
-                  <RazorpayContext>
-                     <App />
-                  </RazorpayContext>
-               </ReviewProvider>
-            </BookingContext>
+            <ReservationContext>
+               <BookingContext>        
+                  <ReviewProvider>
+                     <RazorpayContext>
+                        <App />
+                     </RazorpayContext>
+                  </ReviewProvider>
+               </BookingContext>
+            </ReservationContext>
          </UserContext> 
         </ListingContex>
       </AuthContext>

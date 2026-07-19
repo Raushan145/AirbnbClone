@@ -119,19 +119,19 @@ const Nav = ({
 
         <div className="flex items-center gap-4">
 
-           <button
+          {userData && ( <button
             onClick={() => navigate("/Reservations-Dashboard")}
             className="hidden md:block bg-zinc-100 px-4 py-2 rounded-full hover:bg-zinc-200 cursor-pointer"
           >
             Reservations
-          </button>
+          </button>)}
 
-          <button
+         { userData && ( <button
             onClick={() => navigate("/listingpage1")}
             className="hidden md:block bg-zinc-100 px-4 whitespace-nowrap  py-2 rounded-full hover:bg-zinc-200 cursor-pointer"
           >
             List Your Home
-          </button>
+          </button>)}
 
           <div className="relative flex items-center gap-3 bg-zinc-100 md:px-4 md:py-2 px-2 py-1 rounded-full">
 
@@ -193,41 +193,50 @@ const Nav = ({
                   </div>
                 )}
 
-                <div
+                {!userData && (<div
+                  onClick={() => {navigate("/signup")
+                    setShowMenu(false)
+                  }}
+                  className="px-5 py-3 hover:bg-gray-100 cursor-pointer "
+                >
+                  signUp
+                </div>)}
+
+                {userData && (<div
                   onClick={() => {navigate("/listingpage1")
                     setShowMenu(false)
                   }}
                   className="px-5 py-3 hover:bg-gray-100 cursor-pointer "
                 >
                   List Your Home
-                </div>
+                </div>)}
 
-                <div
+               {userData && ( <div
                   onClick={() => {navigate("/Reservations-Dashboard")
                     setShowMenu(false)
                   }}
                   className="px-5 py-3 hover:bg-gray-100 cursor-pointer"
                 >
                   Reservations
-                </div>
+                </div>)}
 
-                <div
+                {userData && (<div
                   onClick={() => {navigate("/mylisting") 
                     setShowMenu(false)
                   }}
                   className="px-5 py-3 hover:bg-gray-100 cursor-pointer"
                 >
                   My Listing
-                </div>
+                </div>)}
 
-                <div
+               {userData && ( <div
                   onClick={() => {navigate("/mybooking") 
                     setShowMenu(false)
                   }}
                   className="px-5 py-3 hover:bg-gray-100 cursor-pointer"
                 >
                   My Booking
-                </div>
+                </div>)}
 
               </div>
             )}

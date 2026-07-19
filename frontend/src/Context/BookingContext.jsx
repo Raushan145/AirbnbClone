@@ -5,6 +5,7 @@ import { userDataContext } from "./UserContext";
 import { listingDataContext } from "./ListingContex";
 import { useNavigate } from "react-router-dom";
 import { toast } from "react-toastify";
+import { ReservationDataContext } from "./ReservationContext";
 
 export const bookingDataContect = createContext();
 
@@ -26,6 +27,8 @@ const BookingContext = ({ children }) => {
   const { getCurrentUser } = useContext(userDataContext);
   const { getListing } = useContext(listingDataContext);
   const [checkOutLoading, setCheckOutLoading] = useState(false)
+
+    const {fetchReservations} = useContext(ReservationDataContext)
 
   const [bookingData, setBookingData] = useState(() => {
     try {
@@ -127,7 +130,7 @@ const BookingContext = ({ children }) => {
     }
   };
 
-
+  // CheckOut
   const checkoutBooking = async (bookingId) => {
   try {
     setCheckOutLoading(true);
@@ -140,6 +143,34 @@ const BookingContext = ({ children }) => {
 
     
      console.log("Checkout Success");
+
+  await fetchReservations();
+  console.log("Reservations fetched");
+
+  await getCurrentUser();
+  console.log("Current user fetched"); // ya fetchReservations()
+    toast.success(res.data.message || "Guest Checked Out Successfully");
+  } catch (error) {
+    console.log(error);
+    toast.error(error.response?.data?.message || "Checkout Failed");
+  } finally {
+    setCheckOut(false);
+  }
+};
+
+  // Check In
+  const checkInBooking = async (bookingId) => {
+  try {
+    setCheckOutLoading(true);
+
+    const res = await axios.patch(
+      `${ServerURL}/api/booking/checkIn/${bookingId}`,
+      {},
+      { withCredentials: true }
+    );
+
+    
+     console.log("CheckIn Success");
 
   await fetchReservations();
   console.log("Reservations fetched");
@@ -183,6 +214,27 @@ const saveBookingInfo = () => {
   );
 };
 
+
+ const updateBookingPayment = async (bookingId, paymentData) => {
+  try {
+    const res = await axios.patch(
+      `${ServerURL}/api/booking/payment/update/${bookingId}`,
+      paymentData,
+      {
+        withCredentials: true
+      }
+    );
+
+    console.log("Payment Update Success", res.data);
+
+    await fetchReservations();
+    await getCurrentUser();
+
+  } catch (error) {
+    console.log(error);
+  }
+};
+
   return (
     <bookingDataContect.Provider
       value={{
@@ -216,6 +268,8 @@ const saveBookingInfo = () => {
         payingLoading, 
         saveBookingInfo,
         setPayingLoading,
+        updateBookingPayment,
+        checkInBooking
       }}
     >
       {children}

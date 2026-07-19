@@ -66,9 +66,28 @@ const MyListing = () => {
               )
               :
               (
-                <div className="col-span-full text-3xl text-gray-500 mt-20 text-center">
-                    No Listing Found
+               <div className="col-span-full flex flex-col items-center justify-center py-20 text-center">
+
+                <div className="text-6xl mb-5">
+                  🏠
                 </div>
+
+                <h2 className="text-3xl font-bold text-gray-800">
+                  No Listings Found
+                </h2>
+
+                <p className="text-gray-500 mt-3 max-w-md">
+                  You haven't created any listings yet. Become a host and start earning by welcoming guests.
+                </p>
+
+                <button
+                  onClick={() => navigate("/listingpage1")} // apna route yaha de
+                  className="mt-8 px-7 py-3 rounded-xl bg-red-500 text-white font-semibold hover:bg-red-600 transition-all duration-300 shadow-lg hover:shadow-xl"
+                >
+                  Become a Host
+                </button>
+
+              </div>
               )
 
               }

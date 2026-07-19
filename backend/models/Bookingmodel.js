@@ -18,7 +18,7 @@ const BookingSchema = new mongoose.Schema({
     },
     status:{
         type:String,
-        enum:["booked", "cancelled_by_guest","cancelled_by_host","current","complete"],
+        enum:["booked", "cancelled_by_guest","cancelled_by_host","current","complete","active"],
         default:"booked"
     },
     bookingStatus:{
@@ -93,6 +93,9 @@ const BookingSchema = new mongoose.Schema({
       type: Date
     },
     createdAt:{
+      type: Date
+    },
+    checkInAt:{
       type: Date
     }
 

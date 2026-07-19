@@ -51,7 +51,7 @@ export const getBookingsForHost = asyncHandler (async (req, res) => {
 export const getBookingsForListing = asyncHandler(async (req, res) => {
     try {
         const { id } = req.params;
-        const bookings = await Booking.find({ Listing: id, status: { $in: ["booked", "current"] }}).sort({ checkIn: 1 });
+        const bookings = await Booking.find({ Listing: id, status: { $in: ["booked", "active"] }}).sort({ checkIn: 1 });
         return res.status(200).json(bookings);
     } catch (error) {
         console.log("Status:", error.response?.status);
@@ -371,7 +371,7 @@ export const createBooking = asyncHandler(async (req, res) => {
 //     }
 // }
 
-export const checkoutBooking = async (req, res) => {
+ export const checkoutBooking = async (req, res) => {
   try {
     const booking = await Booking.findByIdAndUpdate(
       req.params.id,
@@ -390,6 +390,48 @@ export const checkoutBooking = async (req, res) => {
     });
   } catch (err) {
     res.status(500).json({
+      success: false,
+      message: err.message,
+    });
+  }
+};
+
+export const checkInBooking = async (req, res) => {
+  try {
+    const booking = await Booking.findById(req.params.id);
+    console.log(booking);
+
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found",
+      });
+    }
+
+    // Payment check
+    if (
+      !booking.Payment ||
+      booking.Payment.paymentStatus !== "paid"
+    ) {
+      return res.status(400).json({
+        success: false,
+        message: "Complete payment to check in.",
+      });
+    }
+
+    booking.status = "active";
+    booking.checkInAt = new Date();
+
+    await booking.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Guest checked in successfully.",
+      booking,
+    });
+
+  } catch (err) {
+    return res.status(500).json({
       success: false,
       message: err.message,
     });
@@ -443,6 +485,19 @@ export const cancelBooking = asyncHandler(async (req, res) => {
         cancelledAt: new Date()
       }
     );
+
+    if (booking.Payment) {
+      const payment = await Payment.findById(booking.Payment);
+
+      if (payment) {
+        await Payment.findByIdAndUpdate(booking.Payment, {
+          paymentStatus:
+            payment.method === "pay_at_property"
+              ? "failed"
+              : "refunded",
+        });
+      }
+    }
 
 
     await Listing.findByIdAndUpdate(
@@ -513,3 +568,79 @@ export const deleteBooking =asyncHandler (async (req, res) => {
         return res.status(500).json({ message: "Delete Booking Error" });
     }
 })
+
+
+export const updateBookingPayment = asyncHandler(async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+
+    const {
+      paymentMethod,
+      paymentStatus,
+      razorpay_order_id,
+      razorpay_payment_id,
+      razorpay_signature,
+    } = req.body;
+
+    // Booking
+    const booking = await Booking.findById(bookingId);
+
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found",
+      });
+    }
+
+    // Booking ke Payment ObjectId se Payment document nikalo
+    const payment = await Payment.findById(booking.Payment);
+
+    if (!payment) {
+      return res.status(404).json({
+        success: false,
+        message: "Payment not found",
+      });
+    }
+
+    // Payment Update
+    payment.method =
+      paymentMethod === "online"
+        ? "razorpay"
+        : "pay_at_property";
+
+    payment.paymentStatus = paymentStatus;
+
+    payment.transactionId = razorpay_payment_id;
+
+    payment.razorpayOrderId = razorpay_order_id;
+
+    payment.razorpayPaymentId = razorpay_payment_id;
+
+    payment.razorpaySignature = razorpay_signature;
+
+    payment.paidAt = new Date();
+
+    await payment.save();
+
+
+// Booking Update
+    booking.paymentMethod = paymentMethod;
+    booking.paymentStatus = paymentStatus;
+
+    await booking.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Payment updated successfully",
+      payment,
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});

@@ -262,7 +262,6 @@ const ViewPage = () => {
 
   const isDateReserved = (date) => {
   if (!date) return false;
-
   const normalized = normalizeDate(date);
 
   return reservedDates.some((range) => {
@@ -272,6 +271,7 @@ const ViewPage = () => {
     return normalized >= start && normalized < end;
   });
 };
+
 
   const handleCheckInChange = (date) => {
     if (!date) {

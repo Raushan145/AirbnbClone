@@ -13,27 +13,33 @@ import { RiDeleteBin6Line } from "react-icons/ri";
 import { DotLoader } from "react-spinners";
 import Footer from "../Component/Footer";
 import { bookingDataContect } from "../Context/BookingContext";
+import { ReservationDataContext } from "../Context/ReservationContext";
+import { RazorPayDataContext } from "../Context/RazorpayContext";
 
 const ReservationsList = () => {
   const { userData, setUserData, getCurrentUser } = useContext(userDataContext);
   const [showMenu, setShowMenu] = useState(false);
-  const [reservations, setReservations] = useState([]);
-  const [loading, setLoading] = useState(true);
   const [guestModal, setGuestModal] = useState(null);
   const [cancelBookingId, setCancelBookingId] = useState(null);
   const [checkOutBookingId, setCheckOutBookingId] = useState(null);
+  const [checkInBookingId, setCheckInBookingId] = useState(null);
+  const [paymentType, setPaymentType] = useState(null);
+  const [confirmPay, setConfirmPay] = useState(null);
   const [cancelReason, setCancelReason] = useState("");
   const [checkOutDetail, setCheckOutDetail] = useState("");
   const [filterStatus, setFilterStatus] = useState("current");
   const [viewDetails, setViewDetails] = useState(null);
-  const [noOfCompleteReservation, setNoOfCompleteReservation] = useState(null);
-  const [noOfCurrentReservation, setNoOfCurrentReservation] = useState(null);
-  const [noOfUpcomingReservation, setNoOfupComingReservation] = useState(null);
-  const [noOfCancelledReservation, setNoOfCancelledReservation] =
-    useState(null);
   const navigate = useNavigate();
-  const { checkoutBooking } = useContext(bookingDataContect);
+  const { checkoutBooking , checkInBooking} = useContext(bookingDataContect);
   const filter = ["current", "upComing", "complete", "cancelled"];
+
+  const {fetchReservations,reservations,setReservations} = useContext(ReservationDataContext)
+  const { checkOutHandler } = useContext(RazorPayDataContext);
+
+   const {updateBookingPayment } = useContext(bookingDataContect);
+  
+// console.log(reservations)
+// console.log(reservations?.booking?.status)
   const handleLogout = async () => {
     try {
       await axios.post(
@@ -50,26 +56,26 @@ const ReservationsList = () => {
     }
   };
 
-  const fetchReservations = async () => {
-    try {
-      setLoading(true);
-      const result = await axios.get(`${ServerURL}/api/booking/host`, {
-        withCredentials: true,
-      });
-      const bookings = Array.isArray(result.data) ? result.data : [];
-      setReservations(bookings);
-      // console.log(bookings)
-    } catch (error) {
-      console.log(error);
-      setReservations([]);
-      console.log("Status:", error.response?.status);
-      console.log("Data:", error.response?.data);
-      console.log(error);
-      toast.error("Unable to load reservations");
-    } finally {
-      setLoading(false);
-    }
-  };
+  // const fetchReservations = async () => {
+  //   try {
+  //     setLoading(true);
+  //     const result = await axios.get(`${ServerURL}/api/booking/host`, {
+  //       withCredentials: true,
+  //     });
+  //     const bookings = Array.isArray(result.data) ? result.data : [];
+  //     setReservations(bookings);
+  //     // console.log(bookings)
+  //   } catch (error) {
+  //     console.log(error);
+  //     setReservations([]);
+  //     console.log("Status:", error.response?.status);
+  //     console.log("Data:", error.response?.data);
+  //     console.log(error);
+  //     toast.error("Unable to load reservations");
+  //   } finally {
+  //     setLoading(false);
+  //   }
+  // };
 
   const handleCancelBooking = async (bookingId) => {
     if (cancelReason.trim() === "") {
@@ -121,8 +127,10 @@ const ReservationsList = () => {
   // }, []);
 
   const activeReservations = (reservations || []).filter(
-    (booking) => booking?.status === "booked",
-  );
+  (booking) =>
+    booking?.status === "active" 
+);
+
   const cancelledReservations = (reservations || []).filter(
     (booking) => booking?.status !== "booked",
   );
@@ -142,7 +150,7 @@ const ReservationsList = () => {
     switch (filterStatus) {
       case "current":
         return (
-          booking.status === "booked" && checkIn <= today && checkOut >= today
+           (booking.status === "booked" || booking.status === "active") && checkIn <= today && checkOut >= today
         );
 
       case "upComing":
@@ -175,7 +183,7 @@ const ReservationsList = () => {
       switch (status) {
         case "current":
           return (
-            booking.status === "booked" && checkIn <= today && checkOut >= today
+           ( booking.status === "booked" || booking.status === "active") && checkIn <= today && checkOut >= today
           );
 
         case "upComing":
@@ -199,23 +207,63 @@ const ReservationsList = () => {
     });
   };
 
-  const handleCheckout = async (bookingId) => {
-    try {
-      await axios.patch(
-        `${ServerURL}/api/booking/checkout/${bookingId}`,
-        {},
-        { withCredentials: true },
-      );
+  // const handleCheckout = async (bookingId) => {
+  //   try {
+  //     await axios.patch(
+  //       `${ServerURL}/api/booking/checkout/${bookingId}`,
+  //       {},
+  //       { withCredentials: true },
+  //     );
 
-      toast.success("Guest Checked Out Successfully");
-      await getCurrentUser();
-      fetchReservations();
-    } catch (error) {
-      console.log(error);
-      toast.error(error.response?.data?.message || "Checkout Failed");
-    }
-  };
+  //     toast.success("Guest Checked Out Successfully");
+  //     await getCurrentUser();
+  //     fetchReservations();
+  //   } catch (error) {
+  //     console.log(error);
+  //     toast.error(error.response?.data?.message || "Checkout Failed");
+  //   }
+  // };
 
+
+  // const handleCheckIn = async (bookingId) => {
+  //   try {
+  //     await axios.patch(
+  //       `${ServerURL}/api/booking/checkout/${bookingId}`,
+  //       {},
+  //       { withCredentials: true },
+  //     );
+
+  //     toast.success("Guest Checked Out Successfully");
+  //     await getCurrentUser();
+  //     fetchReservations();
+  //   } catch (error) {
+  //     console.log(error);
+  //     toast.error(error.response?.data?.message || "Checkout Failed");
+  //   }
+  // };
+
+  const handlePay = (booking)=>{
+    console.log("HandleOnline Pay function Hit")
+    console.log(booking)
+    console.log(booking.grandTotal)
+    console.log(booking._id)
+    const amount = booking.grandTotal
+    const BookingId = booking._id
+    checkOutHandler(amount, BookingId)
+  }
+
+  const handleCashPayment = (booking)=>{
+    console.log("HandleCash Pay function Hit")
+    console.log(booking)
+    console.log(booking.grandTotal)
+    console.log(booking._id)
+    const amount = booking.grandTotal
+    const BookingId = booking._id
+    // checkOutHandler(amount, BookingId)
+    // updateBookingPayment(booking)
+  }
+
+  
   // const filteredReservation = getReservationsByStatus(filterStatus);
 
   return (
@@ -365,7 +413,7 @@ const ReservationsList = () => {
         </div>
       </div>
 
-      <div className="flex flex-wrap gap-6 justify-center pt-[140px] ">
+      <div className="flex flex-wrap gap-6 justify-center pt-[120px] ">
         <div className="w-full max-w-6xl">
           {/* <h2 className="text-xl font-bold mb-4">Active Reservations (Last 10)</h2> */}
         </div>
@@ -385,7 +433,7 @@ const ReservationsList = () => {
               return (
                 <div
                   key={booking._id}
-                  className="w-[95%] max-w-6xl bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 flex md:flex-row flex-col"
+                  className="w-[95%] max-w-6xl bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 flex md:flex-row flex-col mt-2"
                 >
                   {/* Image */}
                   <div className="md:w-[320px] w-full md:h-[280px] h-[220px] p-3">
@@ -448,14 +496,6 @@ const ReservationsList = () => {
                       </div>
 
                       <div>
-                        <p className="text-xs text-gray-400">Total Rent</p>
-
-                        <p className="font-bold text-xl text-green-600">
-                          ₹{Math.round(booking?.Payment?.amount || 0)}
-                        </p>
-                      </div>
-
-                      <div>
                         <p className="text-xs text-gray-400">Check In</p>
 
                         <p className="font-medium">
@@ -473,6 +513,14 @@ const ReservationsList = () => {
                             "en-IN",
                           )}
                         </p>
+                      </div>
+
+                      <div>
+                      <p className="text-xs text-gray-400">Total Rent</p>
+
+                      <p className="font-bold text-xl text-green-600">
+                          ₹{Math.round(booking?.Payment?.amount || 0)}
+                      </p>
                       </div>
 
                       <div>
@@ -494,9 +542,9 @@ const ReservationsList = () => {
                         View Guest
                       </button>
 
-                    {booking?.Payment?.paymentStatus !== "paid" && (
+                    {booking?.status === "booked" && (
                       <button
-                        onClick={() => setCancelBookingId(booking._id)}
+                        onClick={() => setCheckInBookingId(booking._id)}
                         className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs  py-2.5 whitespace-nowrap  rounded-xl bg-green-500 text-white font-medium hover:bg-green-600 transition"
                       >
                          Confirm Check-In
@@ -512,8 +560,11 @@ const ReservationsList = () => {
                       )}
 
                       {booking?.Payment?.paymentStatus !== "paid" && (
-                        <button className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs md:py-2 py-2.5 whitespace-nowrap  rounded-xl bg-yellow-500 text-white font-medium hover:bg-yellow-600 transition">
-                          Pay Online
+                        <button className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs md:py-2 py-2.5 whitespace-nowrap  rounded-xl bg-yellow-500 text-white font-medium hover:bg-yellow-600 transition"
+                        // onClick={() => handlePay(booking)}
+                        onClick={()=> setPaymentType(booking)}
+                        >
+                          Pay 
                         </button>
                       )}
                     </div>
@@ -539,7 +590,7 @@ const ReservationsList = () => {
                return (
               <div
                 key={booking._id}
-                className="w-[95%] max-w-6xl bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 flex md:flex-row flex-col"
+                className="w-[95%] max-w-6xl bg-white rounded-3xl sm:pb-5 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 flex md:flex-row flex-col"
               >
                 {/* Image */}
                 <div className="md:w-[320px] w-full md:h-[280px] h-[220px] p-3">
@@ -660,11 +711,7 @@ const ReservationsList = () => {
                       </button>
                     )}
 
-                    {booking?.Payment?.paymentStatus !== "paid" && (
-                      <button className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs md:py-2 py-2.5 whitespace-nowrap  rounded-xl bg-yellow-500 text-white font-medium hover:bg-yellow-600 transition">
-                        Pay Online
-                      </button>
-                    )}
+                   
                   </div>
                 </div>
               </div>
@@ -686,97 +733,123 @@ const ReservationsList = () => {
               const guest = booking.guest || {};
 
              return (
-                  <div
-                    key={booking._id}
-                    className="bg-white rounded-2xl shadow-md hover:shadow-lg duration-300 p-5 border"
-                  >
-                    <div className="flex flex-col md:flex-row justify-between gap-6">
-                      {/* Left */}
-                      <div className="flex gap-4">
-                        <img
-                          src={listing.image1}
-                          alt={listing.title}
-                          className="w-42 h-40 rounded-xl object-cover"
-                        />
+                   <div
+                  key={booking._id}
+                  className="w-[95%] max-w-6xl bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 flex md:flex-row flex-col mt-2"
+                >
+                  {/* Image */}
+                  <div className="md:w-[320px] w-full md:h-[280px] h-[220px] p-3">
+                    <img
+                      loading="lazy"
+                      src={listing.image1 || ""}
+                      alt={listing.title}
+                      className="w-full h-full object-cover rounded-2xl"
+                    />
+                  </div>
 
-                        <div>
-                          <h3 className="text-xl font-bold">
-                            {listing.title || "Untitled Listing"}
-                          </h3>
+                  {/* Content */}
+                  <div className="flex-1 p-5 md:p-6">
+                    {/* Header */}
+                    <div className="flex justify-between gap-3 flex-col md:flex-row">
+                      <div>
+                        <h1 className="text-xl md:text-2xl font-bold text-gray-800">
+                          {listing.title || "Untitled Listing"}
+                        </h1>
 
-                          <p className="text-gray-500">
-                            {listing.category} • {listing.city}
-                          </p>
-
-                          <p className="text-gray-600 mt-2">
-                            <span className="font-semibold">Guest :</span>{" "}
-                            {guest.fullName}
-                          </p>
-
-                          <p className="text-gray-500 text-sm">{guest.email}</p>
-                        </div>
+                        <p className="text-sm text-gray-500 mt-1">
+                          {listing.category || "Listing"} •{" "}
+                          {listing.city || "-"} • {listing.landmark || "-"}
+                        </p>
                       </div>
 
-                      {/* Right */}
-                      <div className="flex flex-col items-start md:items-end gap-2 pr-10  relative">
-                        <span
-                          className="absolute right-0 -top-4 h-7 w-7 rounded-full bg-zinc-200 flex justify-center items-center cursor-pointer text-black font-bold active:scale-95"
-                          onClick={() => {
-                            handleDeleteHistory(booking._id);
-                          }}
-                        >
-                          <RiDeleteBin6Line />
+                      {/* Badges */}
+                      <div className="flex flex-wrap gap-3 md:justify-end items-start h-fit">
+                        <span className="px-3 py-2 rounded-full flex justify-center items-center text-sm font-semibold bg-green-100 text-green-700">
+                          {booking?.status}
                         </span>
 
-                        {booking.status === "cancelled_by_guest" && (
-                          <span className="bg-yellow-100 text-yellow-700 px-3 py-1 rounded-full text-sm font-semibold">
-                            Cancelled by Guest
-                          </span>
-                        )}
+                        <span className="px-3 py-2 rounded-full flex justify-center items-center text-sm font-semibold bg-cyan-100 text-cyan-700">
+                          {booking?.Payment?.paymentStatus}
+                        </span>
 
-                        {booking.status === "cancelled_by_host" && (
-                          <span className="bg-red-100 text-red-700 px-3 py-1 rounded-full text-sm font-semibold">
-                            Cancelled by Host
-                          </span>
-                        )}
+                        <span className="px-3 py-2 rounded-full flex justify-center items-center text-sm font-semibold bg-orange-100 text-orange-700">
+                          {booking?.paymentMethod}
+                        </span>
+                      </div>
+                    </div>
 
-                        <p className="text-sm text-gray-600">
-                          <span className="font-semibold">Check In:</span>{" "}
+                    <hr className="my-4" />
+
+                    {/* Details */}
+                    <div className="grid md:grid-cols-3 grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-xs text-gray-400">Guest Name</p>
+                        <p className="font-semibold text-gray-700">
+                          {guest.fullName || "Guest"}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="text-xs text-gray-400">Guest Email</p>
+
+                        <p className="font-semibold text-gray-700 truncate">
+                          {guest.email || "-"}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="text-xs text-gray-400">Check In</p>
+
+                        <p className="font-medium">
                           {new Date(booking.checkIn).toLocaleDateString(
                             "en-IN",
                           )}
                         </p>
+                      </div>
 
-                        <p className="text-sm text-gray-600">
-                          <span className="font-semibold">Check Out:</span>{" "}
+                      <div>
+                        <p className="text-xs text-gray-400">Check Out</p>
+
+                        <p className="font-medium">
                           {new Date(booking.checkOut).toLocaleDateString(
                             "en-IN",
                           )}
                         </p>
+                      </div>
 
-                        <p className="text-sm text-gray-600">
-                          <span className="font-semibold">Total Rent:</span> ₹
-                          {booking.totalRent}
-                        </p>
+                      <div>
+                      <p className="text-xs text-gray-400">Total Rent</p>
 
-                        {booking.cancelReason && (
-                          <p className="text-sm text-red-500 max-w-xs text-right">
-                            <span className="font-semibold">Reason:</span>{" "}
-                            {booking.cancelReason}
-                          </p>
-                        )}
+                      <p className="font-bold text-xl text-green-600">
+                          ₹{Math.round(booking?.Payment?.amount || 0)}
+                      </p>
+                      </div>
 
-                        {booking.cancelledAt && (
-                          <p className="text-xs text-gray-400">
-                            Cancelled on{" "}
-                            {new Date(booking.cancelledAt).toLocaleString(
-                              "en-IN",
-                            )}
-                          </p>
-                        )}
+                      <div>
+                        <p className="text-xs text-gray-400">Booking Status</p>
+
+                        <span className="inline-block mt-1 px-3 py-1 rounded-full text-sm bg-green-100 text-green-700">
+                          Confirmed
+                        </span>
                       </div>
                     </div>
+
+                    {/* Buttons */}
+
+                    <div className="flex flex-wrap gap-3 mt-6">
+                      <button
+                        onClick={() => setGuestModal(guest)}
+                        className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs  py-2.5 whitespace-nowrap  rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
+                      >
+                        View Guest
+                      </button>
+
+                   
+
+                      
+                    </div>
                   </div>
+                </div>
                 );
             })
           ))}
@@ -797,7 +870,7 @@ const ReservationsList = () => {
            return (
               <div
                 key={booking._id}
-                className="w-[95%] max-w-6xl bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 flex md:flex-row flex-col"
+                className="w-[95%] max-w-6xl bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 pt-5 overflow-hidden border border-gray-100 flex md:flex-row flex-col"
               >
                 <div className="md:w-[320px] w-full md:h-[280px] h-[220px] p-3 ">
                   <img
@@ -812,7 +885,7 @@ const ReservationsList = () => {
 
               {/* Header */}
 
-              <div className="flex justify-between gap-3 flex-col md:flex-row">
+              <div className="flex justify-between md:items-center gap-3 flex-col md:flex-row">
                       <div>
                         <h1 className="text-xl md:text-2xl font-bold text-gray-800">
                           {listing.title || "Untitled Listing"}
@@ -945,7 +1018,6 @@ const ReservationsList = () => {
           ))}
 
 
-       
       </div>
 
 
@@ -996,13 +1068,13 @@ const ReservationsList = () => {
             <p className="text-sm text-gray-600 mt-2">
               Are you sure you want to mark this booking as checked out?
             </p>
-            <textarea
+            {/* <textarea
               value={checkOutDetail}
               onChange={(e) => setCheckOutDetail(e.target.value)}
               // disabled={!cancelReason.trim()}
               placeholder="Why are you cancelling this booking?"
               className="w-full h-20 border rounded-lg p-3 mt-3 resize-none outline-none required"
-            />
+            /> */}
             <div className="flex justify-end gap-3 mt-6">
               <button
                 onClick={() => {
@@ -1014,10 +1086,127 @@ const ReservationsList = () => {
                 Cancel
               </button>
               <button
-                onClick={() => checkoutBooking(checkOutBookingId)}
-                className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600"
+                onClick={() => {checkoutBooking(checkOutBookingId)
+                                setCheckOutBookingId(null);
+                }}
+                className="px-4 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600"
               >
                 Confirm Check-Out
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {confirmPay && (
+       <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/50 px-4">
+          <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
+
+            <h3 className="text-xl font-bold text-gray-800">
+              Confirm Cash Payment
+            </h3>
+
+            <p className="mt-3 text-gray-600">
+              Guest has paid{" "}
+              <span className="font-semibold text-green-600">
+                ₹{confirmPay?.Payment?.amount}
+              </span>{" "}
+              in cash.
+            </p>
+
+            <div className="mt-4 rounded-lg bg-yellow-50 border border-yellow-200 p-3">
+              <p className="text-sm text-yellow-700">
+                This action will mark the booking as <b>Paid</b>.
+              </p>
+            </div>
+
+            <p className="mt-4 text-sm text-gray-500">
+              Cash payment integration is currently under development.
+              For now, online payment is recommended.
+            </p>
+
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                onClick={() => setConfirmPay(null)}
+                className="px-5 py-2 rounded-lg bg-gray-100 hover:bg-gray-200"
+              >
+                Cancel
+              </button>
+
+              <button
+                onClick={() => {
+                  handleCashPayment(confirmPay);
+                  setConfirmPay(null);
+                }}
+                className="px-5 py-2 rounded-lg bg-yellow-500 text-white hover:bg-yellow-600"
+              >
+                Yes, Mark as Paid
+              </button>
+            </div>
+
+          </div>
+        </div>
+      )}
+
+      {checkInBookingId && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 px-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+            <h3 className="text-lg font-semibold text-gray-800">
+              Confirm Check-In?
+            </h3>
+            <p className="text-sm text-gray-600 mt-2">
+              Are you sure you want to mark this booking as checkIn?
+            </p>
+           
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                onClick={() => {
+                  setCheckInBookingId(null);
+                }}
+                className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={() => {checkInBooking(checkInBookingId)
+                                setCheckInBookingId(null);
+                }}
+                className="px-4 py-2 rounded-lg bg-yellow-500 text-white hover:bg-yellow-600"
+              >
+                Confirm Check-In
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {paymentType && (
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 px-4">
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6">
+            <h3 className="text-lg font-semibold text-gray-800">
+              Select Payment Method
+            </h3>
+            <p className="text-sm text-gray-600 mt-2">
+              Choose how the guest is making the payment.
+            </p>
+           
+            <div className="flex justify-end gap-3 mt-6">
+              <button
+                onClick={() => { setConfirmPay(paymentType)
+                        setPaymentType(null)
+                  // setConfirmPay(paymentType)
+                }}
+                className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200"
+              >
+               Cash
+              </button>
+              <button
+                onClick={() => {handlePay(paymentType)
+                  setPaymentType(null)
+                }}
+                className="px-4 py-2 rounded-lg bg-yellow-500 text-white hover:bg-yellow-600"
+              >
+               Online
               </button>
             </div>
           </div>
@@ -1056,8 +1245,8 @@ const ReservationsList = () => {
 
       {viewDetails && (
         <div className="fixed inset-0 z-[80] flex items-center justify-center bg-black/40 px-4 mt-2">
-          <div className="bg-white rounded-2xl shadow-xl w-full max-w-sm p-6 pb-3 mt-5 overflow-scroll removeScroll">
-            <h3 className="text-lg font-semibold">Booking Details</h3>
+          <div className="bg-white rounded-2xl shadow-xl h-[50vh] w-full max-w-sm p-6 pb-3 mt-5 overflow-scroll removeScroll">
+            <h3 className="text-lg font-bold ">Booking Details</h3>
 
             <div className="mt-4 space-y-2 text-sm text-gray-700 flex gap-2 flex-col">
               <p>
@@ -1158,6 +1347,7 @@ const ReservationsList = () => {
         </div>
       )}
 
+      
       <Footer />
     </>
   );
