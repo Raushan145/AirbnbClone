@@ -173,11 +173,16 @@ export const DeleteListing =asyncHandler (async (req, res) => {
   }
 })
 
+<<<<<<< HEAD
 export const search =asyncHandler (async(req,res) =>{
+=======
+export const search = asyncHandler(async(req,res)=>{
+>>>>>>> recover-health
 
   try {
 
     const {query} = req.query;
+<<<<<<< HEAD
 
     if(!query){
       return res.status(400).json({message:"Search Queary is required"})
@@ -199,3 +204,49 @@ export const search =asyncHandler (async(req,res) =>{
   }
 
 })
+=======
+    console.log(query)
+
+    if(!query || query.trim() === ""){
+      return res.status(400).json({
+        success:false,
+        message:"Search query is required"
+      });
+    }
+
+
+  console.log("Search Query:", query);
+
+const listings = await Listing.find({
+  $or:[
+    { title: { $regex: query, $options:"i" }},
+    { city: { $regex: query, $options:"i" }},
+    { landmark: { $regex: query, $options:"i" }},
+    { country: { $regex: query, $options:"i" }},
+    { category: { $regex: query, $options:"i" }}
+  ]
+});
+
+console.log("Found Listings:", listings.length);
+
+
+    return res.status(200).json({
+      success:true,
+      total:listings.length,
+      listings
+    });
+
+
+  } catch(error){
+
+    console.log("Search error:",error);
+
+    return res.status(500).json({
+      success:false,
+      message:"Internal Server Error"
+    });
+
+  }
+
+});
+>>>>>>> recover-health

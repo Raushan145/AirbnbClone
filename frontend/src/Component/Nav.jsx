@@ -186,7 +186,13 @@ const Nav = ({
                   </div>
                 ) : (
                   <div
+<<<<<<< HEAD
                     onClick={handleLogout}
+=======
+                    onClick={()=>{handleLogout()
+                      setShowMenu(false)
+                    }}
+>>>>>>> recover-health
                     className="px-5 py-3 hover:bg-gray-100 cursor-pointer"
                   >
                     Logout
@@ -245,6 +251,7 @@ const Nav = ({
 
         </div>
 
+<<<<<<< HEAD
            {searchData.length>0 &&  <div className="absolute left-60 top-14 w-[45%] bg-white rounded-2xl shadow-xl p-6 text-center text-gray-500 z-50">
              {
               searchData.map((search) =>{
@@ -252,6 +259,24 @@ const Nav = ({
               })
              }
             </div>}
+=======
+           {searchData.length > 0 && (
+             <div className="absolute left-60 top-14 w-[45%] bg-white rounded-2xl shadow-xl p-2 text-left text-gray-800 z-50">
+               {searchData.map((search) => (
+                 <div
+                   key={search._id}
+                   onClick={() => navigate(`/listing/${search._id}`)}
+                   className="border-b last:border-b-0 border-gray-200 px-4 py-3 cursor-pointer hover:bg-gray-100"
+                 >
+                   <div className="font-semibold">{search.title}</div>
+                   <div className="text-sm text-gray-500">
+                     {search.landmark}, {search.city}
+                   </div>
+                 </div>
+               ))}
+             </div>
+           )}
+>>>>>>> recover-health
          </div>
 
       {/* Categories */}

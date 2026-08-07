@@ -28,6 +28,10 @@ import ReviewSection from "../Component/Review/ReviewSection";
 import HostSection from "../Component/HostSection/HostSection";
 import About from "../Component/About/About";
 import ReviewCreate from "../Component/ReviewCreate/ReviewCreate";
+<<<<<<< HEAD
+=======
+import { ReviewDataContext } from "../Context/ReviewContext";
+>>>>>>> recover-health
 
 
 const ViewPage = () => {
@@ -60,6 +64,10 @@ const ViewPage = () => {
   const [landmark, setLandmark] = useState("");
   const [imgError, setImgError] = useState(false);
   const{  checkIn, setCheckIn, checkOut, setCheckOut,totalCharges, setTotalCharges, totalRent,setTotalRent,night, setNight,tax,setTax,charges,setCharges,bookingData,setBookingData,handleBooking ,saveBookingInfo}= useContext(bookingDataContect);
+<<<<<<< HEAD
+=======
+  const{totalNoReviews} = useContext(ReviewDataContext)
+>>>>>>> recover-health
 
 
   const handleLogout = async () => {
@@ -708,6 +716,10 @@ const year = start.getFullYear();
 
             
       </section>
+<<<<<<< HEAD
+=======
+
+>>>>>>> recover-health
             <ReviewSection />
             <HostSection />
 

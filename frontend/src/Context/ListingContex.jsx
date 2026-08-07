@@ -29,6 +29,10 @@ const ListingContex = ({ children }) => {
   const [listingData, setListingData] = useState([]);
   const [cardDetails, setCardDetails] = useState(null)
   const [searchData, setSearchData] = useState([])
+<<<<<<< HEAD
+=======
+  const [isSearching, setIsSearching] = useState(false);
+>>>>>>> recover-health
   const [data, setData] = useState("");
   const [loading, setLoading] = useState(false)
 
@@ -122,6 +126,7 @@ const ListingContex = ({ children }) => {
         console.log("ERROR RESPONSE:", error?.response?.data);
         console.log("ERROR STATUS:", error?.response?.status);
     }
+<<<<<<< HEAD
 
   }
 
@@ -129,10 +134,20 @@ const ListingContex = ({ children }) => {
 const handleSearch = async () => {
   if (!data || data.trim() === "") {
     setSearchData([]);
+=======
+  }
+
+
+const handleSearch = async (query) => {
+  if (!query || query.trim() === "") {
+    setSearchData([]);
+    setIsSearching(false)
+>>>>>>> recover-health
     return;
   }
 
   try {
+<<<<<<< HEAD
     const result = await axios.get(
       `${ServerURL}/api/listings/search?query${data}`,
      
@@ -142,6 +157,18 @@ const handleSearch = async () => {
   } catch (error) {
     console.error("Search Error:", error);
     setSearchData([]);
+=======
+     setIsSearching(true);
+    const result = await axios.get(
+      `${ServerURL}/api/listings/search?query=${encodeURIComponent(query)}`
+    );
+    setSearchData(result.data?.listings);
+    console.log(searchData)
+  } catch (error) {
+    console.error("Search Error:", error);
+    setSearchData([]);
+    setIsSearching(false)
+>>>>>>> recover-health
   }
 };
 
@@ -196,7 +223,13 @@ const handleSearch = async () => {
     searchData,
     setSearchData,
     data, 
+<<<<<<< HEAD
     setData
+=======
+    setData,
+    isSearching,
+    setIsSearching
+>>>>>>> recover-health
   };
 
   return (

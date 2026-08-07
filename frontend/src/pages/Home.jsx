@@ -10,6 +10,7 @@ import SkeletonCard from "../Component/Skeleton/SkeletonCard";
 
 const Home = () => {
   // const [loading, setLoading] = useState(false);
+<<<<<<< HEAD
   const {loading , allListing} = useContext(listingDataContext);
 
   const [cate, setCate] = useState("All");
@@ -21,6 +22,28 @@ const Home = () => {
       (item) => item.category.toLowerCase() === cate.toLowerCase()
     );
   }, [cate, allListing]);
+=======
+  const {loading , allListing, searchData, isSearching,setIsSearching} = useContext(listingDataContext);
+
+  const [cate, setCate] = useState("All");
+
+const filteredListings = useMemo(() => {
+
+    if(isSearching){
+      return searchData
+    }
+
+  const data = searchData.length > 0 ? searchData : allListing;
+  if (cate === "All") return data;
+
+  return data.filter(
+    (item) => item.category.toLowerCase() === cate.toLowerCase()
+  );
+
+}, [cate, allListing, searchData]);
+
+
+>>>>>>> recover-health
 
   return (
     <>

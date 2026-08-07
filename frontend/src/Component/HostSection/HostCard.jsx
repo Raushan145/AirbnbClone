@@ -4,6 +4,10 @@ import {
   FaMedal
 } from "react-icons/fa";
 import { listingDataContext } from "../../Context/ListingContex";
+<<<<<<< HEAD
+=======
+import { ReviewDataContext } from "../../Context/ReviewContext";
+>>>>>>> recover-health
 
 export default function HostCard() {
   const [imgError, setImgError] = useState(false);
@@ -15,7 +19,11 @@ export default function HostCard() {
         deleteing,
         setDeleteing,
       } = useContext(listingDataContext);
+<<<<<<< HEAD
   
+=======
+      const {totalNoReviews, averagerating} = useContext(ReviewDataContext)
+>>>>>>> recover-health
       
     const listing = cardDetails || {};
     
@@ -92,7 +100,11 @@ if (hostingSince) {
         <div className="space-y-3">
 
           <div>
+<<<<<<< HEAD
             <h2 className="text-2xl font-bold">{cardDetails.review || 10}</h2>
+=======
+            <h2 className="text-2xl font-bold">{totalNoReviews || 10}</h2>
+>>>>>>> recover-health
             <p className="text-gray-500">Reviews</p>
           </div>
 
@@ -100,7 +112,11 @@ if (hostingSince) {
 
           <div>
             <h2 className="text-2xl font-bold flex items-center gap-2">
+<<<<<<< HEAD
               {cardDetails.rating || 3.5} 
+=======
+              {averagerating || 3.5} 
+>>>>>>> recover-health
               <FaStar className="text-black text-lg" />
             </h2>
 
