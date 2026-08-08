@@ -173,38 +173,14 @@ export const DeleteListing =asyncHandler (async (req, res) => {
   }
 })
 
-<<<<<<< HEAD
-export const search =asyncHandler (async(req,res) =>{
-=======
+
 export const search = asyncHandler(async(req,res)=>{
->>>>>>> recover-health
+
 
   try {
 
     const {query} = req.query;
-<<<<<<< HEAD
 
-    if(!query){
-      return res.status(400).json({message:"Search Queary is required"})
-    }
-
-    const listing = await Listing.find({
-      $or:[
-        {landmark:{$regex: query, $options: "i"}},
-        {city:{$regex: query, $options: "i"}},
-        {title:{$regex: query, $options: "i"}},
-      ],
-    })
-
-    return res.status(200).json(listing)
-    
-  } catch (error) {
-    console.error("Search error:",error)
-     return res.status(500).json({message:"Internal Server error"})
-  }
-
-})
-=======
     console.log(query)
 
     if(!query || query.trim() === ""){
@@ -249,4 +225,3 @@ console.log("Found Listings:", listings.length);
   }
 
 });
->>>>>>> recover-health

@@ -18,18 +18,12 @@ const RazorpayContext = ({ children }) => {
 
   const { cardDetails } = useContext(listingDataContext);
 
-<<<<<<< HEAD
-  const checkOutHandler = async (amount, bookingId) => {
-    console.log("checkout Handler hit");
-    console.log("amount on checkHandle", amount);
-    console.log("bookingId on checkHandle", bookingId);
-=======
   const checkOutHandler = async (amount, bookingId = null, listingId = null) => {
     console.log("checkout Handler hit");
     console.log("amount on checkHandle", amount);
     console.log("bookingId on checkHandle", bookingId);
     console.log("listingId on checkHandle", listingId);
->>>>>>> recover-health
+
     try {
       const { data: keyData } = await axios.get(
         `${ServerURL}/api/payment/razorpay/getKey`,
@@ -63,28 +57,10 @@ const RazorpayContext = ({ children }) => {
                 withCredentials: true,
               },
             );
-<<<<<<< HEAD
-            // const cardInfo = JSON.parse(
-            //     sessionStorage.getItem("cardDetails")
-            //   );
 
-            //   const listingId = cardInfo?._id
-
-            //   console.log("Card Info" , cardInfo )
-
-            //  if(!listingId){
-            //    toast.error("Listing not found");
-            //    return;
-            //  }
 
             if (verify.data.success) {
               if (bookingId) {
-                //  console.log("Existing booking update hit")
-=======
-
-            if (verify.data.success) {
-              if (bookingId) {
->>>>>>> recover-health
                 await updateBookingPayment(bookingId, {
                   paymentMethod: "online",
                   paymentStatus: "paid",
@@ -92,15 +68,9 @@ const RazorpayContext = ({ children }) => {
                   razorpay_payment_id: verify.data.razorpay_payment_id,
                   razorpay_signature: verify.data.razorpay_signature,
                 });
-<<<<<<< HEAD
-              } else {
-                // New booking create
-                //  console.log(" booking update hit")
-                await handleBooking(cardInfo?._id, {
-=======
               } else if (listingId) {
                 await handleBooking(listingId, {
->>>>>>> recover-health
+
                   paymentMethod: "online",
                   paymentStatus: "paid",
                   razorpay_order_id: verify.data.razorpay_order_id,
@@ -109,20 +79,17 @@ const RazorpayContext = ({ children }) => {
                 });
 
                 navigate("/payment-sucess-booking-recipt");
-<<<<<<< HEAD
-=======
               } else {
                 toast.error("Unable to determine booking target.");
->>>>>>> recover-health
+
               }
             }
             setPaymentData(verify.data);
           } catch (err) {
             console.log(err);
-<<<<<<< HEAD
-=======
+
             toast.error(err.response?.data?.message || "Payment verification failed.");
->>>>>>> recover-health
+
           }
         },
       };
@@ -132,10 +99,9 @@ const RazorpayContext = ({ children }) => {
       rzp.open();
     } catch (err) {
       console.log(err);
-<<<<<<< HEAD
-=======
+
       toast.error(err.response?.data?.message || "Failed to start payment.");
->>>>>>> recover-health
+
     }
   };
 

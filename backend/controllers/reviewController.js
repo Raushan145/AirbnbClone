@@ -4,15 +4,7 @@ import Review from "../models/Reviewmodel.js";
 // import Review from "../models/review.model.js";
 // Add Review
 export const createReview = asyncHandler (async (req, res) => {
-<<<<<<< HEAD
-  try {
-    const { listingId } = req.params;
-    const { rating, comment } = req.body;
 
-    const review = await Review.create({
-      listing: listingId,
-      user: req.user._id, // auth middleware
-=======
    console.log("req.userId:", req.userId);
   try {
     const { listingId } = req.params;
@@ -22,7 +14,6 @@ export const createReview = asyncHandler (async (req, res) => {
     const review = await Review.create({
       listing: listingId,
       user: req.userId, // auth middleware
->>>>>>> recover-health
       rating,
       comment,
     });
@@ -48,11 +39,8 @@ export const getListingReviews = asyncHandler (async (req, res) => {
     const reviews = await Review.find({
       listing: listingId,
     })
-<<<<<<< HEAD
-      .populate("user", "username profileImage")
-=======
+
       .populate("user", "fullName ")
->>>>>>> recover-health
       .sort({ createdAt: -1 });
 
     const total = reviews.length;

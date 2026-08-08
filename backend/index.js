@@ -66,14 +66,12 @@ app.use((req,res) => {
 })
 app.use(errorHandler)
 connectDB()
-<<<<<<< HEAD
-=======
+
 
 app.get("/health", (req, res) => {
   res.status(200).json({success: true, message: "Server is healthy" });
 });
 
->>>>>>> recover-health
 app.listen(port,()=>{
     console.log(`✅ Server starting .......... at ${port}`)
 })

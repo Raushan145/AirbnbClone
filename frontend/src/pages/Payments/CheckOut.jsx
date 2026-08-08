@@ -126,20 +126,12 @@ export default function CheckoutPage(req) {
 
   const handleCheckout = (amount) => {
     if (paymentMethod === "online") {
-<<<<<<< HEAD
-    //    Razorpay Integration
-    //   console.log("Open Razorpay");
-    //   console.log(amount);
-      checkOutHandler(amount);
-      handleBooking(listingId);
 
-=======
       if (!listingId) {
         toast.error("Unable to start payment: listing not found.");
         return;
       }
       checkOutHandler(amount, null, listingId);
->>>>>>> recover-health
     } else {
       // Cash Booking API
       console.log("Create Cash Booking");

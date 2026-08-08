@@ -1,14 +1,8 @@
-<<<<<<< HEAD
-import { useContext, useState } from "react";
-import ReviewCard from "./ReviewCard";
-import { listingDataContext } from "../../Context/ListingContex";
 
-=======
 import { useContext, useEffect, useState } from "react";
 import ReviewCard from "./ReviewCard";
 import { listingDataContext } from "../../Context/ListingContex";
 import { ReviewDataContext } from "../../Context/ReviewContext";
->>>>>>> recover-health
 
 const reviews = [
   {
@@ -40,46 +34,7 @@ const reviews = [
     name: "Shubh",
     joined: "New to Airbnb",
     date: "1 day ago",
-<<<<<<< HEAD
-    review:
-      "Awesome stay. Highly recommended.",
-  },
-];
 
-
-export default function ReviewSection() {
-  
-     const [showReviewPopUp, setShowReviewPopUp] = useState(false)
-
-     const {
-          cardDetails,
-          setCardDetails,
-          updating,
-          setUpdating,
-          deleteing,
-          setDeleteing,
-        } = useContext(listingDataContext);
-    
-        
-      const listing = cardDetails || {};
-      
-  //  HostIng Since
-  const hostingSince = cardDetails?.host?.hostingSince;
-  
-  let hostBadge = "New Host";
-  let hostingText = "Just started hosting";
-  
-  if (hostingSince) {
-    const startDate = new Date(hostingSince);
-    const today = new Date();
-  
-    const diffMonths =
-      (today.getFullYear() - startDate.getFullYear()) * 12 +
-      (today.getMonth() - startDate.getMonth());
-  
-    const diffYears = Math.floor(diffMonths / 12);
-  
-=======
     review: "Awesome stay. Highly recommended.",
   },
 ];
@@ -139,7 +94,6 @@ export default function ReviewSection() {
 
     const diffYears = Math.floor(diffMonths / 12);
 
->>>>>>> recover-health
     if (diffMonths < 1) {
       hostBadge = "New Host";
       hostingText = "Recently joined Airbnb";
@@ -161,20 +115,6 @@ export default function ReviewSection() {
     }
   }
   return (
-<<<<<<< HEAD
-    <section className="max-w-7xl mx-auto px-6 mt-5  border-t">
-
-         <div className="text-center mt-5">
-        <h1 className="text-7xl font-bold">🍃 {cardDetails.rating || 3.5} 🍃</h1>
-
-        <h2 className="text-3xl font-semibold mt-4">
-          Guest favourite
-        </h2>
-
-        <p className="text-gray-500 mt-2">
-          This home is a guest favourite based on ratings,
-          reviews and reliability.
-=======
     
     <section className={`max-w-7xl mx-auto px-6 mt-5 flex-col border-t ${totalNoReviews > 0 ? "flex" : "hidden"}`}>
       <div className="text-center mt-5">
@@ -186,44 +126,11 @@ export default function ReviewSection() {
         <p className="text-gray-500 mt-2">
           This home is a guest favourite based on ratings, reviews and
           reliability.
->>>>>>> recover-health
         </p>
       </div>
 
       <div className="grid md:grid-cols-2 gap-10 mt-10 w-[85%] mx-auto">
-<<<<<<< HEAD
-        {reviews.slice(0,2).map((item) => (
-          <ReviewCard key={item.id} review={item} />
-        ))}
-      </div>
-       <button onClick={() => setShowReviewPopUp(true)} className="bg-red-200 w-[80%] md:w-[30%] flex justify-center items-center mx-auto px-10 mt-8 cursor-pointer bg-zinc-200 hover:bg-zinc-300 text-lg font-semibold rounded-full py-2">Show all {reviews.length} reviews</button>
-     
-   
 
-      {showReviewPopUp && (
-        <div className="fixed inset-0 bg-black/50 flex justify-center items-center z-500 catScroll">
-            <div className="bg-white w-[90%] md:w-[70%] h-[80vh] rounded-2xl p-6 overflow-y-auto relative catScroll">
-
-            {/* Close Button */}
-            <button
-                onClick={() => setShowReviewPopUp(false)}
-                className="absolute top-4 right-4 text-2xl font-bold active:scale-95 cursor-pointer "
-            >
-                ✕
-            </button>
-               <div className="text-center mt-5">
-        <h1 className="text-7xl font-bold">🍃 {cardDetails.rating || 3.5} 🍃</h1>
-
-        <h2 className="text-3xl font-semibold mt-4">
-          Guest favourite
-        </h2>
-
-        <p className="text-gray-500 mt-2">
-          This home is a guest favourite based on ratings,
-          reviews and reliability.
-        </p>
-      </div>
-=======
         {reviews.slice(0, 4).map((item) => (
           <ReviewCard key={item._id || item.id} review={item} />
         ))}
@@ -263,28 +170,11 @@ export default function ReviewSection() {
                 reliability.
               </p>
             </div>
->>>>>>> recover-health
 
             <h2 className="text-2xl font-bold mb-6 mt-6">All Reviews</h2>
 
             <div className="grid md:grid-cols-2 gap-6">
-<<<<<<< HEAD
-                 
-                {reviews.map((item) => (
-                <ReviewCard key={item.id} review={item} />
-                ))}
-            </div>
 
-            </div>
-        </div>
-        )}
-   
-        
-
-    </section>
-  );
-}
-=======
               {reviews.map((item) => (
                 <ReviewCard key={item._id || item.id} review={item} />
               ))}
@@ -295,4 +185,3 @@ export default function ReviewSection() {
     </section>
   );
 }
->>>>>>> recover-health

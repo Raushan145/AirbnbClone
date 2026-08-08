@@ -51,11 +51,8 @@ const PaymentSuccess = () => {
 
         {/* Header */}
 
-<<<<<<< HEAD
-        <div className="bg-green-600 text-white text-center py-8">
-=======
+
         <div className="bg-green-600 text-white text-center py-6">
->>>>>>> recover-health
 
 
           <GiConfirmed className="text-5xl mx-auto mb-3"/>
@@ -75,21 +72,16 @@ const PaymentSuccess = () => {
 
 
 
-<<<<<<< HEAD
-        <div className="p-6 space-y-6">
-=======
+
         <div className="p-6 space-y-3">
->>>>>>> recover-health
+
 
 
 
           {/* Property Details */}
 
-<<<<<<< HEAD
-          <div className="border rounded-2xl p-5">
-=======
+
           {/* <div className="border rounded-2xl p-5">
->>>>>>> recover-health
 
 
             <h2 className="font-bold text-xl mb-4">
@@ -130,11 +122,8 @@ const PaymentSuccess = () => {
             </div>
 
 
-<<<<<<< HEAD
-          </div>
-=======
+
           </div> */}
->>>>>>> recover-health
 
           {/* Booking Details */}
 
@@ -345,11 +334,9 @@ const PaymentSuccess = () => {
           </div>
 
           {/* Host Details */}
-<<<<<<< HEAD
-          <div className="border rounded-2xl p-5">
-=======
+
           {/* <div className="border rounded-2xl p-5">
->>>>>>> recover-health
+
 
 
             <h2 className="font-bold text-xl mb-3">
@@ -368,25 +355,13 @@ const PaymentSuccess = () => {
             </p>
 
 
-<<<<<<< HEAD
-          </div>
 
-
-
-=======
           </div> */}
->>>>>>> recover-health
 
 
           <ReviewCreate />
 
-<<<<<<< HEAD
 
-
-
-
-=======
->>>>>>> recover-health
           <div className="bg-blue-50 border border-blue-200 rounded-xl p-4 text-blue-700">
 
             🎉 Thank you for choosing us.
@@ -394,18 +369,7 @@ const PaymentSuccess = () => {
 
           </div>
 
-
-<<<<<<< HEAD
-
-
-
           <div className="flex gap-4">
-
-
-=======
-          <div className="flex gap-4">
-
->>>>>>> recover-health
             <button
               onClick={()=>navigate("/")}
               className="flex-1 bg-black text-white py-3 rounded-xl font-semibold"
@@ -425,16 +389,8 @@ const PaymentSuccess = () => {
 
           </div>
 
-<<<<<<< HEAD
-
-
 
         </div>
-
-
-=======
-        </div>
->>>>>>> recover-health
       </div>
 
 
