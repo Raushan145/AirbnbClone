@@ -36,12 +36,14 @@ const borderColor = '#ddd'
  const handleSignUp = async ()=>{
     setLoading(true);
     try {
-        const result =  await axios.post(`${ServerURL}/api/auth/signup`,{
-            fullName,email,password,mobile
+        await axios.post(`${ServerURL}/api/auth/signup`,{
+            fullName,
+            email,
+            password,
+            mobileNo: mobile,
         },{withCredentials:true})
-        setUserData(result.data)
+        await getCurrentUser();
         toast.success("Account created successfully");
-        getCurrentUser();
         navigate("/");
         setLoading(false);
     } catch (error) {

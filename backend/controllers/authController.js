@@ -122,7 +122,8 @@ export const SignIn =asyncHandler (async (req,res) => {
         res.clearCookie("token", {
             httpOnly: true,
             secure: false,
-            sameSite: "strict"
+            sameSite: "none",
+            path: "/"
         })
         return res.status(200).json({message: "LogOut Successfully"})
     } catch (error) {

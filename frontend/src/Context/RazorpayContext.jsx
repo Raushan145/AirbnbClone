@@ -19,8 +19,8 @@ const RazorpayContext = ({ children }) => {
   const { cardDetails } = useContext(listingDataContext);
 
   const checkOutHandler = async (amount, bookingId = null, listingId = null) => {
-    console.log("checkout Handler hit");
-    console.log("amount on checkHandle", amount);
+    // console.log("checkout Handler hit");
+    // console.log("amount on checkHandle", amount);
     console.log("bookingId on checkHandle", bookingId);
     console.log("listingId on checkHandle", listingId);
 

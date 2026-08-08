@@ -36,7 +36,7 @@ const Card = ({
   return (
     <div
       onClick={() => handleClick()}
-      className="w-[280px]  max-w-[90%] mx-auto  rounded-xl overflow-hidden bg-white shadow hover:shadow-xl duration-300 cursor-pointer relative mb-5"
+      className="w-[280px]  max-w-[90%] mx-auto  rounded-xl overflow-hidden  bg-white shadow hover:shadow-xl duration-300 cursor-pointer relative mb-5"
     >
      {/* { isBooked &&  <div className="text-green-600 bg-white rounded-full mt-1 px-4 py-1 absolute flex items-center gap-2 justify-center right-1 top-1 z-[10]">
          <FaRegCircleCheck className="w-[17px] h-[17px] text-green-600 " /> Booked
@@ -44,24 +44,24 @@ const Card = ({
 
 
       {/* Images */}
-      <div className="w-full md:h-[220px] h-[180px] overflow-x-auto flex cardImg scroll-smooth relative"> 
+      <div className="w-full md:h-[220px] h-[180px] overflow-x-auto flex cardImg scroll-smooth relative snap-x snap-mandatory"> 
         <img
           loading="lazy"
           src={image1}
           alt={title}
-          className="w-full h-full object-cover flex-shrink-0"
+          className="w-full h-full object-cover flex-shrink-0 snap-start"
         />
 
         <img
           src={image2}
           alt={title}
-          className="w-full h-full object-cover flex-shrink-0"
+          className="w-full h-full object-cover flex-shrink-0 snap-start"
         />
 
         <img
           src={image3}
           alt={title}
-          className="w-full h-full object-cover flex-shrink-0"
+          className="w-full h-full object-cover flex-shrink-0 snap-start"
         />
 
         {/* Three line bar for edit and delete */}
@@ -70,6 +70,11 @@ const Card = ({
           <span className="text-black font-semibold hover:bg-zinc-300 active:scale-95 w-full px-4 py-1 mb-1">Edit</span>
           <span className="text-black font-semibold hover:bg-zinc-300 active:scale-95 w-full px-4 py-1 ">Delete</span>
         </div>} */}
+         {/* Rating */}
+  <div className="absolute top-3 right-3 bg-white/80  backdrop-blur-sm px-3 py-1.5 rounded-full shadow-md flex items-center justify-center gap-1 text-sm font-semibold">
+    <span className="text-yellow-500">★</span>
+    <span>4.8</span>
+  </div>
       </div>
 
       {/* Details */}

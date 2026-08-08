@@ -45,14 +45,13 @@ const borderColor = '#ddd'
          return
     }
     try {
-       const result =  await axios.post(`${ServerURL}/api/auth/signin`,{
+       await axios.post(`${ServerURL}/api/auth/signin`,{
             email,password
         },{withCredentials:true})
         console.log(email,password)
-        setUserData(result.data);
+        await getCurrentUser();
         toast.success("Signed in successfully");
-        getCurrentUser();
-        navigate("/home");
+        navigate("/");
         setLoading(false);
     } catch (error) {
         console.log(error)

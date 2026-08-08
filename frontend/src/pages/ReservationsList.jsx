@@ -30,16 +30,18 @@ const ReservationsList = () => {
   const [filterStatus, setFilterStatus] = useState("current");
   const [viewDetails, setViewDetails] = useState(null);
   const navigate = useNavigate();
-  const { checkoutBooking , checkInBooking} = useContext(bookingDataContect);
+  const { checkoutBooking, checkInBooking } = useContext(bookingDataContect);
   const filter = ["current", "upComing", "complete", "cancelled"];
 
-  const {fetchReservations,reservations,setReservations} = useContext(ReservationDataContext)
+  const { fetchReservations, reservations, setReservations } = useContext(
+    ReservationDataContext,
+  );
   const { checkOutHandler } = useContext(RazorPayDataContext);
 
-   const {updateBookingPayment } = useContext(bookingDataContect);
-  
-// console.log(reservations)
-// console.log(reservations?.booking?.status)
+  const { updateBookingPayment, checkInpaymentCash } = useContext(bookingDataContect);
+
+  // console.log(reservations)
+  // console.log(reservations?.booking?.status)
   const handleLogout = async () => {
     try {
       await axios.post(
@@ -127,9 +129,8 @@ const ReservationsList = () => {
   // }, []);
 
   const activeReservations = (reservations || []).filter(
-  (booking) =>
-    booking?.status === "active" 
-);
+    (booking) => booking?.status === "active",
+  );
 
   const cancelledReservations = (reservations || []).filter(
     (booking) => booking?.status !== "booked",
@@ -150,7 +151,9 @@ const ReservationsList = () => {
     switch (filterStatus) {
       case "current":
         return (
-           (booking.status === "booked" || booking.status === "active") && checkIn <= today && checkOut >= today
+          (booking.status === "booked" || booking.status === "active") &&
+          checkIn <= today &&
+          checkOut >= today
         );
 
       case "upComing":
@@ -183,7 +186,9 @@ const ReservationsList = () => {
       switch (status) {
         case "current":
           return (
-           ( booking.status === "booked" || booking.status === "active") && checkIn <= today && checkOut >= today
+            (booking.status === "booked" || booking.status === "active") &&
+            checkIn <= today &&
+            checkOut >= today
           );
 
         case "upComing":
@@ -224,7 +229,6 @@ const ReservationsList = () => {
   //   }
   // };
 
-
   // const handleCheckIn = async (bookingId) => {
   //   try {
   //     await axios.patch(
@@ -242,28 +246,35 @@ const ReservationsList = () => {
   //   }
   // };
 
-  const handlePay = (booking)=>{
-    console.log("HandleOnline Pay function Hit")
-    console.log(booking)
-    console.log(booking.grandTotal)
-    console.log(booking._id)
-    const amount = booking.grandTotal
-    const BookingId = booking._id
-    checkOutHandler(amount, BookingId)
-  }
+  const handlePay = (booking) => {
+    console.log("HandleOnline Pay function Hit");
+    console.log(booking);
+    console.log(booking.grandTotal);
+    console.log(booking._id);
+    const amount = booking.grandTotal;
+    const BookingId = booking._id;
+    checkOutHandler(amount, BookingId);
+  };
 
-  const handleCashPayment = (booking)=>{
-    console.log("HandleCash Pay function Hit")
-    console.log(booking)
-    console.log(booking.grandTotal)
-    console.log(booking._id)
-    const amount = booking.grandTotal
-    const BookingId = booking._id
-    // checkOutHandler(amount, BookingId)
-    // updateBookingPayment(booking)
-  }
+  const handleCashPayment = async (booking) => {
+    try {
+      console.log("HandleCash Pay function Hit");
+      console.log(booking);
+      const bookingId = booking._id;
 
-  
+      await checkInpaymentCash(bookingId, {
+        paymentMethod: "pay_at_property",
+        paymentStatus: "paid",
+      });
+
+      toast.success("Cash payment marked as paid.");
+      fetchReservations();
+    } catch (error) {
+      console.log(error);
+      toast.error(error.response?.data?.message || "Failed to mark cash payment.");
+    }
+  };
+
   // const filteredReservation = getReservationsByStatus(filterStatus);
 
   return (
@@ -429,6 +440,7 @@ const ReservationsList = () => {
             filteredReservations.map((booking) => {
               const listing = booking.Listing || {};
               const guest = booking.guest || {};
+              console.log(booking);
 
               return (
                 <div
@@ -516,11 +528,11 @@ const ReservationsList = () => {
                       </div>
 
                       <div>
-                      <p className="text-xs text-gray-400">Total Rent</p>
+                        <p className="text-xs text-gray-400">Total Rent</p>
 
-                      <p className="font-bold text-xl text-green-600">
+                        <p className="font-bold text-xl text-green-600">
                           ₹{Math.round(booking?.Payment?.amount || 0)}
-                      </p>
+                        </p>
                       </div>
 
                       <div>
@@ -542,38 +554,46 @@ const ReservationsList = () => {
                         View Guest
                       </button>
 
-                    {booking?.status === "booked" && (
-                      <button
-                        onClick={() => setCheckInBookingId(booking._id)}
-                        className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs  py-2.5 whitespace-nowrap  rounded-xl bg-green-500 text-white font-medium hover:bg-green-600 transition"
-                      >
-                         Confirm Check-In
-                      </button>)}
-
-                      {filterStatus === "current" && (
-                        <button
-                          onClick={() => setCheckOutBookingId(booking._id)}
-                          className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs  py-2.5 whitespace-nowrap  rounded-xl bg-cyan-500 text-white font-medium hover:bg-cyan-600 transition"
-                        >
-                          Check-Out
-                        </button>
-                      )}
-
+                      {/* PAY BUTTON */}
                       {booking?.Payment?.paymentStatus !== "paid" && (
-                        <button className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs md:py-2 py-2.5 whitespace-nowrap  rounded-xl bg-yellow-500 text-white font-medium hover:bg-yellow-600 transition"
-                        // onClick={() => handlePay(booking)}
-                        onClick={()=> setPaymentType(booking)}
+                        <button
+                          onClick={() => setPaymentType(booking)}
+                          className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs py-2.5 whitespace-nowrap rounded-xl bg-yellow-500 text-white font-medium hover:bg-yellow-600 transition"
                         >
-                          Pay 
+                          Pay
                         </button>
                       )}
+
+                      {/* CONFIRM CHECK-IN */}
+                      {booking?.Payment?.paymentStatus === "paid" &&
+                        !booking?.checkInAt &&
+                        booking?.bookingStatus === "confirmed" && (
+                          <button
+                            onClick={() => setCheckInBookingId(booking._id)}
+                            className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs py-2.5 whitespace-nowrap rounded-xl bg-green-500 text-white font-medium hover:bg-green-600 transition"
+                          >
+                            Confirm Check-In
+                          </button>
+                        )}
+
+                      {/* CHECK-OUT */}
+                      {booking?.Payment?.paymentStatus === "paid" &&
+                        booking?.checkInAt &&
+                        !booking?.checkOutAt &&
+                        booking?.bookingStatus === "confirmed" && (
+                          <button
+                            onClick={() => setCheckOutBookingId(booking._id)}
+                            className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs py-2.5 whitespace-nowrap rounded-xl bg-cyan-500 text-white font-medium hover:bg-cyan-600 transition"
+                          >
+                            Check-Out
+                          </button>
+                        )}
                     </div>
                   </div>
                 </div>
               );
             })
           ))}
-
 
         {filterStatus === "upComing" &&
           (filteredReservations.length === 0 ? (
@@ -587,138 +607,139 @@ const ReservationsList = () => {
               const listing = booking.Listing || {};
               const guest = booking.guest || {};
 
-               return (
-              <div
-                key={booking._id}
-                className="w-[95%] max-w-6xl bg-white rounded-3xl sm:pb-5 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 flex md:flex-row flex-col"
-              >
-                {/* Image */}
-                <div className="md:w-[320px] w-full md:h-[280px] h-[220px] p-3">
-                  <img
-                    loading="lazy"
-                    src={listing.image1 || ""}
-                    alt={listing.title}
-                    className="w-full h-full object-cover rounded-2xl"
-                  />
-                </div>
-
-                {/* Content */}
-                <div className="flex-1 px-5 md:p-6">
-                  {/* Header */}
-                  <div className="flex justify-between gap-3 flex-col md:flex-row">
-                    <div>
-                      <h1 className="text-xl md:text-2xl font-bold text-gray-800">
-                        {listing.title || "Untitled Listing"}
-                      </h1>
-
-                      <p className="text-sm text-gray-500 mt-1">
-                        {listing.category || "Listing"} • {listing.city || "-"}{" "}
-                        • {listing.landmark || "-"}
-                      </p>
-                    </div>
-
-                    {/* Badges */}
-                    <div className="flex flex-wrap gap-3 md:justify-end items-start h-fit">
-                      <span className="px-3 py-2 rounded-full flex justify-center items-center text-sm font-semibold bg-green-100 text-green-700">
-                        {booking?.status}
-                      </span>
-
-                      <span className="px-3 py-2 rounded-full flex justify-center items-center text-sm font-semibold bg-cyan-100 text-cyan-700">
-                        {booking?.Payment?.paymentStatus}
-                      </span>
-
-                      <span className="px-3 py-2 rounded-full flex justify-center items-center text-sm font-semibold bg-orange-100 text-orange-700">
-                        {booking?.paymentMethod}
-                      </span>
-                    </div>
+              return (
+                <div
+                  key={booking._id}
+                  className="w-[95%] max-w-6xl bg-white rounded-3xl sm:pb-5 shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 flex md:flex-row flex-col"
+                >
+                  {/* Image */}
+                  <div className="md:w-[320px] w-full md:h-[280px] h-[220px] p-3">
+                    <img
+                      loading="lazy"
+                      src={listing.image1 || ""}
+                      alt={listing.title}
+                      className="w-full h-full object-cover rounded-2xl"
+                    />
                   </div>
 
-                  <hr className="my-4" />
+                  {/* Content */}
+                  <div className="flex-1 px-5 md:p-6">
+                    {/* Header */}
+                    <div className="flex justify-between gap-3 flex-col md:flex-row">
+                      <div>
+                        <h1 className="text-xl md:text-2xl font-bold text-gray-800">
+                          {listing.title || "Untitled Listing"}
+                        </h1>
 
-                  {/* Details */}
-                  <div className="grid md:grid-cols-3 grid-cols-2 gap-2">
-                    <div>
-                      <p className="text-xs text-gray-400">Guest Name</p>
-                      <p className="font-semibold text-gray-700">
-                        {guest.fullName || "Guest"}
-                      </p>
+                        <p className="text-sm text-gray-500 mt-1">
+                          {listing.category || "Listing"} •{" "}
+                          {listing.city || "-"} • {listing.landmark || "-"}
+                        </p>
+                      </div>
+
+                      {/* Badges */}
+                      <div className="flex flex-wrap gap-3 md:justify-end items-start h-fit">
+                        <span className="px-3 py-2 rounded-full flex justify-center items-center text-sm font-semibold bg-green-100 text-green-700">
+                          {booking?.status}
+                        </span>
+
+                        <span className="px-3 py-2 rounded-full flex justify-center items-center text-sm font-semibold bg-cyan-100 text-cyan-700">
+                          {booking?.Payment?.paymentStatus}
+                        </span>
+
+                        <span className="px-3 py-2 rounded-full flex justify-center items-center text-sm font-semibold bg-orange-100 text-orange-700">
+                          {booking?.paymentMethod}
+                        </span>
+                      </div>
                     </div>
 
-                    <div>
-                      <p className="text-xs text-gray-400">Guest Email</p>
+                    <hr className="my-4" />
 
-                      <p className="font-semibold text-gray-700 truncate">
-                        {guest.email || "-"}
-                      </p>
+                    {/* Details */}
+                    <div className="grid md:grid-cols-3 grid-cols-2 gap-2">
+                      <div>
+                        <p className="text-xs text-gray-400">Guest Name</p>
+                        <p className="font-semibold text-gray-700">
+                          {guest.fullName || "Guest"}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="text-xs text-gray-400">Guest Email</p>
+
+                        <p className="font-semibold text-gray-700 truncate">
+                          {guest.email || "-"}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="text-xs text-gray-400">Total Rent</p>
+
+                        <p className="font-bold text-xl text-green-600">
+                          ₹{Math.round(booking?.Payment?.amount || 0)}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="text-xs text-gray-400">Check In</p>
+
+                        <p className="font-medium">
+                          {new Date(booking.checkIn).toLocaleDateString(
+                            "en-IN",
+                          )}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="text-xs text-gray-400">Check Out</p>
+
+                        <p className="font-medium">
+                          {new Date(booking.checkOut).toLocaleDateString(
+                            "en-IN",
+                          )}
+                        </p>
+                      </div>
+
+                      <div>
+                        <p className="text-xs text-gray-400">Booking Status</p>
+
+                        <span className="inline-block mt-1 px-3 py-1 rounded-full text-sm bg-green-100 text-green-700">
+                          Confirmed
+                        </span>
+                      </div>
                     </div>
 
-                    <div>
-                      <p className="text-xs text-gray-400">Total Rent</p>
+                    {/* Buttons */}
 
-                      <p className="font-bold text-xl text-green-600">
-                        ₹{Math.round(booking?.Payment?.amount || 0)}
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="text-xs text-gray-400">Check In</p>
-
-                      <p className="font-medium">
-                        {new Date(booking.checkIn).toLocaleDateString("en-IN")}
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="text-xs text-gray-400">Check Out</p>
-
-                      <p className="font-medium">
-                        {new Date(booking.checkOut).toLocaleDateString("en-IN")}
-                      </p>
-                    </div>
-
-                    <div>
-                      <p className="text-xs text-gray-400">Booking Status</p>
-
-                      <span className="inline-block mt-1 px-3 py-1 rounded-full text-sm bg-green-100 text-green-700">
-                        Confirmed
-                      </span>
-                    </div>
-                  </div>
-
-                  {/* Buttons */}
-
-                  <div className="flex flex-wrap gap-3 mt-6">
-                    <button
-                      onClick={() => setGuestModal(guest)}
-                      className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs md:py-2 py-2.5 whitespace-nowrap  rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
-                    >
-                      View Guest
-                    </button>
-
-                    <button
-                      onClick={() => setCancelBookingId(booking._id)}
-                      className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs md:py-2 py-2.5 whitespace-nowrap  rounded-xl bg-red-500 text-white font-medium hover:bg-red-600 transition"
-                    >
-                      Cancel
-                    </button>
-
-                    {filterStatus === "current" && (
+                    <div className="flex flex-wrap gap-3 mt-6">
                       <button
-                        onClick={() => setCheckOutBookingId(booking._id)}
-                        className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs md:py-2 py-2.5 whitespace-nowrap  rounded-xl bg-cyan-500 text-white font-medium hover:bg-cyan-600 transition"
+                        onClick={() => setGuestModal(guest)}
+                        className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs md:py-2 py-2.5 whitespace-nowrap  rounded-xl bg-blue-600 text-white font-medium hover:bg-blue-700 transition"
                       >
-                        Check-Out
+                        View Guest
                       </button>
-                    )}
 
-                   
+                      <button
+                        onClick={() => setCancelBookingId(booking._id)}
+                        className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs md:py-2 py-2.5 whitespace-nowrap  rounded-xl bg-red-500 text-white font-medium hover:bg-red-600 transition"
+                      >
+                        Cancel
+                      </button>
+
+                      {filterStatus === "current" && (
+                        <button
+                          onClick={() => setCheckOutBookingId(booking._id)}
+                          className="flex-1 md:flex-none md:px-5 md:py-2 px-2 md:text-lg text-xs md:py-2 py-2.5 whitespace-nowrap  rounded-xl bg-cyan-500 text-white font-medium hover:bg-cyan-600 transition"
+                        >
+                          Check-Out
+                        </button>
+                      )}
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
+              );
             })
           ))}
-
 
         {filterStatus === "cancelled" &&
           (filteredReservations.length === 0 ? (
@@ -732,8 +753,8 @@ const ReservationsList = () => {
               const listing = booking.Listing || {};
               const guest = booking.guest || {};
 
-             return (
-                   <div
+              return (
+                <div
                   key={booking._id}
                   className="w-[95%] max-w-6xl bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 overflow-hidden border border-gray-100 flex md:flex-row flex-col mt-2"
                 >
@@ -818,11 +839,11 @@ const ReservationsList = () => {
                       </div>
 
                       <div>
-                      <p className="text-xs text-gray-400">Total Rent</p>
+                        <p className="text-xs text-gray-400">Total Rent</p>
 
-                      <p className="font-bold text-xl text-green-600">
+                        <p className="font-bold text-xl text-green-600">
                           ₹{Math.round(booking?.Payment?.amount || 0)}
-                      </p>
+                        </p>
                       </div>
 
                       <div>
@@ -843,17 +864,12 @@ const ReservationsList = () => {
                       >
                         View Guest
                       </button>
-
-                   
-
-                      
                     </div>
                   </div>
                 </div>
-                );
+              );
             })
           ))}
-
 
         {filterStatus === "complete" &&
           (filteredReservations.length === 0 ? (
@@ -867,25 +883,24 @@ const ReservationsList = () => {
               const listing = booking.Listing || {};
               const guest = booking.guest || {};
 
-           return (
-              <div
-                key={booking._id}
-                className="w-[95%] max-w-6xl bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 pt-5 overflow-hidden border border-gray-100 flex md:flex-row flex-col"
-              >
-                <div className="md:w-[320px] w-full md:h-[280px] h-[220px] p-3 ">
-                  <img
-                    loading="lazy"
-                    src={listing.image1 || ""}
-                    alt={listing.title}
-                    className="w-full h-full object-cover rounded-2xl"
-                  />
-                </div>
+              return (
+                <div
+                  key={booking._id}
+                  className="w-[95%] max-w-6xl bg-white rounded-3xl shadow-lg hover:shadow-2xl transition-all duration-300 pt-5 overflow-hidden border border-gray-100 flex md:flex-row flex-col"
+                >
+                  <div className="md:w-[320px] w-full md:h-[280px] h-[220px] p-3 ">
+                    <img
+                      loading="lazy"
+                      src={listing.image1 || ""}
+                      alt={listing.title}
+                      className="w-full h-full object-cover rounded-2xl"
+                    />
+                  </div>
 
-                <div className="flex-1 md:px-10 px-4 pb-5">
+                  <div className="flex-1 md:px-10 px-4 pb-5">
+                    {/* Header */}
 
-              {/* Header */}
-
-              <div className="flex justify-between md:items-center gap-3 flex-col md:flex-row">
+                    <div className="flex justify-between md:items-center gap-3 flex-col md:flex-row">
                       <div>
                         <h1 className="text-xl md:text-2xl font-bold text-gray-800">
                           {listing.title || "Untitled Listing"}
@@ -917,9 +932,8 @@ const ReservationsList = () => {
                       </div>
                     </div>
 
-
-{/* Hearder copy */}
-                  {/* <div className="flex justify-between items-start gap-4 relative">
+                    {/* Hearder copy */}
+                    {/* <div className="flex justify-between items-start gap-4 relative">
 
                     <div className="px-3 py-1 rounded-full absolute right-3 top-1 text-sm font-semibold">
                       <div className="flex gap-5 items-center">
@@ -952,75 +966,73 @@ const ReservationsList = () => {
                     </div>
                   </div> */}
 
-                  <hr className="my-2" />
+                    <hr className="my-2" />
 
-                  <div className="grid md:grid-cols-2 grid-cols-2 gap-y-2 ">
-                    <div>
-                      <p className="text-gray-400">Guest Name</p>
-                      <h3 className="font-semibold">
-                        {guest.fullName || "Guest"}
-                      </h3>
+                    <div className="grid md:grid-cols-2 grid-cols-2 gap-y-2 ">
+                      <div>
+                        <p className="text-gray-400">Guest Name</p>
+                        <h3 className="font-semibold">
+                          {guest.fullName || "Guest"}
+                        </h3>
+                      </div>
+
+                      <div>
+                        <p className="text-gray-400">Guest Email</p>
+                        <h3 className="font-semibold">{guest.email || "-"}</h3>
+                      </div>
+
+                      <div>
+                        <p className="text-gray-400">Check In</p>
+                        <h3>
+                          {new Date(booking.checkIn).toLocaleDateString(
+                            "en-IN",
+                          )}
+                        </h3>
+                      </div>
+
+                      <div>
+                        <p className="text-gray-400">Check Out</p>
+                        <h3>
+                          {new Date(booking.checkOut).toLocaleDateString(
+                            "en-IN",
+                          )}
+                        </h3>
+                      </div>
+
+                      <div>
+                        <p className="text-gray-400">Total Rent</p>
+                        <h3 className="text-xl font-bold text-green-600">
+                          ₹{Math.round(booking?.Payment?.amount || 0)}
+                        </h3>
+                      </div>
+
+                      <div>
+                        <p className="text-gray-400">Booking Id</p>
+                        <span className=" py-1 rounded-lg ">{booking._id}</span>
+                      </div>
                     </div>
 
-                    <div>
-                      <p className="text-gray-400">Guest Email</p>
-                      <h3 className="font-semibold">{guest.email || "-"}</h3>
-                    </div>
+                    <div className="flex gap-3 mt-4">
+                      <button
+                        onClick={() => setGuestModal(guest)}
+                        className="md:px-5 md:py-2 px-2 md:text-lg text-xs md:py-2 py-2.5 whitespace-nowrap  bg-blue-600 text-white rounded-lg hover:bg-blue-700"
+                      >
+                        View Guest
+                      </button>
 
-                    <div>
-                      <p className="text-gray-400">Check In</p>
-                      <h3>
-                        {new Date(booking.checkIn).toLocaleDateString("en-IN")}
-                      </h3>
-                    </div>
-
-                    <div>
-                      <p className="text-gray-400">Check Out</p>
-                      <h3>
-                        {new Date(booking.checkOut).toLocaleDateString("en-IN")}
-                      </h3>
-                    </div>
-
-                    <div>
-                      <p className="text-gray-400">Total Rent</p>
-                      <h3 className="text-xl font-bold text-green-600">
-                        ₹{Math.round(booking?.Payment?.amount || 0)}
-                      </h3>
-                    </div>
-
-                    <div>
-                      <p className="text-gray-400">Booking Id</p>
-                      <span className=" py-1 rounded-lg ">{booking._id}</span>
-                    </div>
-                  </div>
-
-                  <div className="flex gap-3 mt-4">
-                    <button
-                      onClick={() => setGuestModal(guest)}
-                      className="md:px-5 md:py-2 px-2 md:text-lg text-xs md:py-2 py-2.5 whitespace-nowrap  bg-blue-600 text-white rounded-lg hover:bg-blue-700"
-                    >
-                      View Guest
-                    </button>
-                   
-                    
-
-                    {/* {!booking?.Payment?.paymentStatus == "paid" && (  <button
+                      {/* {!booking?.Payment?.paymentStatus == "paid" && (  <button
                         onClick={() => setCancelBookingId(booking._id)}
                         className="px-5 py-2 rounded-lg text-white bg-red-500 hover:bg-red-600"
                       >
                        Pay Online
                       </button>)} */}
+                    </div>
                   </div>
                 </div>
-              </div>
-            );
+              );
             })
           ))}
-
-
       </div>
-
-
 
       {cancelBookingId && (
         <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/40 px-4">
@@ -1086,8 +1098,9 @@ const ReservationsList = () => {
                 Cancel
               </button>
               <button
-                onClick={() => {checkoutBooking(checkOutBookingId)
-                                setCheckOutBookingId(null);
+                onClick={() => {
+                  checkoutBooking(checkOutBookingId);
+                  setCheckOutBookingId(null);
                 }}
                 className="px-4 py-2 rounded-lg bg-green-500 text-white hover:bg-green-600"
               >
@@ -1099,9 +1112,8 @@ const ReservationsList = () => {
       )}
 
       {confirmPay && (
-       <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/50 px-4">
+        <div className="fixed inset-0 z-[70] flex items-center justify-center bg-black/50 px-4">
           <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl">
-
             <h3 className="text-xl font-bold text-gray-800">
               Confirm Cash Payment
             </h3>
@@ -1121,8 +1133,7 @@ const ReservationsList = () => {
             </div>
 
             <p className="mt-4 text-sm text-gray-500">
-              Cash payment integration is currently under development.
-              For now, online payment is recommended.
+              Use this button to confirm that the guest has paid in cash at the property.
             </p>
 
             <div className="flex justify-end gap-3 mt-6">
@@ -1143,7 +1154,6 @@ const ReservationsList = () => {
                 Yes, Mark as Paid
               </button>
             </div>
-
           </div>
         </div>
       )}
@@ -1157,7 +1167,7 @@ const ReservationsList = () => {
             <p className="text-sm text-gray-600 mt-2">
               Are you sure you want to mark this booking as checkIn?
             </p>
-           
+
             <div className="flex justify-end gap-3 mt-6">
               <button
                 onClick={() => {
@@ -1168,8 +1178,9 @@ const ReservationsList = () => {
                 Cancel
               </button>
               <button
-                onClick={() => {checkInBooking(checkInBookingId)
-                                setCheckInBookingId(null);
+                onClick={() => {
+                  checkInBooking(checkInBookingId);
+                  setCheckInBookingId(null);
                 }}
                 className="px-4 py-2 rounded-lg bg-yellow-500 text-white hover:bg-yellow-600"
               >
@@ -1189,24 +1200,26 @@ const ReservationsList = () => {
             <p className="text-sm text-gray-600 mt-2">
               Choose how the guest is making the payment.
             </p>
-           
+
             <div className="flex justify-end gap-3 mt-6">
               <button
-                onClick={() => { setConfirmPay(paymentType)
-                        setPaymentType(null)
+                onClick={() => {
+                  setConfirmPay(paymentType);
+                  setPaymentType(null);
                   // setConfirmPay(paymentType)
                 }}
                 className="px-4 py-2 rounded-lg bg-gray-100 text-gray-700 hover:bg-gray-200"
               >
-               Cash
+                Cash
               </button>
               <button
-                onClick={() => {handlePay(paymentType)
-                  setPaymentType(null)
+                onClick={() => {
+                  handlePay(paymentType);
+                  setPaymentType(null);
                 }}
                 className="px-4 py-2 rounded-lg bg-yellow-500 text-white hover:bg-yellow-600"
               >
-               Online
+                Online
               </button>
             </div>
           </div>
@@ -1347,7 +1360,6 @@ const ReservationsList = () => {
         </div>
       )}
 
-      
       <Footer />
     </>
   );

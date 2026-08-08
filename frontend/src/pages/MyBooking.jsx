@@ -214,7 +214,7 @@ const MyBooking = () => {
         My Booking
       </h1>
 
-      <div className="pt-[140px] max-w-6xl mx-auto px-4 pb-10">
+      <div className="pt-[140px] max-w-6xl flex gap-3 flex-col mx-auto px-4 pb-10">
         {/* Active Bookings */}
        
        {activeBookings.length === 0 ? (
@@ -248,7 +248,7 @@ const MyBooking = () => {
           return (
                 <div
                   key={booking._id}
-                  className="w-full bg-white rounded-2xl shadow-md hover:shadow-xl transition flex md:flex-row flex-col overflow-hidden"
+                  className="w-full bg-white rounded-2xl shadow-md hover:shadow-xl transition flex md:flex-row flex-col  overflow-hidden"
                 >
                   <div className="md:w-[350px] w-full h-[250px] flex-shrink-0">
                     <img

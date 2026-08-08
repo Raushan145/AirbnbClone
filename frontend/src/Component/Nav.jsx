@@ -112,7 +112,7 @@ const Nav = ({
           <input
             placeholder="Any Where | Any Location | Any City"
             onChange={(e)=>setInput(e.target.value)} value={input}
-            className="w-full bg-transparent outline-none"
+            className="w-full bg-transparent outline-none p-1"
           />
           <IoIosSearch size={20} className="md:ml-0 ml-2"/>
         </div>

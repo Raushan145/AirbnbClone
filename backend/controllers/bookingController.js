@@ -408,9 +408,7 @@ export const checkInBooking = async (req, res) => {
     }
 
     // Payment check
-    if (
-      !booking.Payment ||
-      booking.Payment.paymentStatus !== "paid"
+    if ( !booking.Payment || booking.paymentStatus !== "paid"
     ) {
       return res.status(400).json({
         success: false,
@@ -634,6 +632,69 @@ export const updateBookingPayment = asyncHandler(async (req, res) => {
       payment,
     });
 
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: error.message,
+    });
+  }
+});
+
+export const updateBookingPaymentInCash = asyncHandler(async (req, res) => {
+  try {
+    const { bookingId } = req.params;
+    const {
+      paymentMethod = "pay_at_property",
+      paymentStatus = "paid",
+    } = req.body;
+
+    const booking = await Booking.findById(bookingId);
+
+    if (!booking) {
+      return res.status(404).json({
+        success: false,
+        message: "Booking not found",
+      });
+    }
+
+    let payment = null;
+
+    if (booking.Payment) {
+      payment = await Payment.findById(booking.Payment);
+    }
+
+    if (!payment) {
+      payment = await Payment.create({
+        booking: booking._id,
+        user: req.userId,
+        amount: booking.grandTotal,
+        currency: "INR",
+        method: paymentMethod === "online" ? "razorpay" : "pay_at_property",
+        paymentStatus,
+        transactionId: null,
+        paidAt: paymentStatus === "paid" ? new Date() : null,
+      });
+      booking.Payment = payment._id;
+    } else {
+      payment.method =
+        paymentMethod === "online" ? "razorpay" : "pay_at_property";
+      payment.paymentStatus = paymentStatus;
+      payment.paidAt = paymentStatus === "paid" ? new Date() : null;
+      await payment.save();
+    }
+
+    booking.paymentMethod = paymentMethod;
+    booking.paymentStatus = paymentStatus;
+    await booking.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Cash payment updated successfully",
+      payment,
+      booking,
+    });
   } catch (error) {
     console.log(error);
 

@@ -230,8 +230,34 @@ const saveBookingInfo = () => {
     await fetchReservations();
     await getCurrentUser();
 
+    return res.data;
   } catch (error) {
     console.log(error);
+    toast.error(error.response?.data?.message || "Payment update failed");
+    throw error;
+  }
+};
+
+ const checkInpaymentCash = async (bookingId, paymentData = {}) => {
+  try {
+    const res = await axios.patch(
+      `${ServerURL}/api/booking/payment/updateInCash/${bookingId}`,
+      paymentData,
+      {
+        withCredentials: true
+      }
+    );
+
+    console.log("Cash Payment Update Success", res.data);
+
+    await fetchReservations();
+    await getCurrentUser();
+
+    return res.data;
+  } catch (error) {
+    console.log(error);
+    toast.error(error.response?.data?.message || "Cash payment update failed");
+    throw error;
   }
 };
 
@@ -265,11 +291,12 @@ const saveBookingInfo = () => {
         checkoutBooking,
         checkOutLoading,
         setCheckOutLoading,
-        payingLoading, 
+        payingLoading,
         saveBookingInfo,
         setPayingLoading,
         updateBookingPayment,
-        checkInBooking
+        checkInBooking,
+        checkInpaymentCash,
       }}
     >
       {children}
